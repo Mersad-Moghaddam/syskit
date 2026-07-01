@@ -1,69 +1,141 @@
 # SysKit
 
-> A modern, Linux-first command-line toolkit built with Go for system inspection, resource monitoring, and diagnostics.
+> A modern, Linux-first command-line toolkit for system inspection, resource monitoring, and diagnostics — built with Go.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Go](https://img.shields.io/badge/Go-1.22+-00ADD8?logo=go&logoColor=white)](https://go.dev)
+[![Linux](https://img.shields.io/badge/Platform-Linux-FCC624?logo=linux&logoColor=black)](https://kernel.org)
+[![Status](https://img.shields.io/badge/Status-Design%20Phase-orange)]()
+
+---
 
 ## Overview
 
-SysKit is an open-source CLI application designed for developers, backend engineers, DevOps professionals, and Linux enthusiasts who need fast, reliable, and consistent access to system information.
+SysKit is an open-source command-line toolkit designed for backend engineers, DevOps professionals, and Linux enthusiasts who need fast, reliable, and consistent access to system information.
 
-Rather than simply wrapping existing Linux utilities, SysKit aims to collect information directly from native Linux interfaces such as `/proc` and `/sys` whenever possible, providing both a practical daily-use tool and a hands-on exploration of Linux internals.
+Rather than wrapping existing Linux utilities, SysKit interacts directly with native Linux interfaces — `/proc`, `/sys`, Netlink, and other kernel APIs — to collect and present system data. This approach provides better performance, richer detail, and a deeper understanding of the underlying operating system.
 
-The project is built with a strong focus on performance, clean architecture, maintainability, and an excellent terminal user experience.
+SysKit is both a practical daily-use tool and a long-term educational project for mastering Go, Linux internals, CLI development, and systems programming.
+
+## Philosophy
+
+SysKit follows a **Specification-Driven Development (SDD)** workflow. Implementation comes after documentation and architecture. Every feature begins as a specification, is reviewed for correctness and consistency, and only then moves into code.
+
+This approach ensures:
+
+- Deliberate, well-understood design decisions
+- A codebase that remains maintainable as it grows
+- Documentation that stays in sync with the implementation
+- A project that serves as both a tool and a learning resource
 
 ## Goals
 
-* Build a unified interface for common Linux inspection tasks.
-* Learn advanced Go through a real-world project.
-* Explore Linux internals by interacting directly with kernel interfaces.
-* Create a fast, modular, and extensible CLI application.
-* Serve as a long-term open-source learning project.
+- **Unified Interface** — Provide a single, consistent CLI for common Linux inspection and monitoring tasks.
+- **Native Data Collection** — Read directly from kernel interfaces instead of parsing shell command output.
+- **Performance** — Deliver fast startup, low memory footprint, and minimal overhead.
+- **Modularity** — Build an architecture that supports independent, composable subsystems.
+- **Extensibility** — Support plugins, custom collectors, and multiple output formats.
+- **Education** — Serve as a reference project for Go engineering, Linux internals, and CLI design.
 
 ## Planned Features
 
-* System information
-* CPU monitoring
-* Memory monitoring
-* Disk usage analysis
-* Process inspection and management
-* Network monitoring
-* Port inspection
-* Filesystem information
-* System health diagnostics
-* Interactive terminal dashboard
-* JSON and YAML output
-* Plugin system
-* Docker and Kubernetes integration
-* Remote monitoring over SSH
+| Category | Features |
+|---|---|
+| **System** | Host information, kernel version, uptime, load averages |
+| **CPU** | Core count, utilization, frequency, per-core statistics |
+| **Memory** | Physical/swap usage, buffers, caches, memory pressure |
+| **Disk** | Partition layout, usage, I/O statistics, mount points |
+| **Process** | Process listing, tree view, resource usage, signals |
+| **Network** | Interface statistics, connections, routing, DNS |
+| **Ports** | Listening ports, socket states, associated processes |
+| **Filesystem** | Inode usage, filesystem types, mount options |
+| **Diagnostics** | System health checks, resource bottleneck detection |
+| **Dashboard** | Interactive terminal UI with real-time monitoring |
+| **Output** | Table, JSON, YAML, and plain-text output formats |
+| **Plugins** | User-defined collectors and custom extensions |
+| **Containers** | Docker and container runtime inspection |
 
 ## Design Principles
 
-* Linux-first
-* Performance-oriented
-* Native APIs whenever possible
-* Modular architecture
-* Consistent user experience
-* Minimal dependencies
-* Comprehensive testing
-* Extensible by design
+- **Linux First** — Built exclusively for Linux. No cross-platform abstraction layers.
+- **Native APIs First** — Prefer `/proc`, `/sys`, and Netlink over shelling out to external commands.
+- **Performance Matters** — Minimize allocations, avoid unnecessary work, benchmark critical paths.
+- **Keep It Modular** — Each subsystem is independent and self-contained.
+- **Test Everything** — Unit tests, integration tests, and benchmarks for every component.
+- **Documentation First** — Specs before code. Every feature is designed before it is built.
+- **Clean Go** — Idiomatic Go. No frameworks, no magic, no unnecessary abstractions.
+- **Minimal Dependencies** — Rely on the standard library wherever possible.
+- **Consistent CLI Experience** — Predictable flags, uniform output, clear error messages.
 
 ## Technology Stack
 
-* Go
-* Linux Kernel Interfaces (`/proc`, `/sys`)
-* Cobra (CLI)
-* Bubble Tea (Terminal UI)
-* Lip Gloss (Terminal Styling)
+| Component | Technology |
+|---|---|
+| Language | [Go](https://go.dev) 1.22+ |
+| Data Sources | `/proc`, `/sys`, Netlink, kernel APIs |
+| CLI Framework | [Cobra](https://github.com/spf13/cobra) |
+| Terminal UI | [Bubble Tea](https://github.com/charmbracelet/bubbletea) |
+| Styling | [Lip Gloss](https://github.com/charmbracelet/lipgloss) |
+| Testing | Go standard `testing` package, [testify](https://github.com/stretchr/testify) |
 
 ## Project Status
 
-🚧 **Early development**
+**Early Development — Design & Specification Phase**
 
-SysKit is currently in the design and planning phase. The project is being developed using a specification-driven approach, with a strong emphasis on software architecture, Linux internals, and modern Go engineering practices before implementation begins.
+SysKit is currently in its foundational phase. The project is being developed using a specification-driven approach with a strong emphasis on architecture, documentation, and Linux internals before any implementation begins.
+
+See the [Roadmap](specs/roadmap.md) for planned milestones.
+
+## Project Structure
+
+```text
+syskit/
+├── .github/            # GitHub templates and CI workflows
+├── docs/               # User-facing documentation and maintainer guides
+├── specs/              # Specifications and architecture documents
+│   ├── constitution.md # Engineering principles
+│   ├── product.md      # Product overview
+│   ├── roadmap.md      # Development milestones
+│   ├── architecture.md # System architecture
+│   └── features/       # Individual feature specifications
+├── learning/           # Study notes on Linux internals
+├── standards/          # Engineering standards and review policies
+├── decisions/          # Architecture Decision Records
+├── scripts/            # Development and build scripts
+├── LICENSE
+├── README.md
+└── .gitignore
+```
+
+No production Go code exists yet. Directories such as `cmd/`, `internal/`, and `pkg/` will be created only after the implementation readiness checklist is complete.
+
+## Documentation Map
+
+- [Getting started](docs/getting-started.md)
+- [Architecture overview](docs/architecture.md)
+- [Developer onboarding](docs/developer-onboarding.md)
+- [Product overview](specs/product.md)
+- [Feature specifications](specs/features/)
+- [Collector architecture](specs/collectors.md)
+- [Rendering architecture](specs/rendering.md)
+- [Plugin architecture](specs/plugin-architecture.md)
+- [Learning roadmap](learning/roadmap.md)
+- [Implementation readiness](docs/implementation-readiness.md)
 
 ## Vision
 
-SysKit aims to become a reliable daily companion for backend engineers and Linux users by providing a modern command-line experience for system inspection, monitoring, and diagnostics.
+SysKit aims to become a reliable daily companion for backend engineers and Linux users — a tool that provides a modern, fast, and thoughtful command-line experience for system inspection, monitoring, and diagnostics.
+
+Beyond the tool itself, SysKit is designed to be a living reference for building well-architected Go applications that interact deeply with the Linux kernel.
+
+## Contributing
+
+SysKit is in its design and specification phase. Contributions are most useful when they improve specs, architecture, Linux explanations, documentation, or repository process. See [docs/contributing.md](docs/contributing.md).
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+*Built with care for Linux, Go, and the terminal.*
