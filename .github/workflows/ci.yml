@@ -1,0 +1,91 @@
+name: Repository Checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  planning:
+    name: Planning Repository Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Enforce pre-implementation boundary
+        run: |
+          for path in cmd internal pkg; do
+            if [ -e "$path" ]; then
+              echo "::error::$path must not exist before implementation begins."
+              exit 1
+            fi
+          done
+
+          if [ -e main.go ]; then
+            echo "::error::main.go must not exist before implementation begins."
+            exit 1
+          fi
+
+          if find . -path ./.git -prune -o -name '*.go' -print | grep -q .; then
+            echo "::error::Go source files are not part of the planning phase."
+            exit 1
+          fi
+
+      - name: Validate required planning artifacts
+        run: |
+          required_files=(
+            README.md
+            LICENSE
+            CHANGELOG.md
+            CODE_OF_CONDUCT.md
+            SECURITY.md
+            GOVERNANCE.md
+            docs/architecture.md
+            docs/getting-started.md
+            docs/contributing.md
+            docs/roadmap.md
+            docs/developer-onboarding.md
+            docs/project-structure.md
+            docs/documentation-standards.md
+            docs/implementation-readiness.md
+            specs/product.md
+            specs/architecture.md
+            specs/collectors.md
+            specs/rendering.md
+            specs/plugin-architecture.md
+            specs/cli-conventions.md
+            specs/testing-strategy.md
+            specs/features/system.md
+            specs/features/cpu.md
+            specs/features/memory.md
+            specs/features/disk.md
+            specs/features/filesystem.md
+            specs/features/process.md
+            specs/features/network.md
+            specs/features/ports.md
+            specs/features/diagnostics.md
+            specs/features/dashboard.md
+            specs/features/output-formats.md
+            specs/features/plugins.md
+            specs/features/containers.md
+            standards/definition-of-ready.md
+            standards/definition-of-done.md
+            standards/naming-conventions.md
+          )
+
+          for file in "${required_files[@]}"; do
+            if [ ! -s "$file" ]; then
+              echo "::error::Required planning artifact is missing or empty: $file"
+              exit 1
+            fi
+          done
+
+      - name: Check for unresolved placeholders
+        run: |
+          marker='TO''DO'
+          if grep -R "$marker" README.md docs specs standards learning decisions .github -n; then
+            echo "::error::Resolve unresolved task markers before merging."
+            exit 1
+          fi

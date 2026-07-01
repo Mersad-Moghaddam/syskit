@@ -1,0 +1,31 @@
+labels:
+  - name: bug
+    color: d73a4a
+    description: Something is incorrect or broken
+  - name: documentation
+    color: 0075ca
+    description: Documentation improvements
+  - name: enhancement
+    color: a2eeef
+    description: New feature or improvement
+  - name: design
+    color: 5319e7
+    description: Architecture, specification, or product design
+  - name: good first issue
+    color: 7057ff
+    description: Suitable for new contributors
+  - name: help wanted
+    color: 008672
+    description: Maintainer would welcome contribution
+  - name: linux
+    color: fcc624
+    description: Linux kernel, procfs, sysfs, cgroups, or Netlink behavior
+  - name: testing
+    color: fbca04
+    description: Tests, fixtures, benchmarks, or CI
+  - name: security
+    color: b60205
+    description: Security, permissions, trust, or vulnerability handling
+  - name: pre-implementation
+    color: c5def5
+    description: Planning-phase work before production code exists
