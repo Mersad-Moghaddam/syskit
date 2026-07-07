@@ -50,6 +50,7 @@ These are the only external dependencies sanctioned for SysKit. Each maps to a c
 | `github.com/charmbracelet/bubbletea` | Interactive TUI runtime | MIT | Powers the dashboard/interactive mode; building an equivalent event loop and renderer is unreasonable. |
 | `github.com/charmbracelet/lipgloss` | Terminal styling and layout | MIT | Declarative styling for TUI and table output; keeps rendering consistent and maintainable. |
 | `github.com/stretchr/testify` | Test assertions and mocks | MIT | Readable assertions (`require`, `assert`) for the table-driven tests mandated by **Test Everything**; test-only, not in the shipped binary. |
+| `github.com/goccy/go-yaml` | YAML output encoding | MIT | stdlib has no YAML encoder; YAML is a committed output format (roadmap v0.2 / FR-10). Actively maintained, pure-Go, minimal transitive deps; confined to the render layer. Recorded in [ADR 009](../decisions/009-yaml-encoding.md). |
 
 No other direct dependencies are permitted without going through the process below.
 

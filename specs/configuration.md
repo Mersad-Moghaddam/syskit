@@ -129,6 +129,54 @@ no_header = true
 
 The effective value for a setting is resolved as: flag → environment → per-command section → global section → built-in default.
 
+### Environment vs. per-command file sections
+
+The five-level order above already fixes one interaction that the shorter
+`flags > env > file > defaults` summary can obscure: **a global environment
+variable outranks a per-command config-file section.** Two principles combine,
+and they do not conflict:
+
+1. **Across tiers, the tier order is absolute.** Environment is a higher tier
+   than the config file. Because SysKit has no per-command *environment*
+   variables — every `SYSKIT_*` variable is global (see
+   [Environment Variables](#environment-variables)) — an env var always applies
+   at global scope and always sits above *every* file-based value, including a
+   per-command `[section]`.
+2. **Within the file tier, the more specific scope wins.** A per-command
+   `[section]` overrides the file's global (top-level) setting for that command
+   only.
+
+So "more specific scope wins" operates *within* the config-file tier, while the
+tier ranking (flag > env > file > default) is never overridden by scope. A
+per-command file section can outrank a global *file* setting; it can never
+outrank a global *env* var or a flag.
+
+**Worked example.** Setting `format`, running `syskit process`, with:
+
+| Source | Scope | Value |
+|---|---|---|
+| Flag `--format` | this invocation | *(not set)* |
+| Env `SYSKIT_FORMAT` | global (session) | `json` |
+| File `[process]` section | per-command | `yaml` |
+| File top-level | global | `table` |
+| Built-in default | — | `table` |
+
+Resolution walks the order flag → env → per-command section → global section →
+default and stops at the first source that sets the value:
+
+```text
+flag            → not set   ↓
+env             → "json"    ✓  ← resolved: format = "json"
+per-command     → "yaml"    (not reached)
+global section  → "table"   (not reached)
+default         → "table"   (not reached)
+```
+
+The effective value is **`json`**: the global env var wins over the per-command
+file section. Remove the env var and the same walk resolves to `yaml` (the
+per-command section beats the global `table`). Remove both and it resolves to
+the global `table`; remove that too and it falls to the built-in default.
+
 ---
 
 ## Loading Model

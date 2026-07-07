@@ -66,7 +66,7 @@ JSON output:
 - Terminal width is too narrow.
 - Structured output includes partial data warnings.
 - Color requested for non-TTY output.
-- YAML dependency policy must be reviewed before implementation.
+- YAML encoding uses `github.com/goccy/go-yaml`, approved in [ADR 009](../../decisions/009-yaml-encoding.md).
 
 ## Acceptance Criteria
 
@@ -90,7 +90,7 @@ Medium.
 
 - Rendering architecture.
 - CLI conventions.
-- Dependency policy for YAML support.
+- YAML encoding library: `github.com/goccy/go-yaml`, approved in [ADR 009](../../decisions/009-yaml-encoding.md).
 
 ## Future Extensions
 
