@@ -71,7 +71,7 @@ Every collector must define fixture needs before implementation. Fixture sets sh
 
 ## Concurrency
 
-Collectors may be called concurrently by services, dashboards, and watch mode. They should avoid package-level mutable state. Caching should be explicit, bounded, and owned by services unless a collector has a documented reason to cache.
+Collectors may be called concurrently by services, dashboards, and watch mode. They should avoid package-level mutable state. Caching should be explicit, bounded, and owned by services unless a collector has a documented reason to cache. This constraint is recorded as a decision in [ADR-008](../decisions/008-no-persistent-storage.md): SysKit holds no cache subsystem in core scope, and any bounded, service-owned cache must be added deliberately rather than adopted as a default.
 
 ## Acceptance Criteria
 

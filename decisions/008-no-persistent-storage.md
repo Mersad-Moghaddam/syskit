@@ -1,6 +1,6 @@
 # ADR-008: No Persistent Storage, Cache, or Queue in Core Scope
 
-**Status:** Proposed
+**Status:** Accepted
 **Date:** 2026-07-07
 **Deciders:** SysKit maintainers
 
@@ -46,6 +46,6 @@ If a future need for bounded, explicit, service-owned caching arises (e.g. repea
 
 ## Action Items
 
-1. [ ] Add this file as `decisions/ADR-008-no-persistent-storage.md`, following the existing ADR template.
-2. [ ] Cross-reference this ADR from `specs/architecture.md` and `docs/architecture.md` wherever "no storage/cache/queue" is currently asserted, so the rationale has one canonical source.
-3. [ ] Update `specs/collectors.md` if needed to point to this ADR when it discusses bounded caching, so the "explicit, bounded, service-owned" guidance is traceable to a decision record.
+1. [x] Add this file to `decisions/`. Filed as `decisions/008-no-persistent-storage.md` to match the established `NNN-short-title.md` convention used by ADR 001–007 (`decisions/README.md`, `docs/project-structure.md`), rather than an `ADR-008-` prefix that would be inconsistent with the existing records.
+2. [x] Cross-reference this ADR from `ARCHITECTURE.md` §6 (where the no-storage/cache/queue decision is asserted) so the rationale has one canonical source. `specs/architecture.md` and `docs/architecture.md` do not themselves assert "no storage/cache/queue"; both now defer to `ARCHITECTURE.md`, which links here.
+3. [x] Update `specs/collectors.md` to reference this ADR where it discusses bounded, service-owned caching, so the "explicit, bounded, service-owned" guidance is traceable to a decision record.

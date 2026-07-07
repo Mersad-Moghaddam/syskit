@@ -151,7 +151,7 @@ erDiagram
 
 **ADR 007 — Out-of-process plugins (v0.5).** *Context:* extensibility without Go `plugin` ABI pain and with a clear trust boundary. *Decision:* external plugin executables over a versioned JSON protocol; core works without plugins. *Alternatives:* Go `plugin`, static-linking-only, no plugins. *Trade-offs:* protocol/lifecycle work, per-call overhead. *Consequences:* fault isolation, language-agnostic, explicit trust model; deferred until core stabilizes.
 
-**ADR-D8 (this document) — No storage/cache/queue.** *Context:* transient, read-only, per-invocation domain. *Decision:* hold no persistent state; only a per-session in-memory previous-snapshot for live modes. *Alternatives:* cache layer, embedded store, event bus. *Trade-offs:* none for current scope. *Consequences:* simplest possible footprint; revisit only if post-1.0 historical data is adopted.
+**ADR-008 — No storage/cache/queue** (`decisions/008-no-persistent-storage.md`). *Context:* transient, read-only, per-invocation domain. *Decision:* hold no persistent state; only a per-session in-memory previous-snapshot for live modes. *Alternatives:* cache layer, embedded store, event bus. *Trade-offs:* none for current scope. *Consequences:* simplest possible footprint; revisit only if post-1.0 historical data is adopted. Any future storage/cache/queue must supersede this ADR rather than be added incrementally.
 
 ## 7. Non-Functional Considerations
 
@@ -173,7 +173,7 @@ erDiagram
 
 | # | Item | Type | Action |
 |---|---|---|---|
-| 1 | **Exit-code conflict**: cli-conventions (0–4) vs error-handling (0–5) reassign code 3 differently | Risk (contract bug) | Reconcile to the 0–5 table before v0.1 (§7). |
+| 1 | ~~**Exit-code conflict**: cli-conventions (0–4) vs error-handling (0–5) reassign code 3 differently~~ **RESOLVED** | Risk (contract bug) | Fixed: `specs/cli-conventions.md` and `specs/error-handling.md` now carry the identical canonical 0–5 table (3=Permission, 4=Unsupported, 5=Partial), with `error-handling.md` marked canonical. Runtime enforcement (a test asserting `ErrPermission`→3, `ErrUnsupported`→4, joined partial-failure→5) is tracked separately as **FND-07** in EPIC-00 / sprint-01 and does not block this doc fix. |
 | 2 | No numeric performance SLOs | Open question | Define startup/memory budgets, or keep regression-only and state so. |
 | 3 | YAML encoding strategy — stdlib vs new dependency — undecided | Open question | Resolve against dependency-policy before v0.2 (YAML lands). |
 | 4 | Layer boundary enforced only by review | Risk | Add an import-boundary/architecture test once code exists. |

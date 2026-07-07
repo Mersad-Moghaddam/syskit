@@ -2,6 +2,8 @@
 
 **Status:** Accepted, 2026-07-01
 
+> **Note (added 2026-07-07):** This ADR is preserved as the original decision record and is intentionally left unedited below. For the up-to-date, canonical description of how this layered architecture is ultimately documented — current diagrams, component responsibilities, and data flow — see [`ARCHITECTURE.md`](../ARCHITECTURE.md) at the repository root. This ADR records *why* the decision was made; `ARCHITECTURE.md` records *how it now stands*.
+
 ---
 
 ## Context
