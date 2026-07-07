@@ -1,5 +1,7 @@
 # Phase 1 — Discovery and Full Inventory
 
+*Point-in-time analysis that informed ARCHITECTURE.md; retained here for historical reference.*
+
 > Evidence-based inventory of the SysKit repository as it exists on 2026-07-07. SysKit is in its **design and specification phase**: no production Go code exists yet, and a CI check actively forbids it (`.github/workflows/ci.yml`). Everything below is drawn from the repository's documentation, specs, ADRs, and configuration — not from running code.
 
 ## 1. What SysKit Is

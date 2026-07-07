@@ -1,5 +1,7 @@
 # Phase 3 — Current State Analysis
 
+*Point-in-time analysis that informed ARCHITECTURE.md; retained here for historical reference.*
+
 > The "current architecture" of SysKit is a **documented, ratified design with zero implementation**. This phase documents that documentation-as-artifact honestly: what is decided, how it is intended to flow, what is genuinely strong about it, and where the specs themselves contain gaps, conflicts, or risk.
 
 ## 1. Current State in One Sentence

@@ -1,5 +1,7 @@
 # Phase 4 — Baseline Architecture Design
 
+*Point-in-time analysis that informed ARCHITECTURE.md; retained here for historical reference.*
+
 > This is the **baseline architecture SysKit should build** for its first implementation (v0.1) and grow into through v0.5. It ratifies the design the specs already describe, fills the gaps Phase 3 surfaced, and justifies every decision against the project's actual — not hypothetical — needs. Where the specs are silent or conflicting, a concrete recommendation is given and marked as such.
 
 ## 1. High-Level Design

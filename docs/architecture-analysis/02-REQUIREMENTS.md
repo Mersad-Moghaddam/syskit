@@ -1,5 +1,7 @@
 # Phase 2 — Requirements Extraction
 
+*Point-in-time analysis that informed ARCHITECTURE.md; retained here for historical reference.*
+
 > Requirements drawn strictly from `specs/`, `decisions/`, `standards/`, and `plan/`. Where the documentation is silent, the item is deferred to "Open Questions" rather than assumed.
 
 ## 1. Functional Requirements
