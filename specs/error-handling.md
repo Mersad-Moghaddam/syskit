@@ -135,7 +135,7 @@ This mirrors the Go standard library convention: wrapped errors compose into rea
 
 ## Exit Codes
 
-SysKit uses a small, stable set of exit codes so that scripts and pipelines can react programmatically. These codes are part of the CLI contract defined in [cli-conventions.md](cli-conventions.md).
+SysKit uses a small, stable set of exit codes so that scripts and pipelines can react programmatically. This table is canonical; [cli-conventions.md](cli-conventions.md) mirrors it and the two must always match.
 
 | Code | Name | Meaning |
 |---|---|---|

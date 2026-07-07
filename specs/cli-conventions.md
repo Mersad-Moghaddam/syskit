@@ -63,15 +63,16 @@ Color must never be the only carrier of meaning.
 
 ## Exit Codes
 
-| Code | Meaning |
-|---|---|
-| `0` | Success |
-| `1` | Runtime failure |
-| `2` | Usage error or invalid flags |
-| `3` | Partial data because permissions or kernel interfaces prevented full inspection |
-| `4` | Unsupported host capability |
+| Code | Name | Meaning |
+|---|---|---|
+| `0` | Success | Command completed successfully |
+| `1` | General error | An unspecified runtime error occurred |
+| `2` | Usage error | Invalid flags, arguments, or command usage |
+| `3` | Permission | Insufficient privilege to read a kernel interface |
+| `4` | Unsupported | Required kernel interface is missing or unsupported |
+| `5` | Partial failure | Some data collected; one or more collectors failed |
 
-Commands may return partial data with exit code `3` only when the output clearly identifies what could not be read.
+This table is canonical and defined in full in [error-handling.md](error-handling.md); the two files must always match. Commands may return partial data with exit code `5` only when the output clearly identifies what could not be read.
 
 ## Error Presentation
 

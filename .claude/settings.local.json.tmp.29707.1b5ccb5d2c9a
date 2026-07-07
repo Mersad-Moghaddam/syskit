@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/dev/**)",
+      "Bash(git -C /Users/dev/workspace-d23e015e status)",
+      "Bash(go version *)",
+      "Bash(go env *)",
+      "Bash(grep -rniE \"exit code|exit status|code \\\\`?[345]\\\\`?|partial data|unsupported host\" README.md docs specs standards learning decisions plan .github --include=\"*.md\")",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)"
+    ]
+  }
+}
