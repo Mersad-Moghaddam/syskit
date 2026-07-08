@@ -6,17 +6,25 @@ Implementation should begin only after the foundational decisions are stable eno
 
 ## Required Before First Code
 
-- [ ] Product scope and non-goals are reviewed.
-- [ ] Architecture layers and dependency direction are accepted.
-- [ ] CLI conventions are accepted.
-- [ ] Core feature specs for v0.1 are accepted.
-- [ ] Collector architecture is accepted.
-- [ ] Rendering architecture is accepted.
-- [ ] Error handling, logging, and configuration specs are accepted.
-- [ ] Testing strategy is accepted.
-- [ ] Dependency policy is accepted.
-- [ ] Branch, commit, review, and versioning standards are accepted.
-- [ ] Planning-phase CI passes.
+- [x] Product scope and non-goals are reviewed.
+- [x] Architecture layers and dependency direction are accepted.
+- [x] CLI conventions are accepted.
+- [x] Core feature specs for v0.1 are accepted.
+- [x] Collector architecture is accepted.
+- [x] Rendering architecture is accepted.
+- [x] Error handling, logging, and configuration specs are accepted.
+- [x] Testing strategy is accepted.
+- [x] Dependency policy is accepted.
+- [x] Branch, commit, review, and versioning standards are accepted.
+- [x] Planning-phase CI passes.
+
+> **Sign-off (FND-01, 2026-07-07):** All items above are satisfied — the v0.1
+> feature specs (`system`, `cpu`, `memory`, `disk`, `filesystem`), the layered
+> architecture (`specs/architecture.md`, ADR-004), CLI/render/error/logging/
+> config specs, the testing strategy, the dependency policy, and the process
+> standards are all accepted and ratified in `ARCHITECTURE.md`. Implementation
+> may begin with the foundation-only transition PR (FND-02). No user-facing
+> feature ships until the foundation compiles and tests green.
 
 ## v0.1 Implementation Entry Criteria
 

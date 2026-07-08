@@ -2,7 +2,7 @@
 
 > How to propose changes, review designs, and prepare implementation work.
 
-SysKit is in the design and specification phase. Contributions are welcome when they improve the planning foundation: clarifying requirements, strengthening architecture, adding Linux references, tightening acceptance criteria, or improving project process. Production Go code should wait until the implementation readiness checklist is satisfied.
+SysKit has entered its implementation phase (v0.1 Foundation). Contributions are welcome across code and planning: implementing features against accepted specs, clarifying requirements, strengthening architecture, adding Linux references, tightening acceptance criteria, or improving project process. Production Go code must build on the approved layout and satisfy the Definition of Done.
 
 ## Before You Start
 
@@ -23,7 +23,9 @@ For documentation and planning work, install:
 - A Markdown-capable editor.
 - A terminal on Linux or any environment that can edit Markdown files.
 
-For future implementation work, use Linux and Go 1.22 or newer. No Go module or production package is expected during the planning phase.
+For implementation work, use Linux and Go 1.22 or newer. Build with
+`go build ./...`, and run the test suite with `go test -race ./...`. The module
+path is `github.com/Mersad-Moghaddam/syskit`.
 
 ## Workflow
 
@@ -34,12 +36,13 @@ For future implementation work, use Linux and Go 1.22 or newer. No Go module or 
 5. Run the repository checks locally where practical.
 6. Open a pull request using the template.
 
-## Planning-Phase Rules
+## Implementation-Phase Rules
 
-- Do not add production Go source files.
-- Do not create `cmd/`, `internal/`, or `pkg/` yet.
-- Do not scaffold Cobra commands before the feature specs are approved.
-- Do not add external dependencies without updating the dependency policy and ADRs.
+- Production Go source lives under `cmd/` and `internal/` on the approved layout; no `pkg/` grab-bag and no `util`/`common`/`helpers` packages.
+- Respect the strict downward dependency direction (CLI → Command → Service → Collector → Platform → kernel); lower layers never import higher ones.
+- Collectors read only through the injected `platform.SysFS` seam — never the OS filesystem directly — and never shell out to external commands.
+- SysKit is Linux-only: no `runtime.GOOS` branching or OS build tags.
+- Do not add external dependencies without updating the dependency policy and adding an ADR.
 - Do not remove architecture constraints unless a new ADR explains the decision.
 
 ## Pull Request Expectations

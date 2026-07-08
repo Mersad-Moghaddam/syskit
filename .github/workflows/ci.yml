@@ -1,4 +1,4 @@
-name: Repository Checks
+name: CI
 
 on:
   push:
@@ -7,33 +7,77 @@ on:
     branches: [main]
 
 jobs:
-  planning:
-    name: Planning Repository Validation
+  build:
+    name: Build & Test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Enforce pre-implementation boundary
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Verify gofmt
         run: |
-          for path in cmd internal pkg; do
-            if [ -e "$path" ]; then
-              echo "::error::$path must not exist before implementation begins."
-              exit 1
-            fi
-          done
-
-          if [ -e main.go ]; then
-            echo "::error::main.go must not exist before implementation begins."
+          unformatted="$(gofmt -l .)"
+          if [ -n "$unformatted" ]; then
+            echo "::error::These files are not gofmt-clean:"
+            echo "$unformatted"
             exit 1
           fi
 
-          if find . -path ./.git -prune -o -name '*.go' -print | grep -q .; then
-            echo "::error::Go source files are not part of the planning phase."
+      - name: Verify goimports
+        run: |
+          go install golang.org/x/tools/cmd/goimports@latest
+          ungrouped="$("$(go env GOPATH)/bin/goimports" -l -local github.com/Mersad-Moghaddam/syskit .)"
+          if [ -n "$ungrouped" ]; then
+            echo "::error::These files have ungrouped or unformatted imports:"
+            echo "$ungrouped"
             exit 1
           fi
 
-      - name: Validate required planning artifacts
+      - name: go vet
+        run: go vet ./...
+
+      - name: Build
+        run: go build ./...
+
+      - name: Unit tests (race)
+        run: go test -race ./...
+
+      - name: Integration tests
+        run: go test -tags=integration ./...
+
+      - name: Coverage
+        run: |
+          go test -coverprofile=coverage.out ./...
+          go tool cover -func=coverage.out
+
+      - name: Upload coverage profile
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage.out
+          if-no-files-found: warn
+
+      - name: Benchmarks
+        run: go test -run=^$ -bench=. -benchmem ./...
+
+      - name: govulncheck
+        run: |
+          go install golang.org/x/vuln/cmd/govulncheck@latest
+          "$(go env GOPATH)/bin/govulncheck" ./...
+
+  docs:
+    name: Required Artifacts & Markers
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate required project artifacts
         run: |
           required_files=(
             README.md
@@ -42,6 +86,7 @@ jobs:
             CODE_OF_CONDUCT.md
             SECURITY.md
             GOVERNANCE.md
+            ARCHITECTURE.md
             docs/architecture.md
             docs/getting-started.md
             docs/contributing.md
@@ -77,15 +122,16 @@ jobs:
 
           for file in "${required_files[@]}"; do
             if [ ! -s "$file" ]; then
-              echo "::error::Required planning artifact is missing or empty: $file"
+              echo "::error::Required project artifact is missing or empty: $file"
               exit 1
             fi
           done
 
-      - name: Check for unresolved placeholders
+      - name: Check for unresolved task markers
         run: |
           marker='TO''DO'
-          if grep -R "$marker" README.md docs specs standards learning decisions .github -n; then
+          if grep -RIn "$marker" README.md docs specs standards learning decisions .github -q; then
+            grep -RIn "$marker" README.md docs specs standards learning decisions .github
             echo "::error::Resolve unresolved task markers before merging."
             exit 1
           fi

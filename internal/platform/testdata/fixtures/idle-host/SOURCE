@@ -1,0 +1,17 @@
+SOURCE provenance for fixture: idle-host
+
+status:       synthetic fixture (hand-authored, not captured from a live host)
+represents:   an essentially idle Linux host (near-zero load, mostly idle CPU)
+kernel:       synthetic (placeholder — modelled on Linux 6.x /proc format)
+distro:       synthetic (placeholder)
+arch:         x86_64 (placeholder)
+container:    none (placeholder)
+capture-date: synthetic fixture — 2026-07-08 (authored)
+
+files:
+  proc/stat     — /proc/stat, 2 logical CPUs, low jiffy counts
+  proc/loadavg  — /proc/loadavg, load averages ~0
+
+Byte format mirrors what the Linux kernel emits (whitespace and field order
+preserved). Values are illustrative, not measured. Replace with a real capture
+via scripts/capture-fixtures.sh once that helper exists.

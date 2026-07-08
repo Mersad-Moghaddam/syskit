@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Go](https://img.shields.io/badge/Go-1.22+-00ADD8?logo=go&logoColor=white)](https://go.dev)
 [![Linux](https://img.shields.io/badge/Platform-Linux-FCC624?logo=linux&logoColor=black)](https://kernel.org)
-[![Status](https://img.shields.io/badge/Status-Design%20Phase-orange)]()
+[![Status](https://img.shields.io/badge/Status-Implementation%20(v0.1%20Foundation)-brightgreen)]()
 
 ---
 
@@ -80,9 +80,15 @@ This approach ensures:
 
 ## Project Status
 
-**Early Development — Design & Specification Phase**
+**Implementation — v0.1 Foundation**
 
-SysKit is currently in its foundational phase. The project is being developed using a specification-driven approach with a strong emphasis on architecture, documentation, and Linux internals before any implementation begins.
+The implementation-readiness checklist is signed off and SysKit has entered its
+implementation phase. The repository is now a compiling Go module: the approved
+layout (`cmd/`, `internal/{cli,collector,platform,render,service,model}`,
+`testdata/`) is in place and the foundation scaffolding (CLI bootstrap, the
+`SysFS` platform seam, render layer, and cross-cutting error/logging/config
+patterns) is landing under EPIC-00. Feature commands follow as vertical slices
+per milestone.
 
 See the [Roadmap](specs/roadmap.md) for planned milestones.
 
@@ -90,6 +96,16 @@ See the [Roadmap](specs/roadmap.md) for planned milestones.
 
 ```text
 syskit/
+├── cmd/syskit/         # CLI entry point (main)
+├── internal/           # Application internals (not importable externally)
+│   ├── cli/            # Cobra command wiring, config, logger, exit mapping
+│   │   └── command/    # One file per subcommand
+│   ├── collector/      # Built-in domain collectors
+│   ├── platform/       # Linux procfs, sysfs, Netlink, cgroup adapters (SysFS)
+│   ├── render/         # Table, JSON, YAML, TUI rendering
+│   ├── service/        # Aggregation and domain logic
+│   └── model/          # Shared typed domain structs
+├── testdata/           # Shared fixtures
 ├── .github/            # GitHub templates and CI workflows
 ├── docs/               # User-facing documentation and maintainer guides
 ├── specs/              # Specifications and architecture documents
@@ -107,7 +123,10 @@ syskit/
 └── .gitignore
 ```
 
-No production Go code exists yet. Directories such as `cmd/`, `internal/`, and `pkg/` will be created only after the implementation readiness checklist is complete.
+The Go module (`github.com/Mersad-Moghaddam/syskit`) targets Go 1.22+ and builds
+to a single static binary. Dependencies flow strictly downward
+(CLI → Command → Service → Collector → Platform → kernel); lower layers never
+import higher ones.
 
 ## Documentation Map
 
@@ -130,7 +149,11 @@ Beyond the tool itself, SysKit is designed to be a living reference for building
 
 ## Contributing
 
-SysKit is in its design and specification phase. Contributions are most useful when they improve specs, architecture, Linux explanations, documentation, or repository process. See [docs/contributing.md](docs/contributing.md).
+SysKit has entered its implementation phase (v0.1 Foundation). Contributions are
+welcome across code, specs, architecture, Linux explanations, documentation, and
+repository process. Production code must follow the architecture boundaries and
+meet the [Definition of Done](standards/definition-of-done.md). See
+[docs/contributing.md](docs/contributing.md).
 
 ## License
 

@@ -119,6 +119,7 @@ historical record.
 | [007](./007-out-of-process-plugins.md) | Prefer out-of-process plugins                 | Accepted | 2026-07-01 |
 | [008](./008-no-persistent-storage.md) | No persistent storage, cache, or queue in core scope | Accepted | 2026-07-07 |
 | [009](./009-yaml-encoding.md) | Use goccy/go-yaml for YAML output encoding | Accepted | 2026-07-07 |
+| [010](./010-toml-config.md) | Use BurntSushi/toml for configuration file parsing | Accepted | 2026-07-08 |
 
 ---
 
