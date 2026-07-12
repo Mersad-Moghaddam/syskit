@@ -77,7 +77,7 @@ Process inspection, network visibility, and the filtering/sorting framework shar
 
 | ID | Story | Pts | Sprint | Status | Spec / Ref |
 |---|---|---|---|---|---|
-| FLT-01 | Filtering & sorting framework (reusable across list commands). | 8 | 4 | Backlog | `../specs/cli-conventions.md` |
+| FLT-01 | Filtering & sorting framework (reusable across list commands). | 8 | 4 | Done | `../specs/cli-conventions.md` |
 | PRC-01 | `syskit process` — listing, resource usage, filter by name/PID/user. | 13 | 4 | Backlog | `../specs/features/process.md` |
 | PRC-02 | `syskit process tree` — tree view, handle disappearing PIDs. | 8 | 5 | Backlog | `../specs/features/process.md` |
 | NET-01 | Netlink platform integration (sockets, message parse). | 13 | 5 | Backlog | `../specs/features/network.md`, `../decisions/003-native-apis-over-shell.md` |

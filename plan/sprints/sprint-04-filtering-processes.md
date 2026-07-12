@@ -14,7 +14,7 @@ Build the reusable filtering/sorting framework and ship `syskit process` on top 
 
 | ID | Story | Pts | Status |
 |---|---|---|---|
-| FLT-01 | Filtering & sorting framework. | 8 | Committed |
+| FLT-01 | Filtering & sorting framework. | 8 | Done |
 | PRC-01 | `syskit process` listing + resource usage + filters. | 13 | Committed |
 
 ## Task breakdowns

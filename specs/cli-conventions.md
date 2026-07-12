@@ -37,6 +37,10 @@ Commands that list resources should use consistent flags:
 
 Invalid fields should return a usage error that lists valid fields for that command.
 
+`--filter` uses `field=value` equality predicates. Repeated filters are combined
+with AND. `--sort` accepts one documented field; `--reverse` reverses that
+field's natural order, and `--limit 0` means no limit.
+
 ## Output Formats
 
 Table output is optimized for humans. JSON and YAML are stable automation contracts.
