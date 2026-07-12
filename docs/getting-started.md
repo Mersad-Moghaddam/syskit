@@ -44,6 +44,7 @@ go run ./cmd/syskit system --format json
 go run ./cmd/syskit cpu
 go run ./cmd/syskit memory --format json
 go run ./cmd/syskit filesystem --show-pseudo
+go run ./cmd/syskit disk --io --interval 1s
 ```
 
 The remaining inspection commands below are planned until their feature slices

@@ -3,7 +3,9 @@ package disk
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/Mersad-Moghaddam/syskit/internal/collector"
 	"github.com/Mersad-Moghaddam/syskit/internal/model"
@@ -39,7 +41,37 @@ func (c *Collector) Collect() (*model.DiskInfo, error) {
 		inodes, free := stats.TotalInodes, stats.FreeInodes
 		mounts[i].TotalInodes, mounts[i].FreeInodes = &inodes, &free
 	}
-	return &model.DiskInfo{Mounts: mounts}, nil
+	statsData, err := c.fs.ReadFile("proc/diskstats")
+	if err != nil {
+		return nil, fmt.Errorf("reading /proc/diskstats: %w", err)
+	}
+	devices, err := ParseDiskStats(statsData)
+	if err != nil {
+		return nil, fmt.Errorf("parsing /proc/diskstats: %w", err)
+	}
+	return &model.DiskInfo{Mounts: mounts, Devices: devices, CollectedAt: time.Now().UTC()}, nil
+}
+func ParseDiskStats(data []byte) ([]model.DiskDevice, error) {
+	var devices []model.DiskDevice
+	for _, line := range strings.Split(strings.TrimSpace(string(data)), "\n") {
+		f := strings.Fields(line)
+		if len(f) < 10 {
+			return nil, fmt.Errorf("diskstats fields: %w", collector.ErrParse)
+		}
+		values := make([]uint64, 0, 7)
+		for _, idx := range []int{3, 5, 7, 9} {
+			v, err := strconv.ParseUint(f[idx], 10, 64)
+			if err != nil {
+				return nil, fmt.Errorf("diskstats %q: %w", f[idx], collector.ErrParse)
+			}
+			values = append(values, v)
+		}
+		devices = append(devices, model.DiskDevice{Name: f[2], ReadOperations: values[0], ReadBytes: values[1] * 512, WrittenOperations: values[2], WrittenBytes: values[3] * 512})
+	}
+	if len(devices) == 0 {
+		return nil, fmt.Errorf("diskstats entries: %w", collector.ErrFieldMissing)
+	}
+	return devices, nil
 }
 func ParseMountInfo(data []byte) ([]model.MountInfo, error) {
 	var mounts []model.MountInfo

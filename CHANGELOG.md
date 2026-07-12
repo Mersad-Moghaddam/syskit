@@ -18,6 +18,9 @@ recorded here with its date and categorized changes.
 
 ### Added
 
+- **Disk I/O and filters (DSK-01):** `syskit disk --io` derives per-device
+  read/write rates from two `/proc/diskstats` snapshots; capacity output now
+  filters by mount point, filesystem type, or source device.
 - **Filesystem command (FS-01):** `syskit filesystem` shows mount sources,
   types, options, and inode availability; pseudo filesystems are hidden by
   default and can be included with `--show-pseudo`.
