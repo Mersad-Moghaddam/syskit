@@ -100,6 +100,7 @@ filesystem, process, network, and port information as a table, JSON, or YAML.`,
 	))
 	cmd.AddCommand(command.NewMemoryCmd(service.NewMemory(memory.NewCollector(platform.RealFS())), command.MemoryOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
 	cmd.AddCommand(command.NewDiskCmd(service.NewDisk(disk.NewCollector(platform.RealFS())), command.DiskOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
+	cmd.AddCommand(command.NewFilesystemCmd(service.NewDisk(disk.NewCollector(platform.RealFS())), command.FilesystemOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
 
 	return cmd
 }
