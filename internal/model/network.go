@@ -1,7 +1,15 @@
 package model
 
 type NetworkInfo struct {
-	Interfaces []NetworkInterface `json:"interfaces"`
+	Interfaces  []NetworkInterface `json:"interfaces"`
+	Routes      []Route            `json:"routes,omitempty"`
+	Nameservers []string           `json:"nameservers,omitempty"`
+}
+type Route struct {
+	Interface   string `json:"interface"`
+	Destination string `json:"destination"`
+	Gateway     string `json:"gateway"`
+	Default     bool   `json:"default"`
 }
 type NetworkInterface struct {
 	Name      string `json:"name"`
