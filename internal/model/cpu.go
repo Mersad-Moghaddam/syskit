@@ -10,7 +10,16 @@ type CPUInfo struct {
 	Model         string         `json:"model"`
 	Architecture  string         `json:"architecture"`
 	Flags         []string       `json:"flags,omitempty"`
+	Caches        []CPUCache     `json:"caches,omitempty"`
 	Frequencies   []CPUFrequency `json:"frequencies,omitempty"`
+}
+
+// CPUCache is a cache description reported by the kernel for CPU zero. Cache
+// entries are shared across logical CPUs, so reading one CPU avoids duplicates.
+type CPUCache struct {
+	Level     int    `json:"level"`
+	Type      string `json:"type"`
+	SizeBytes uint64 `json:"size_bytes"`
 }
 
 // CPUFrequency records optional cpufreq values for one logical CPU. Linux

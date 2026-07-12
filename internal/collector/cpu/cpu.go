@@ -34,8 +34,60 @@ func (c *Collector) Collect() (*model.CPUInfo, error) {
 		return nil, fmt.Errorf("parsing /proc/cpuinfo: %w", err)
 	}
 	info.Architecture = runtime.GOARCH
+	info.Caches = c.collectCaches()
 	info.Frequencies = c.collectFrequencies(ids)
 	return info, nil
+}
+
+func (c *Collector) collectCaches() []model.CPUCache {
+	entries, err := c.fs.ReadDir("sys/devices/system/cpu/cpu0/cache")
+	if err != nil {
+		return nil
+	}
+	caches := make([]model.CPUCache, 0, len(entries))
+	for _, entry := range entries {
+		if !entry.IsDir() || !strings.HasPrefix(entry.Name(), "index") {
+			continue
+		}
+		prefix := "sys/devices/system/cpu/cpu0/cache/" + entry.Name() + "/"
+		levelData, levelErr := c.fs.ReadFile(prefix + "level")
+		typeData, typeErr := c.fs.ReadFile(prefix + "type")
+		sizeData, sizeErr := c.fs.ReadFile(prefix + "size")
+		if levelErr != nil || typeErr != nil || sizeErr != nil {
+			continue
+		}
+		level, levelErr := strconv.Atoi(strings.TrimSpace(string(levelData)))
+		size, sizeErr := parseCacheSize(strings.TrimSpace(string(sizeData)))
+		if levelErr != nil || sizeErr != nil || level < 1 {
+			continue
+		}
+		caches = append(caches, model.CPUCache{Level: level, Type: strings.TrimSpace(string(typeData)), SizeBytes: size})
+	}
+	sort.Slice(caches, func(i, j int) bool {
+		if caches[i].Level != caches[j].Level {
+			return caches[i].Level < caches[j].Level
+		}
+		return caches[i].Type < caches[j].Type
+	})
+	return caches
+}
+
+func parseCacheSize(value string) (uint64, error) {
+	if value == "" {
+		return 0, collector.ErrFieldMissing
+	}
+	multiplier := uint64(1)
+	last := value[len(value)-1]
+	if last == 'K' || last == 'k' {
+		multiplier, value = 1024, value[:len(value)-1]
+	} else if last == 'M' || last == 'm' {
+		multiplier, value = 1024*1024, value[:len(value)-1]
+	}
+	n, err := strconv.ParseUint(value, 10, 64)
+	if err != nil {
+		return 0, fmt.Errorf("cache size %q: %w", value, collector.ErrParse)
+	}
+	return n * multiplier, nil
 }
 
 // ParseCPUInfo parses the processor blocks from /proc/cpuinfo. It returns the

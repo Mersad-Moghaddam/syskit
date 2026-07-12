@@ -25,6 +25,14 @@ func TestParseCPUInfoMalformed(t *testing.T) {
 	assert.True(t, errors.Is(err, collector.ErrFieldMissing))
 }
 
+func TestParseCacheSize(t *testing.T) {
+	value, err := parseCacheSize("32K")
+	assert.NoError(t, err)
+	assert.Equal(t, uint64(32768), value)
+	_, err = parseCacheSize("bad")
+	assert.True(t, errors.Is(err, collector.ErrParse))
+}
+
 func BenchmarkParseCPUInfo(b *testing.B) {
 	data := []byte("processor : 0\nmodel name : Test CPU\nphysical id : 0\ncore id : 0\nflags : sse avx\n")
 	b.ReportAllocs()
