@@ -20,6 +20,9 @@ recorded here with its date and categorized changes.
 
 ### Added
 
+- **YAML output (OUT-03):** `--format yaml` now mirrors the JSON output schema
+  for all non-interactive commands through the ADR-009 approved encoder.
+
 - **Disk I/O and filters (DSK-01):** `syskit disk --io` derives per-device
   read/write rates from two `/proc/diskstats` snapshots; capacity output now
   filters by mount point, filesystem type, or source device.

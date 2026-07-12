@@ -26,8 +26,8 @@ type Renderer interface {
 var (
 	// ErrUnknownFormat indicates a --format value that names no renderer.
 	ErrUnknownFormat = errors.New("unknown output format")
-	// ErrFormatDeferred indicates a format that is planned but not yet
-	// implemented. YAML is deferred to v0.2 (FND/OUT-03, ADR-009).
+	// ErrFormatDeferred remains available for a future output format that is
+	// declared before implementation.
 	ErrFormatDeferred = errors.New("output format not yet supported")
 	// ErrUnsupportedValue indicates a renderer received a value shape it cannot
 	// render (for example, a non-Table value handed to the table renderer).
@@ -64,7 +64,7 @@ func WithColor(enabled bool) Option {
 //
 //   - "json"  → machine-readable indented JSON.
 //   - "table" → aligned, width-aware text table.
-//   - "yaml"  → ErrFormatDeferred (planned for v0.2 via ADR-009).
+//   - "yaml"  → machine-readable YAML mirroring the JSON shape.
 //   - other   → ErrUnknownFormat.
 //
 // This is the seam the CLI's --format flag wires to. The "yaml" case is kept

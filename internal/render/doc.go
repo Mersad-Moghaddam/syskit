@@ -1,6 +1,6 @@
 // Package render turns already-collected values into user-facing output behind
-// a single Renderer interface: table and JSON now, YAML at v0.2, and the TUI
-// later. The epic calls this seam a "Formatter"; the canonical name is Renderer
+// a single Renderer interface: table, JSON, and YAML now, and the TUI later.
+// The epic calls this seam a "Formatter"; the canonical name is Renderer
 // to match ARCHITECTURE.md §4.
 //
 // Structured renderers (JSON) consume a domain model directly and rely on its

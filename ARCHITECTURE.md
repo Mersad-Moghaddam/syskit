@@ -175,7 +175,7 @@ erDiagram
 |---|---|---|---|
 | 1 | ~~**Exit-code conflict**: cli-conventions (0–4) vs error-handling (0–5) reassign code 3 differently~~ **RESOLVED** | Risk (contract bug) | Fixed: `specs/cli-conventions.md` and `specs/error-handling.md` now carry the identical canonical 0–5 table (3=Permission, 4=Unsupported, 5=Partial), with `error-handling.md` marked canonical. Runtime enforcement (a test asserting `ErrPermission`→3, `ErrUnsupported`→4, joined partial-failure→5) is tracked separately as **FND-07** in EPIC-00 / sprint-01 and does not block this doc fix. |
 | 2 | No numeric performance SLOs | Open question | Define startup/memory budgets, or keep regression-only and state so. |
-| 3 | YAML encoding strategy — stdlib vs new dependency — undecided | Open question | Resolve against dependency-policy before v0.2 (YAML lands). |
+| 3 | ~~YAML encoding strategy — stdlib vs new dependency — undecided~~ **RESOLVED** | Closed | ADR-009 selected `goccy/go-yaml`; the v0.2 renderer mirrors JSON-shaped output. |
 | 4 | Layer boundary enforced only by review | Risk | Add an import-boundary/architecture test once code exists. |
 | 5 | Plugin protocol not yet defined | Deferred | Define before v0.5; keep collectors registrable meanwhile. |
 | 6 | Config env-vs-per-command-section interaction underspecified | Open question | Clarify precedence before config is implemented. |
