@@ -1,10 +1,12 @@
 package platform
 
 import (
+	"fmt"
 	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
+	"syscall"
 )
 
 // SysFS is the narrow, read-only seam through which every collector reads
@@ -19,7 +21,11 @@ type SysFS interface {
 	Open(name string) (fs.File, error)
 	// ReadDir lists a pseudo-directory (e.g. "proc" to enumerate PIDs).
 	ReadDir(name string) ([]fs.DirEntry, error)
+	StatFS(path string) (FSStats, error)
 }
+
+// FSStats is the filesystem capacity and inode subset used by collectors.
+type FSStats struct{ TotalBytes, FreeBytes, AvailableBytes, TotalInodes, FreeInodes uint64 }
 
 // osFS is a SysFS backed by the real operating-system filesystem, rooted at
 // root. It is the only place in SysKit that touches the OS filesystem.
@@ -81,6 +87,15 @@ func (o osFS) ReadDir(name string) ([]fs.DirEntry, error) {
 	return entries, nil
 }
 
+func (o osFS) StatFS(path string) (FSStats, error) {
+	var stat syscall.Statfs_t
+	if err := syscall.Statfs(path, &stat); err != nil {
+		return FSStats{}, mapError("statting", path, err)
+	}
+	block := uint64(stat.Bsize)
+	return FSStats{TotalBytes: stat.Blocks * block, FreeBytes: stat.Bfree * block, AvailableBytes: stat.Bavail * block, TotalInodes: stat.Files, FreeInodes: stat.Ffree}, nil
+}
+
 // fixtureFS is a SysFS backed by an arbitrary fs.FS, typically an
 // os.DirFS rooted at a fixtures directory, so that ReadFile("proc/stat")
 // resolves within the fixture root.
@@ -124,4 +139,8 @@ func (t fixtureFS) ReadDir(name string) ([]fs.DirEntry, error) {
 		return nil, mapError("listing", name, err)
 	}
 	return entries, nil
+}
+
+func (t fixtureFS) StatFS(path string) (FSStats, error) {
+	return FSStats{}, fmt.Errorf("statting %q: %w", path, ErrUnsupported)
 }
