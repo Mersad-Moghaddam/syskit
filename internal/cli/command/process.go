@@ -12,6 +12,7 @@ import (
 
 type ProcessService interface {
 	List(service.ProcessOptions) (*model.ProcessList, error)
+	Tree() ([]service.ProcessTreeNode, error)
 }
 type ProcessOptions struct {
 	Format   func() string
@@ -55,7 +56,30 @@ func NewProcessCmd(s ProcessService, o ProcessOptions) *cobra.Command {
 	cmd.Flags().IntVar(&limit, "limit", 0, "maximum results (0 is unlimited)")
 	cmd.Flags().IntVar(&pid, "pid", 0, "filter by PID")
 	cmd.Flags().StringVar(&user, "user", "", "filter by UID")
+	cmd.AddCommand(&cobra.Command{Use: "tree", Short: "Show processes as a parent-child tree", Args: cobra.NoArgs, RunE: func(c *cobra.Command, args []string) error {
+		tree, err := s.Tree()
+		if err != nil {
+			return fmt.Errorf("collecting process tree: %w", err)
+		}
+		if o.Format() != "table" {
+			r, err := render.New(o.Format())
+			if err != nil {
+				return err
+			}
+			return r.Render(c.OutOrStdout(), tree)
+		}
+		for _, node := range tree {
+			writeTree(c, node, "")
+		}
+		return nil
+	}})
 	return cmd
+}
+func writeTree(c *cobra.Command, node service.ProcessTreeNode, prefix string) {
+	fmt.Fprintf(c.OutOrStdout(), "%s%d %s\n", prefix, node.Process.PID, node.Process.Command)
+	for _, child := range node.Children {
+		writeTree(c, *child, prefix+"  ")
+	}
 }
 func processTable(list *model.ProcessList) render.Table {
 	t := render.Table{Headers: []string{"PID", "PPID", "UID", "STATE", "CPU TICKS", "RSS BYTES", "THREADS", "COMMAND"}}

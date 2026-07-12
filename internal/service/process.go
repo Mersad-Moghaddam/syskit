@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 
 	"github.com/Mersad-Moghaddam/syskit/internal/model"
@@ -52,4 +53,51 @@ func ParseProcessFilters(raw []string) ([]Filter, error) {
 		filters = append(filters, f)
 	}
 	return filters, nil
+}
+
+// Tree orders processes depth-first by PPID. Orphans remain roots so a parent
+// exiting or a PID namespace boundary never hides a process.
+func (s *Process) Tree() ([]ProcessTreeNode, error) {
+	list, err := s.collector.Collect()
+	if err != nil {
+		return nil, err
+	}
+	byPID := map[int]*ProcessTreeNode{}
+	for _, p := range list.Processes {
+		copy := p
+		byPID[p.PID] = &ProcessTreeNode{Process: copy}
+	}
+	roots := make([]*ProcessTreeNode, 0)
+	for _, node := range byPID {
+		parent, ok := byPID[node.Process.PPID]
+		if !ok || node.Process.PID == node.Process.PPID {
+			roots = append(roots, node)
+			continue
+		}
+		parent.Children = append(parent.Children, node)
+	}
+	sortTreeNodes(roots)
+	for _, root := range roots {
+		sortTree(root)
+	}
+	result := make([]ProcessTreeNode, len(roots))
+	for i, root := range roots {
+		result[i] = *root
+	}
+	return result, nil
+}
+
+type ProcessTreeNode struct {
+	Process  model.Process      `json:"process"`
+	Children []*ProcessTreeNode `json:"children,omitempty"`
+}
+
+func sortTreeNodes(nodes []*ProcessTreeNode) {
+	sort.Slice(nodes, func(i, j int) bool { return nodes[i].Process.PID < nodes[j].Process.PID })
+}
+func sortTree(node *ProcessTreeNode) {
+	sortTreeNodes(node.Children)
+	for _, child := range node.Children {
+		sortTree(child)
+	}
 }
