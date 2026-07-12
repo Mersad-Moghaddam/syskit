@@ -41,6 +41,7 @@ The CLI currently exposes `--help`, `version`, and `system`. For example:
 ```sh
 go run ./cmd/syskit system
 go run ./cmd/syskit system --format json
+go run ./cmd/syskit cpu
 ```
 
 The remaining inspection commands below are planned until their feature slices

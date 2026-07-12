@@ -18,6 +18,10 @@ recorded here with its date and categorized changes.
 
 ### Added
 
+- **CPU static command (CPU-01):** `syskit cpu` reports logical/physical
+  topology, sockets, model, architecture, flags, and optional cpufreq values
+  from native Linux interfaces. Timed utilization and `--per-core` land in the
+  follow-up CPU-02 slice.
 - **System command (SYS-01):** `syskit system` reports host, distribution,
   kernel, architecture, uptime, boot time, and load averages in table or JSON
   output from native Linux interfaces, with fixture, golden, integration, and
