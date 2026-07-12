@@ -1,0 +1,13 @@
+{
+  "hostname": "fixture-host",
+  "os_name": "Fixture Linux",
+  "os_version": "1.0",
+  "kernel_release": "6.12",
+  "kernel_version": "#1",
+  "architecture": "amd64",
+  "uptime_seconds": 93784,
+  "boot_time": "2026-07-11T09:56:56Z",
+  "load_average_1": 0.42,
+  "load_average_5": 0.35,
+  "load_average_15": 0.3
+}

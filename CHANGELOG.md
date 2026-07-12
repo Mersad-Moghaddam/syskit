@@ -18,6 +18,10 @@ recorded here with its date and categorized changes.
 
 ### Added
 
+- **System command (SYS-01):** `syskit system` reports host, distribution,
+  kernel, architecture, uptime, boot time, and load averages in table or JSON
+  output from native Linux interfaces, with fixture, golden, integration, and
+  benchmark coverage.
 - Initial project scaffolding and repository structure (`docs/`, `specs/`, `learning/`, `standards/`, `decisions/`, `checklists/`, `scripts/`, `.github/`).
 - Engineering Constitution (`specs/constitution.md`) defining the project's core engineering principles.
 - Product overview, roadmap, and system architecture specifications under `specs/`.

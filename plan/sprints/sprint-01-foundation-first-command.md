@@ -22,7 +22,7 @@ Complete the delivery scaffolding — collector interface, render layer, error/l
 | FND-09 | Configuration loading (flags > env > file > default). | 5 | Done |
 | FND-11 | Test harness (golden helper, `testdata/`, capture script). | 5 | Done |
 | FND-10b | Go CI pipeline — second half: `-race`, integration tag, coverage, bench, govulncheck. | (part of FND-10) | Done |
-| SYS-01 | `syskit system` — first vertical slice. | 8 | Committed |
+| SYS-01 | `syskit system` — first vertical slice. | 8 | Done |
 
 _Total exceeds a single dev's capacity — parallelized across the team within the WIP limit. Authoritative points in ../product-backlog.md._
 
@@ -33,13 +33,13 @@ _Total exceeds a single dev's capacity — parallelized across the team within t
 - [x] Golden-test helper integration; unit tests per formatter.
 
 **SYS-01 — system command** (the proof of the architecture)
-- [ ] platform: read `/proc/uptime`, `/proc/loadavg`, `/etc/os-release`, kernel version via `SysFS` (+ fixtures).
-- [ ] collector: parse into a `SystemInfo` struct (+ unit tests, error paths).
-- [ ] service: assemble host summary.
-- [ ] command: `syskit system` wiring + `--format`.
-- [ ] render: table + JSON (+ golden files).
-- [ ] integration: `//go:build linux && integration` — non-empty kernel version, sane uptime.
-- [ ] docs: command help + getting-started example; CHANGELOG entry.
+- [x] platform: read `/proc/uptime`, `/proc/loadavg`, `/etc/os-release`, kernel version via `SysFS` (+ fixtures).
+- [x] collector: parse into a `SystemInfo` struct (+ unit tests, error paths).
+- [x] service: assemble host summary.
+- [x] command: `syskit system` wiring + `--format`.
+- [x] render: table + JSON (+ golden files).
+- [x] integration: `//go:build linux && integration` — non-empty kernel version, sane uptime.
+- [x] docs: command help + getting-started example; CHANGELOG entry.
 
 _Other stories decomposed per `../templates/task-breakdown.md` at planning._
 

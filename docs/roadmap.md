@@ -7,8 +7,8 @@
 SysKit is in the implementation phase, building v0.1. The foundation is
 complete: the Go module, CLI bootstrap, platform seam, collector contract,
 renderers, configuration, logging, error handling, fixture tooling, and Go CI
-are in place. No user-facing inspection command or release is available yet;
-the next slice is `syskit system`.
+are in place. The first user-facing command, `syskit system`, is available;
+the CPU, memory, disk, and filesystem slices remain before v0.1 can release.
 
 ## Planned Milestones
 

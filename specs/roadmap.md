@@ -23,17 +23,17 @@ Milestones are sequential — each builds on the foundation established by the p
 - Deliver the first set of system inspection commands
 
 **Features:**
-- [ ] `syskit system` — Host information, kernel version, OS release, uptime, load averages
+- [x] `syskit system` — Host information, kernel version, OS release, uptime, load averages
 - [ ] `syskit cpu` — Core count, architecture, model, frequency, cache info
 - [ ] `syskit memory` — Physical/swap usage, buffers, caches, available memory
 - [ ] `syskit disk` — Partition layout, filesystem usage, mount points
 
 **Technical:**
-- [ ] CLI framework with Cobra
-- [ ] Collector interface and platform abstraction layer
-- [ ] Table and JSON output formatters
-- [ ] Unit test framework and CI integration
-- [ ] Error handling patterns and conventions
+- [x] CLI framework with Cobra
+- [x] Collector interface and platform abstraction layer
+- [x] Table and JSON output formatters
+- [x] Unit test framework and CI integration
+- [x] Error handling patterns and conventions
 
 ---
 

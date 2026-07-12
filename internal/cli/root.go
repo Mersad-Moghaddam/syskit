@@ -6,6 +6,11 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+
+	"github.com/Mersad-Moghaddam/syskit/internal/cli/command"
+	systemcollector "github.com/Mersad-Moghaddam/syskit/internal/collector/system"
+	"github.com/Mersad-Moghaddam/syskit/internal/platform"
+	"github.com/Mersad-Moghaddam/syskit/internal/service"
 )
 
 // Supported values for the persistent --format flag. FND-06 wires these to the
@@ -79,6 +84,13 @@ filesystem, process, network, and port information as a table, JSON, or YAML.`,
 	})
 
 	cmd.AddCommand(newVersionCmd())
+	cmd.AddCommand(command.NewSystemCmd(
+		service.NewSystem(systemcollector.NewCollector(platform.RealFS())),
+		command.SystemOptions{
+			Format:   func() string { return opts.format },
+			NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader },
+		},
+	))
 
 	return cmd
 }

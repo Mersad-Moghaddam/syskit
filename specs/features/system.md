@@ -16,7 +16,9 @@ Incident response and debugging often begin with basic orientation: what host is
 
 - Report hostname, kernel release, kernel version, architecture, OS name, OS version, uptime, boot time, and load averages.
 - Read from Linux-native sources where possible.
-- Support table, JSON, and YAML output.
+- Support table and JSON output. YAML is deferred to v0.2 under
+  [ADR-009](../../decisions/009-yaml-encoding.md), where it will mirror the
+  JSON schema.
 - Show partial data when optional files are unavailable.
 - Avoid shelling out to `uname`, `uptime`, or `hostname`.
 
