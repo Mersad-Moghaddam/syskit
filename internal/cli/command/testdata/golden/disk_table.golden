@@ -1,0 +1,2 @@
+DEVICE     TYPE  SIZE  USED  AVAIL  USE%  MOUNT
+/dev/test  ext4   100    40     60  40%   /

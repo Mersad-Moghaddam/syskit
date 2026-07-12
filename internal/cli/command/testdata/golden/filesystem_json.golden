@@ -1,0 +1,16 @@
+{
+  "mounts": [
+    {
+      "source": "/dev/test",
+      "filesystem_type": "ext4",
+      "mount_point": "/",
+      "options": [
+        "rw"
+      ],
+      "total_inodes": 100,
+      "free_inodes": 80
+    }
+  ],
+  "devices": null,
+  "collected_at": "0001-01-01T00:00:00Z"
+}

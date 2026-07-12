@@ -1,0 +1,2 @@
+MOUNT  TYPE  SOURCE     INODES  FREE  IUSE%  OPTIONS
+/      ext4  /dev/test     100    80  20%    rw

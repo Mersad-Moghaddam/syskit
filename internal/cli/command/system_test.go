@@ -26,6 +26,7 @@ func TestSystemCommandOutput(t *testing.T) {
 			cmd := NewSystemCmd(fakeSystemService{info: info}, SystemOptions{Format: func() string { return tt.format }, NoHeader: func() bool { return false }})
 			var out bytes.Buffer
 			cmd.SetOut(&out)
+			cmd.SetArgs([]string{})
 			require.NoError(t, cmd.Execute())
 			golden.Assert(t, out.Bytes(), tt.golden)
 		})

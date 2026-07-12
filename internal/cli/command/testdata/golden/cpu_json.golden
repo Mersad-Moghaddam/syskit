@@ -1,0 +1,23 @@
+{
+  "logical_cores": 1,
+  "model": "Fixture CPU",
+  "architecture": "amd64",
+  "times": [
+    {
+      "cpu_id": "all",
+      "user": 10,
+      "nice": 0,
+      "system": 5,
+      "idle": 85,
+      "iowait": 0,
+      "irq": 0,
+      "softirq": 0,
+      "steal": 0,
+      "guest": 0,
+      "guest_nice": 0,
+      "total": 100,
+      "utilization_percent": 15
+    }
+  ],
+  "collected_at": "0001-01-01T00:00:00Z"
+}

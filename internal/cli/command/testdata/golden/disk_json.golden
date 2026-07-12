@@ -1,0 +1,16 @@
+{
+  "mounts": [
+    {
+      "source": "/dev/test",
+      "filesystem_type": "ext4",
+      "mount_point": "/",
+      "options": null,
+      "total_bytes": 100,
+      "used_bytes": 40,
+      "available_bytes": 60,
+      "use_percent": 40
+    }
+  ],
+  "devices": null,
+  "collected_at": "0001-01-01T00:00:00Z"
+}

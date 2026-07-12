@@ -1,0 +1,11 @@
+{
+  "total_bytes": 100,
+  "used_bytes": 40,
+  "available_bytes": 60,
+  "free_bytes": 10,
+  "buffers_bytes": 0,
+  "cache_bytes": 0,
+  "swap_total_bytes": 0,
+  "swap_used_bytes": 0,
+  "swap_free_bytes": 0
+}
