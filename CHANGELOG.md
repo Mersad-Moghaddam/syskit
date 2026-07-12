@@ -18,6 +18,9 @@ recorded here with its date and categorized changes.
 
 ### Added
 
+- **Memory command (MEM-01):** `syskit memory` reports byte-normalized memory,
+  cache, swap, and optional PSI pressure data from procfs. Missing
+  `MemAvailable` and PSI remain unavailable rather than being fabricated.
 - **CPU utilization (CPU-02):** `syskit cpu` samples `/proc/stat` twice to
   report aggregate utilization, with `--per-core` and configurable `--interval`
   for logical-CPU rows. Raw counters remain available in JSON output.

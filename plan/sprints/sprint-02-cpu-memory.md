@@ -16,7 +16,7 @@ Ship `syskit cpu` (static identity + utilization + per-core) and `syskit memory`
 |---|---|---|---|
 | CPU-01 | `syskit cpu` static topology/model/cache. | 5 | Done |
 | CPU-02 | `syskit cpu` utilization + `--per-core`. | 8 | Done |
-| MEM-01 | `syskit memory`. | 8 | Committed |
+| MEM-01 | `syskit memory`. | 8 | Done |
 
 _Authoritative in ../product-backlog.md._
 

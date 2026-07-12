@@ -61,7 +61,7 @@ The first four inspection commands, each a full vertical slice: collector → se
 | SYS-01 | `syskit system` — host, kernel, OS release, uptime, load averages. | 8 | 1 | Done | `../specs/features/system.md` |
 | CPU-01 | `syskit cpu` — topology, model, cache, static identity. | 5 | 2 | Done | `../specs/features/cpu.md` |
 | CPU-02 | `syskit cpu` utilization — two-sample derivation, `--per-core`. | 8 | 2 | Done | `../specs/features/cpu.md` |
-| MEM-01 | `syskit memory` — physical/swap, buffers, caches, available, pressure. | 8 | 2 | Backlog | `../specs/features/memory.md` |
+| MEM-01 | `syskit memory` — physical/swap, buffers, caches, available, pressure. | 8 | 2 | Done | `../specs/features/memory.md` |
 | DSK-01 | `syskit disk` — partition layout, usage, mount points, I/O stats. | 8 | 3 | Backlog | `../specs/features/disk.md` |
 | FS-01 | `syskit filesystem` — inode usage, fs types, mount options. | 8 | 3 | Backlog | `../specs/features/filesystem.md` |
 | REL-v01 | Release v0.1.0 — golden/integration hardening, CHANGELOG, tag. | 3 | 3 | Backlog | `../docs/release-process.md` |
