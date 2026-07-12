@@ -9,6 +9,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/Mersad-Moghaddam/syskit/internal/collector"
 	"github.com/Mersad-Moghaddam/syskit/internal/model"
@@ -36,7 +37,56 @@ func (c *Collector) Collect() (*model.CPUInfo, error) {
 	info.Architecture = runtime.GOARCH
 	info.Caches = c.collectCaches()
 	info.Frequencies = c.collectFrequencies(ids)
+	stat, err := c.fs.ReadFile("proc/stat")
+	if err != nil {
+		return nil, fmt.Errorf("reading /proc/stat: %w", err)
+	}
+	times, err := ParseCPUStat(stat)
+	if err != nil {
+		return nil, fmt.Errorf("parsing /proc/stat: %w", err)
+	}
+	info.Times, info.CollectedAt = times, time.Now().UTC()
 	return info, nil
+}
+
+// ParseCPUStat extracts aggregate and per-core counters from /proc/stat.
+// Missing trailing fields on older kernels are normalized to zero.
+func ParseCPUStat(data []byte) ([]model.CPUTime, error) {
+	var times []model.CPUTime
+	for _, line := range strings.Split(string(data), "\n") {
+		fields := strings.Fields(line)
+		if len(fields) == 0 || (fields[0] != "cpu" && !strings.HasPrefix(fields[0], "cpu")) {
+			continue
+		}
+		id := fields[0]
+		if id == "cpu" {
+			id = "all"
+		} else {
+			if _, err := strconv.Atoi(strings.TrimPrefix(id, "cpu")); err != nil {
+				continue
+			}
+			id = strings.TrimPrefix(id, "cpu")
+		}
+		if len(fields) < 2 {
+			return nil, fmt.Errorf("%s counters: %w", fields[0], collector.ErrFieldMissing)
+		}
+		values := [10]uint64{}
+		for i := 1; i < len(fields) && i <= len(values); i++ {
+			v, err := strconv.ParseUint(fields[i], 10, 64)
+			if err != nil {
+				return nil, fmt.Errorf("%s counter %q: %w", fields[0], fields[i], collector.ErrParse)
+			}
+			values[i-1] = v
+		}
+		t := model.CPUTime{CPUID: id, User: values[0], Nice: values[1], System: values[2], Idle: values[3], IOWait: values[4], IRQ: values[5], SoftIRQ: values[6], Steal: values[7], Guest: values[8], GuestNice: values[9]}
+		// guest values are already included in user/nice and therefore excluded.
+		t.Total = t.User + t.Nice + t.System + t.Idle + t.IOWait + t.IRQ + t.SoftIRQ + t.Steal
+		times = append(times, t)
+	}
+	if len(times) == 0 {
+		return nil, fmt.Errorf("CPU counters: %w", collector.ErrFieldMissing)
+	}
+	return times, nil
 }
 
 func (c *Collector) collectCaches() []model.CPUCache {

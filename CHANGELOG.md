@@ -18,6 +18,9 @@ recorded here with its date and categorized changes.
 
 ### Added
 
+- **CPU utilization (CPU-02):** `syskit cpu` samples `/proc/stat` twice to
+  report aggregate utilization, with `--per-core` and configurable `--interval`
+  for logical-CPU rows. Raw counters remain available in JSON output.
 - **CPU static command (CPU-01):** `syskit cpu` reports logical/physical
   topology, sockets, model, architecture, flags, and optional cpufreq values
   from native Linux interfaces. Timed utilization and `--per-core` land in the

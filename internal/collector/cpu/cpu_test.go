@@ -33,6 +33,15 @@ func TestParseCacheSize(t *testing.T) {
 	assert.True(t, errors.Is(err, collector.ErrParse))
 }
 
+func TestParseCPUStat(t *testing.T) {
+	times, err := ParseCPUStat([]byte("cpu 10 2 3 80 5 1 1 0 4 0\ncpu0 5 1 1 40 2 0 0 0 0 0\n"))
+	assert.NoError(t, err)
+	assert.Len(t, times, 2)
+	assert.Equal(t, "all", times[0].CPUID)
+	assert.Equal(t, uint64(102), times[0].Total)
+	assert.Equal(t, uint64(4), times[0].Guest)
+}
+
 func BenchmarkParseCPUInfo(b *testing.B) {
 	data := []byte("processor : 0\nmodel name : Test CPU\nphysical id : 0\ncore id : 0\nflags : sse avx\n")
 	b.ReportAllocs()
