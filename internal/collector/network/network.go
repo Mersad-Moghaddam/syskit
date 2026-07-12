@@ -5,6 +5,7 @@ import (
 	"net"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/Mersad-Moghaddam/syskit/internal/collector"
 	"github.com/Mersad-Moghaddam/syskit/internal/model"
@@ -25,7 +26,7 @@ func (c *Collector) Collect() (*model.NetworkInfo, error) {
 	if err != nil {
 		return nil, fmt.Errorf("parsing /proc/net/dev: %w", err)
 	}
-	info := &model.NetworkInfo{Interfaces: interfaces}
+	info := &model.NetworkInfo{Interfaces: interfaces, CollectedAt: time.Now().UTC()}
 	if routes, err := c.fs.ReadFile("proc/net/route"); err == nil {
 		info.Routes, _ = ParseRoutes(routes)
 	}
