@@ -82,7 +82,7 @@ func New(format string, opts ...Option) (Renderer, error) {
 	case "table":
 		return tableRenderer{noHeader: o.noHeader, color: o.color}, nil
 	case "yaml":
-		return nil, fmt.Errorf("format %q: %w", format, ErrFormatDeferred)
+		return yamlRenderer{}, nil
 	default:
 		return nil, fmt.Errorf("format %q: %w", format, ErrUnknownFormat)
 	}

@@ -1,0 +1,7 @@
+load_average:
+  fifteen_minutes: 0.3
+  five_minutes: 0.35
+  one_minute: 0.42
+swap_enabled: true
+total_bytes: 1.6777216e+10
+used_bytes: 8.388608e+09

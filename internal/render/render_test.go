@@ -2,7 +2,6 @@ package render
 
 import (
 	"bytes"
-	"errors"
 	"flag"
 	"os"
 	"path/filepath"
@@ -192,13 +191,14 @@ func TestNewUnknownFormat(t *testing.T) {
 	assert.ErrorIs(t, err, ErrUnknownFormat)
 }
 
-func TestNewYAMLDeferred(t *testing.T) {
-	// YAML is deferred to v0.2 (FND/OUT-03, ADR-009). New keeps it distinct from
-	// unknown formats so the deferred capability has a dedicated seam.
+func TestYAMLRendererGolden(t *testing.T) {
 	r, err := New("yaml")
-	assert.Nil(t, r)
-	assert.ErrorIs(t, err, ErrFormatDeferred)
-	assert.False(t, errors.Is(err, ErrUnknownFormat), "yaml is deferred, not unknown")
+	require.NoError(t, err)
+	var buf bytes.Buffer
+	require.NoError(t, r.Render(&buf, sampleValue()))
+	assertGolden(t, "sample.yaml.golden", buf.Bytes())
+	assert.Contains(t, buf.String(), "total_bytes:")
+	assert.NotContains(t, buf.String(), "TotalBytes")
 }
 
 func TestNewReturnsRequestedRenderer(t *testing.T) {
