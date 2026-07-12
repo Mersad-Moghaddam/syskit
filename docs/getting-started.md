@@ -35,7 +35,8 @@ go test -race ./...
 go run ./cmd/syskit --help
 ```
 
-The CLI currently exposes `--help`, `version`, and `system`. For example:
+The CLI currently exposes the v0.1 commands plus in-progress v0.2 process,
+network, and ports commands. For example:
 
 ```sh
 go run ./cmd/syskit system
@@ -44,10 +45,14 @@ go run ./cmd/syskit cpu
 go run ./cmd/syskit memory --format json
 go run ./cmd/syskit filesystem --show-pseudo
 go run ./cmd/syskit disk --io --interval 1s
+go run ./cmd/syskit process --limit 20
+go run ./cmd/syskit process tree
+go run ./cmd/syskit network
+go run ./cmd/syskit ports --listening
 ```
 
-The remaining inspection commands below are planned until their feature slices
-land.
+The remaining commands below include both shipped and planned contracts; check
+`--help` for the current supported flags.
 
 ## How to Explore This Repository
 
@@ -60,9 +65,10 @@ Start with the documents in this order:
 5. [Learning roadmap](../learning/roadmap.md) for Linux concepts to study before implementation.
 6. [Implementation readiness checklist](implementation-readiness.md) before creating production code.
 
-## Planned First Commands
+## Command Roadmap
 
-These are documented contracts, not currently executable commands:
+These commands show the intended product shape; `system`, `cpu`, `memory`,
+`disk`, `filesystem`, `process`, `network`, and `ports` are executable today.
 
 ```sh
 syskit system

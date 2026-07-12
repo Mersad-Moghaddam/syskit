@@ -83,7 +83,7 @@ Process inspection, network visibility, and the filtering/sorting framework shar
 | NET-01 | Netlink platform integration (sockets, message parse). | 13 | 5 | Backlog | `../specs/features/network.md`, `../decisions/003-native-apis-over-shell.md` |
 | NET-02 | `syskit network` — interface stats, connections, routing. | 8 | 5 | Backlog | `../specs/features/network.md` |
 | PRT-01 | `syskit ports` — listening ports, socket states, owning process. | 8 | 6 | Backlog | `../specs/features/ports.md` |
-| OUT-03 | YAML output formatter. | 5 | 6 | Backlog | `../specs/features/output-formats.md` |
+| OUT-03 | YAML output formatter. | 5 | 6 | Done | `../specs/features/output-formats.md` |
 | REL-v02 | Release v0.2.0 — hardening, CHANGELOG, tag. | 3 | 6 | Backlog | `../docs/release-process.md` |
 | DOC-v02 | v0.2 docs + glossary updates. | 2 | 6 | Backlog | `../docs/glossary.md` |
 
