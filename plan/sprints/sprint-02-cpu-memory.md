@@ -14,7 +14,7 @@ Ship `syskit cpu` (static identity + utilization + per-core) and `syskit memory`
 
 | ID | Story | Pts | Status |
 |---|---|---|---|
-| CPU-01 | `syskit cpu` static topology/model/cache. | 5 | In progress |
+| CPU-01 | `syskit cpu` static topology/model/cache. | 5 | Done |
 | CPU-02 | `syskit cpu` utilization + `--per-core`. | 8 | Committed |
 | MEM-01 | `syskit memory`. | 8 | Committed |
 

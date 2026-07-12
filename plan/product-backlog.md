@@ -59,7 +59,7 @@ The first four inspection commands, each a full vertical slice: collector → se
 | ID | Story | Pts | Sprint | Status | Spec / Ref |
 |---|---|---|---|---|---|
 | SYS-01 | `syskit system` — host, kernel, OS release, uptime, load averages. | 8 | 1 | Done | `../specs/features/system.md` |
-| CPU-01 | `syskit cpu` — topology, model, cache, static identity. | 5 | 2 | In progress | `../specs/features/cpu.md` |
+| CPU-01 | `syskit cpu` — topology, model, cache, static identity. | 5 | 2 | Done | `../specs/features/cpu.md` |
 | CPU-02 | `syskit cpu` utilization — two-sample derivation, `--per-core`. | 8 | 2 | Backlog | `../specs/features/cpu.md` |
 | MEM-01 | `syskit memory` — physical/swap, buffers, caches, available, pressure. | 8 | 2 | Backlog | `../specs/features/memory.md` |
 | DSK-01 | `syskit disk` — partition layout, usage, mount points, I/O stats. | 8 | 3 | Backlog | `../specs/features/disk.md` |
