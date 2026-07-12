@@ -12,6 +12,7 @@ import (
 	"github.com/Mersad-Moghaddam/syskit/internal/collector/disk"
 	"github.com/Mersad-Moghaddam/syskit/internal/collector/memory"
 	"github.com/Mersad-Moghaddam/syskit/internal/collector/network"
+	"github.com/Mersad-Moghaddam/syskit/internal/collector/port"
 	processcollector "github.com/Mersad-Moghaddam/syskit/internal/collector/process"
 	systemcollector "github.com/Mersad-Moghaddam/syskit/internal/collector/system"
 	"github.com/Mersad-Moghaddam/syskit/internal/platform"
@@ -105,6 +106,7 @@ filesystem, process, network, and port information as a table, JSON, or YAML.`,
 	cmd.AddCommand(command.NewFilesystemCmd(service.NewDisk(disk.NewCollector(platform.RealFS())), command.FilesystemOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
 	cmd.AddCommand(command.NewProcessCmd(service.NewProcess(processcollector.NewCollector(platform.RealFS())), command.ProcessOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
 	cmd.AddCommand(command.NewNetworkCmd(service.NewNetwork(network.NewCollector(platform.RealFS())), command.NetworkOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
+	cmd.AddCommand(command.NewPortCmd(service.NewPort(port.NewCollector(platform.RealFS())), command.PortOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
 
 	return cmd
 }
