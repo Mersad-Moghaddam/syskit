@@ -16,8 +16,8 @@ Ship `syskit disk` and `syskit filesystem`, complete v0.1 user docs, and tag **v
 |---|---|---|---|
 | DSK-01 | `syskit disk`. | 8 | Done |
 | FS-01 | `syskit filesystem`. | 8 | Done |
-| DOC-v01 | v0.1 user docs (build/install + command pages). | 3 | Committed |
-| REL-v01 | Release v0.1.0 (hardening, CHANGELOG, tag). | 3 | Committed |
+| DOC-v01 | v0.1 user docs (build/install + command pages). | 3 | Done |
+| REL-v01 | Release v0.1.0 (hardening, CHANGELOG, tag). | 3 | Done |
 
 ## Task breakdowns
 

@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Go](https://img.shields.io/badge/Go-1.22+-00ADD8?logo=go&logoColor=white)](https://go.dev)
 [![Linux](https://img.shields.io/badge/Platform-Linux-FCC624?logo=linux&logoColor=black)](https://kernel.org)
-[![Status](https://img.shields.io/badge/Status-Implementation%20(v0.1%20Foundation)-brightgreen)]()
+[![Status](https://img.shields.io/badge/Status-v0.1.0%20released-brightgreen)]()
 
 ---
 
@@ -80,15 +80,12 @@ This approach ensures:
 
 ## Project Status
 
-**Implementation — v0.1 Foundation**
+**v0.1.0 released**
 
-The implementation-readiness checklist is signed off and SysKit has entered its
-implementation phase. The repository is now a compiling Go module: the approved
-layout (`cmd/`, `internal/{cli,collector,platform,render,service,model}`,
-`testdata/`) is in place and the foundation scaffolding (CLI bootstrap, the
-`SysFS` platform seam, render layer, and cross-cutting error/logging/config
-patterns) is landing under EPIC-00. Feature commands follow as vertical slices
-per milestone.
+SysKit v0.1.0 provides native Linux inspection commands for `system`, `cpu`,
+`memory`, `disk`, and `filesystem`, in table and JSON formats. The layered
+architecture, fixture-backed collectors, golden output contracts, and Linux
+integration coverage are in place for future milestones.
 
 See the [Roadmap](specs/roadmap.md) for planned milestones.
 

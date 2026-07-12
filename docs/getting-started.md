@@ -2,9 +2,8 @@
 
 > How to build and explore SysKit during its v0.1 implementation phase.
 
-SysKit is a Linux-first Go project in active v0.1 implementation. Its foundation
-is available to build and test, while the user-facing inspection commands are
-still being delivered as documented vertical slices.
+SysKit is a Linux-first Go project. v0.1.0 is available to build from source
+with system, CPU, memory, disk, and filesystem inspection commands.
 
 ## Current State
 
@@ -14,8 +13,8 @@ still being delivered as documented vertical slices.
 | Architecture | Defined |
 | Feature specifications | Defined for planned core features |
 | Engineering standards | Defined |
-| Production code | Foundation complete; inspection commands in progress |
-| Installable releases | Not available yet |
+| Production code | v0.1.0 released |
+| Installable releases | Source build available; packages planned |
 
 ## Development Environment
 

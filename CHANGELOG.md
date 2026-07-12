@@ -16,6 +16,8 @@ recorded here with its date and categorized changes.
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-07-12
+
 ### Added
 
 - **Disk I/O and filters (DSK-01):** `syskit disk --io` derives per-device
