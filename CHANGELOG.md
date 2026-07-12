@@ -18,6 +18,9 @@ recorded here with its date and categorized changes.
 
 ### Added
 
+- **Filesystem command (FS-01):** `syskit filesystem` shows mount sources,
+  types, options, and inode availability; pseudo filesystems are hidden by
+  default and can be included with `--show-pseudo`.
 - **Memory command (MEM-01):** `syskit memory` reports byte-normalized memory,
   cache, swap, and optional PSI pressure data from procfs. Missing
   `MemAvailable` and PSI remain unavailable rather than being fabricated.
