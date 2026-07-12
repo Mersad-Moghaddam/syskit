@@ -9,6 +9,7 @@ import (
 
 	"github.com/Mersad-Moghaddam/syskit/internal/cli/command"
 	"github.com/Mersad-Moghaddam/syskit/internal/collector/cpu"
+	"github.com/Mersad-Moghaddam/syskit/internal/collector/disk"
 	"github.com/Mersad-Moghaddam/syskit/internal/collector/memory"
 	systemcollector "github.com/Mersad-Moghaddam/syskit/internal/collector/system"
 	"github.com/Mersad-Moghaddam/syskit/internal/platform"
@@ -98,6 +99,7 @@ filesystem, process, network, and port information as a table, JSON, or YAML.`,
 		command.CPUOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }},
 	))
 	cmd.AddCommand(command.NewMemoryCmd(service.NewMemory(memory.NewCollector(platform.RealFS())), command.MemoryOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
+	cmd.AddCommand(command.NewDiskCmd(service.NewDisk(disk.NewCollector(platform.RealFS())), command.DiskOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
 
 	return cmd
 }
