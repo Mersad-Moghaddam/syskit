@@ -1,8 +1,10 @@
 # Getting Started
 
-> How to approach SysKit during the design phase and what users can expect once implementation begins.
+> How to build and explore SysKit during its v0.1 implementation phase.
 
-SysKit is currently a planning repository. It contains architecture, specifications, standards, learning notes, and project governance, but no production Go source code yet. This is intentional: the repository is being prepared so implementation can start from a clear, reviewed design.
+SysKit is a Linux-first Go project in active v0.1 implementation. Its foundation
+is available to build and test, while the user-facing inspection commands are
+still being delivered as documented vertical slices.
 
 ## Current State
 
@@ -12,12 +14,12 @@ SysKit is currently a planning repository. It contains architecture, specificati
 | Architecture | Defined |
 | Feature specifications | Defined for planned core features |
 | Engineering standards | Defined |
-| Production code | Not started |
+| Production code | Foundation complete; inspection commands in progress |
 | Installable releases | Not available yet |
 
-## Expected Development Environment
+## Development Environment
 
-When implementation begins, contributors should expect to work on Linux with:
+Build and test on Linux with:
 
 - Go 1.22 or newer.
 - A Linux kernel with procfs and sysfs mounted in the standard locations.
@@ -26,7 +28,18 @@ When implementation begins, contributors should expect to work on Linux with:
 
 The project is Linux-first by design. macOS, Windows, and BSD support are out of scope for the core tool.
 
-## How to Use This Repository Now
+## Build and Test
+
+```sh
+go build ./...
+go test -race ./...
+go run ./cmd/syskit --help
+```
+
+The CLI currently exposes its foundation commands (`--help` and `version`).
+The inspection commands below remain planned until their feature slices land.
+
+## How to Explore This Repository
 
 Start with the documents in this order:
 
@@ -37,9 +50,9 @@ Start with the documents in this order:
 5. [Learning roadmap](../learning/roadmap.md) for Linux concepts to study before implementation.
 6. [Implementation readiness checklist](implementation-readiness.md) before creating production code.
 
-## Expected First Commands
+## Planned First Commands
 
-These commands are planned contracts, not currently executable commands:
+These are documented contracts, not currently executable commands:
 
 ```sh
 syskit system
@@ -55,7 +68,8 @@ Each command must be implemented only after its specification and acceptance cri
 
 ## Configuration Model
 
-SysKit is designed to work with zero configuration. Future configuration will use this precedence:
+SysKit works with zero configuration. The implemented configuration loader uses
+this precedence:
 
 1. Command-line flags.
 2. `SYSKIT_*` environment variables.

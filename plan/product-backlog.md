@@ -36,17 +36,17 @@ Turns the planning repo into a compiling, tested Go project without shipping use
 
 | ID | Story | Pts | Sprint | Status | Spec / Ref |
 |---|---|---|---|---|---|
-| FND-01 | As a maintainer, I complete the implementation-readiness sign-off so code may begin. | 3 | 0 | Backlog | `../docs/implementation-readiness.md` |
-| FND-02 | Transition PR: create Go module, approved repo layout, update README status, CI, contributing. | 5 | 0 | Backlog | `../docs/project-structure.md` |
-| FND-03 | CLI bootstrap with Cobra: root command, `--format`, `--help`, `version`. | 5 | 0 | Backlog | `../specs/cli-conventions.md`, `../decisions/005-cobra-for-cli.md` |
-| FND-04 | Platform abstraction `SysFS` interface + `RealFS` + fixture-backed `TestFS`. | 8 | 0 | Backlog | `../specs/testing-strategy.md`, `../specs/architecture.md` |
-| FND-05 | Collector interface + registration pattern (no cross-collector deps). | 5 | 1 | Backlog | `../specs/collectors.md` |
-| FND-06 | Render layer skeleton: `Formatter` interface + table + JSON. | 8 | 1 | Backlog | `../specs/rendering.md`, `../specs/features/output-formats.md` |
-| FND-07 | Error-handling patterns: sentinel errors, `%w` wrapping, exit codes. | 3 | 1 | Backlog | `../specs/error-handling.md` |
-| FND-08 | Logging strategy scaffolding (structured, off by default). | 3 | 1 | Backlog | `../specs/logging-strategy.md` |
-| FND-09 | Configuration loading (precedence: flags > env > file > default). | 5 | 1 | Backlog | `../specs/configuration.md` |
-| FND-10 | Go CI pipeline: fmt, vet, `test -race`, integration tag, coverage, bench, govulncheck. | 8 | 0–1 | Backlog | `../specs/testing-strategy.md`, `../.github/workflows/ci.yml` |
-| FND-11 | Test harness: golden helper, `testdata/` layout, `scripts/capture-fixtures.sh`. | 5 | 1 | Backlog | `../specs/testing-strategy.md` |
+| FND-01 | As a maintainer, I complete the implementation-readiness sign-off so code may begin. | 3 | 0 | Done | `../docs/implementation-readiness.md` |
+| FND-02 | Transition PR: create Go module, approved repo layout, update README status, CI, contributing. | 5 | 0 | Done | `../docs/project-structure.md` |
+| FND-03 | CLI bootstrap with Cobra: root command, `--format`, `--help`, `version`. | 5 | 0 | Done | `../specs/cli-conventions.md`, `../decisions/005-cobra-for-cli.md` |
+| FND-04 | Platform abstraction `SysFS` interface + `RealFS` + fixture-backed `TestFS`. | 8 | 0 | Done | `../specs/testing-strategy.md`, `../specs/architecture.md` |
+| FND-05 | Collector interface + registration pattern (no cross-collector deps). | 5 | 1 | Done | `../specs/collectors.md` |
+| FND-06 | Render layer skeleton: `Formatter` interface + table + JSON. | 8 | 1 | Done | `../specs/rendering.md`, `../specs/features/output-formats.md` |
+| FND-07 | Error-handling patterns: sentinel errors, `%w` wrapping, exit codes. | 3 | 1 | Done | `../specs/error-handling.md` |
+| FND-08 | Logging strategy scaffolding (structured, off by default). | 3 | 1 | Done | `../specs/logging-strategy.md` |
+| FND-09 | Configuration loading (precedence: flags > env > file > default). | 5 | 1 | Done | `../specs/configuration.md` |
+| FND-10 | Go CI pipeline: fmt, vet, `test -race`, integration tag, coverage, bench, govulncheck. | 8 | 0–1 | Done | `../specs/testing-strategy.md`, `../.github/workflows/ci.yml` |
+| FND-11 | Test harness: golden helper, `testdata/` layout, `scripts/capture-fixtures.sh`. | 5 | 1 | Done | `../specs/testing-strategy.md` |
 
 Subtotal: **58 pts** (Sprint 0: 21, Sprint 1: 37 — see release plan for exact split; FND-10 spans both).
 

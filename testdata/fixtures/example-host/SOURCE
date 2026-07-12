@@ -1,0 +1,9 @@
+kernel: 6.8.0-example-generic (SYNTHETIC — not a real capture)
+distro: Example Linux 24.04 (synthetic)
+arch: x86_64
+container: no
+date: 2026-07-08 (UTC)
+
+NOTE: This fixture set is hand-authored to document the testdata/ layout
+(see testdata/README.md). The bytes are synthetic and must not be treated as a
+real kernel capture. Use scripts/capture-fixtures.sh to produce real fixtures.

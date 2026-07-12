@@ -29,6 +29,12 @@ recorded here with its date and categorized changes.
 - **Platform abstraction (FND-04):** the `SysFS` interface with `RealFS()` (rooted at `/`, reads pseudo-files to EOF) and fixture-backed `TestFS(fs.FS)`, plus platform sentinel errors (`ErrNotFound`, `ErrPermission`, `ErrUnsupported`) — the injectable seam that makes every collector testable against fixtures.
 - **CI pipeline (FND-10):** Go stages — gofmt, goimports, `go vet`, build, `go test -race`, integration (`-tags=integration`), coverage, benchmarks, and `govulncheck`.
 - **Configuration format decision (ADR 010):** `github.com/BurntSushi/toml` (MIT, zero transitive deps) approved for parsing the optional TOML config file, confined to the CLI layer.
+- **Collector contract (FND-05):** a generic `Collector[T]` snapshot interface plus a mutable-state-free `Registry` for name-based collector discovery, with domain sentinels (`ErrParse`, `ErrFieldMissing`) and a documented "optional-missing is unavailable, not an error" rule. Collectors take `SysFS` by injection and never touch the OS directly.
+- **Render layer (FND-06):** a `Renderer` interface with deterministic, golden-testable table and JSON formatters (snake_case, explicit units, no color in structured output); YAML kept as a distinct deferred seam for v0.2.
+- **Error handling & exit codes (FND-07):** CLI-boundary `present()` mapping sentinels to the canonical exit codes (0 success, 1 general, 2 usage, 3 permission, 4 unsupported, 5 partial) with a `PartialError` type for partial-collection failures.
+- **Logging (FND-08):** structured `log/slog` diagnostics on stderr, silent by default, raised by `--verbose`/`--debug` and silenced by `--quiet` (precedence quiet > debug > verbose); lower layers never log.
+- **Configuration loading (FND-09):** optional TOML config with precedence flags > env (`SYSKIT_*`) > per-command `[section]` > global > defaults, XDG discovery, `--config`, and the documented env-outranks-per-command-section rule; missing file is silent, malformed file is an error.
+- **Test harness (FND-11):** a `golden` helper (`Assert`/`Read`, `-update` regeneration), the cross-package `testdata/` layout, and a read-only `scripts/capture-fixtures.sh` that records fixture provenance.
 
 ### Changed
 

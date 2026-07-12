@@ -15,13 +15,13 @@ Complete the delivery scaffolding — collector interface, render layer, error/l
 
 | ID | Story | Pts | Status |
 |---|---|---|---|
-| FND-05 | Collector interface + registration. | 5 | Committed |
-| FND-06 | Render layer: `Formatter` + table + JSON. | 8 | Committed |
-| FND-07 | Error-handling patterns (sentinels, `%w`, exit codes). | 3 | Committed |
-| FND-08 | Logging scaffolding (structured, off by default). | 3 | Committed |
-| FND-09 | Configuration loading (flags > env > file > default). | 5 | Committed |
-| FND-11 | Test harness (golden helper, `testdata/`, capture script). | 5 | Committed |
-| FND-10b | Go CI pipeline — second half: `-race`, integration tag, coverage, bench, govulncheck. | (part of FND-10) | Committed |
+| FND-05 | Collector interface + registration. | 5 | Done |
+| FND-06 | Render layer: `Formatter` + table + JSON. | 8 | Done |
+| FND-07 | Error-handling patterns (sentinels, `%w`, exit codes). | 3 | Done |
+| FND-08 | Logging scaffolding (structured, off by default). | 3 | Done |
+| FND-09 | Configuration loading (flags > env > file > default). | 5 | Done |
+| FND-11 | Test harness (golden helper, `testdata/`, capture script). | 5 | Done |
+| FND-10b | Go CI pipeline — second half: `-race`, integration tag, coverage, bench, govulncheck. | (part of FND-10) | Done |
 | SYS-01 | `syskit system` — first vertical slice. | 8 | Committed |
 
 _Total exceeds a single dev's capacity — parallelized across the team within the WIP limit. Authoritative points in ../product-backlog.md._
@@ -29,8 +29,8 @@ _Total exceeds a single dev's capacity — parallelized across the team within t
 ## Task breakdowns
 
 **FND-06 — render layer** (unblocks every command's output)
-- [ ] `Formatter` interface; table formatter (alignment, headers); JSON formatter.
-- [ ] Golden-test helper integration; unit tests per formatter.
+- [x] `Formatter` interface; table formatter (alignment, headers); JSON formatter.
+- [x] Golden-test helper integration; unit tests per formatter.
 
 **SYS-01 — system command** (the proof of the architecture)
 - [ ] platform: read `/proc/uptime`, `/proc/loadavg`, `/etc/os-release`, kernel version via `SysFS` (+ fixtures).

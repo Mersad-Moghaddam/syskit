@@ -1,0 +1,10 @@
+{
+  "total_bytes": 16777216000,
+  "used_bytes": 8388608000,
+  "swap_enabled": true,
+  "load_average": {
+    "one_minute": 0.42,
+    "five_minutes": 0.35,
+    "fifteen_minutes": 0.3
+  }
+}

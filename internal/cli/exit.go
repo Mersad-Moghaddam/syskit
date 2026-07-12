@@ -2,22 +2,29 @@ package cli
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/spf13/cobra"
+
+	"github.com/Mersad-Moghaddam/syskit/internal/platform"
 )
 
-// Process exit codes assigned at the CLI boundary. The full canonical table
-// (3 permission, 4 unsupported, 5 partial) is defined in
-// specs/cli-conventions.md and wired by FND-07; FND-03 establishes the seam with
-// success, general error, and usage error.
+// Process exit codes assigned at the CLI boundary. This table is canonical in
+// specs/error-handling.md and mirrored in specs/cli-conventions.md; the two
+// must always match. Codes are derived from the sentinel errors that propagate
+// up from the platform and collector layers — never assigned deeper than the
+// CLI.
 const (
-	exitOK    = 0
-	exitError = 1
-	exitUsage = 2
+	exitOK          = 0 // success
+	exitError       = 1 // unspecified runtime error
+	exitUsage       = 2 // invalid flags, arguments, or usage
+	exitPermission  = 3 // insufficient privilege to read a kernel interface
+	exitUnsupported = 4 // required kernel interface missing or unsupported
+	exitPartial     = 5 // some data collected; one or more collectors failed
 )
 
 // usageError marks an error as a command-usage problem — an invalid flag, flag
-// value, or argument — so exitCode maps it to exit status 2.
+// value, or argument — so the boundary maps it to exit status 2.
 type usageError struct {
 	err error
 }
@@ -25,6 +32,27 @@ type usageError struct {
 func (e *usageError) Error() string { return e.err.Error() }
 
 func (e *usageError) Unwrap() error { return e.err }
+
+// PartialError reports that a command aggregated several collectors and some,
+// but not all, failed. The successfully collected data is still rendered to
+// stdout; the joined diagnostics are surfaced to stderr and the process exits
+// with exitPartial (5). It is the seam the service layer uses to signal partial
+// failure without blanking the whole result over one missing field
+// (specs/error-handling.md "Partial-Failure Handling").
+type PartialError struct {
+	// Err is the joined error (typically errors.Join of each collector
+	// failure), so every underlying cause remains inspectable with errors.Is.
+	Err error
+}
+
+func (e *PartialError) Error() string {
+	if e.Err == nil {
+		return "partial failure"
+	}
+	return e.Err.Error()
+}
+
+func (e *PartialError) Unwrap() error { return e.Err }
 
 // usageArgs wraps a positional-argument validator so a validation failure is
 // reported as a usage error (exit 2) rather than a general error. Subcommands
@@ -38,17 +66,40 @@ func usageArgs(validate cobra.PositionalArgs) cobra.PositionalArgs {
 	}
 }
 
-// exitCode maps an execution error to a process exit code: nil is success (0),
-// usage errors are 2, and everything else defaults to a general error (1).
-// FND-07 extends the default branch with errors.Is checks for the
-// permission/unsupported/partial sentinels.
+// present translates an internal error into a user-facing message and the exit
+// code it maps to. It is the single boundary where wrapped, lowercase internal
+// errors become actionable full-sentence diagnostics for stderr
+// (specs/error-handling.md "Internal vs. User-Facing Errors"). The message is
+// empty when err is nil, and empty for usage errors because Cobra prints those
+// itself.
+func present(err error) (message string, code int) {
+	switch {
+	case err == nil:
+		return "", exitOK
+	case errors.Is(err, platform.ErrPermission):
+		return "Permission denied reading a kernel interface. Try running with elevated privileges (sudo).", exitPermission
+	case errors.Is(err, platform.ErrUnsupported):
+		return "This information is not available on your kernel.", exitUnsupported
+	}
+
+	var perr *PartialError
+	if errors.As(err, &perr) {
+		return fmt.Sprintf("Some data could not be collected: %v", err), exitPartial
+	}
+
+	var uerr *usageError
+	if errors.As(err, &uerr) {
+		// Usage problems are concise and actionable; the message names the bad
+		// flag/argument. Exit 2 signals usage error to scripts.
+		return fmt.Sprintf("Error: %v\nRun 'syskit --help' for usage.", err), exitUsage
+	}
+
+	return fmt.Sprintf("Error: %v", err), exitError
+}
+
+// exitCode maps an execution error to a process exit code using the same
+// mapping as present, so the two never diverge.
 func exitCode(err error) int {
-	if err == nil {
-		return exitOK
-	}
-	var ue *usageError
-	if errors.As(err, &ue) {
-		return exitUsage
-	}
-	return exitError
+	_, code := present(err)
+	return code
 }
