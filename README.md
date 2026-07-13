@@ -134,6 +134,7 @@ import higher ones.
 - [Architecture overview](docs/architecture.md)
 - [Developer onboarding](docs/developer-onboarding.md)
 - [Performance baseline](docs/performance.md)
+- [v1 compatibility contract](docs/compatibility.md)
 - [Product overview](specs/product.md)
 - [Feature specifications](specs/features/)
 - [Collector architecture](specs/collectors.md)

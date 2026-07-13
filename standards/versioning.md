@@ -57,6 +57,9 @@ While SysKit is on a `0.x` line (see `../specs/roadmap.md`), the API is explicit
 - Breaking changes are still announced in the CHANGELOG and, where practical, given a deprecation window.
 
 The first stable contract is frozen at `v1.0.0`. From then on, breaking changes require a MAJOR bump.
+The candidate inventory and its CI enforcement are documented in the
+[v1 compatibility contract](../docs/compatibility.md); the canonical manifests
+live under `contracts/`.
 
 ---
 

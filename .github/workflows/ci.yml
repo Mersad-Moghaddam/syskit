@@ -92,6 +92,7 @@ jobs:
             docs/command-reference.md
             docs/plugin-authoring.md
             docs/performance.md
+            docs/compatibility.md
             docs/contributing.md
             docs/roadmap.md
             docs/developer-onboarding.md
@@ -118,6 +119,8 @@ jobs:
             specs/features/output-formats.md
             specs/features/plugins.md
             specs/features/containers.md
+            contracts/v1-cli.json
+            contracts/v1-schemas.json
             standards/definition-of-ready.md
             standards/definition-of-done.md
             standards/naming-conventions.md

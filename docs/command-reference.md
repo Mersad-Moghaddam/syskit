@@ -68,6 +68,16 @@ specific directory; world-writable directories are rejected.
 Executables must stay inside their plugin directory, be regular executable
 files, return exactly one JSON value, and complete before `--timeout`.
 
+## Utilities
+
+| Command | Purpose |
+|---|---|
+| `version` | Print the embedded SysKit version. |
+| `completion bash` | Generate Bash completion source. |
+| `completion fish` | Generate Fish completion source. |
+| `completion powershell` | Generate PowerShell completion source. |
+| `completion zsh` | Generate Zsh completion source. |
+
 ## Global flags
 
 | Flag | Meaning |
@@ -79,3 +89,5 @@ files, return exactly one JSON value, and complete before `--timeout`.
 | `--verbose`, `--debug`, `--quiet` | Control diagnostics written to stderr. |
 
 Run `syskit <command> --help` for the complete current flag contract.
+The machine-readable command/flag inventory and structured schemas are frozen in
+the [v1 compatibility contract](compatibility.md).

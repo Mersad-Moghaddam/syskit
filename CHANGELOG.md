@@ -27,6 +27,9 @@ their milestone is tagged, then recorded in a dated release entry below.
   checksum-pinned `syskit-bin` AUR metadata alongside Debian packages.
 - **Complete release checksums:** normalized binary archives include the license,
   and `SHA256SUMS` covers every published package and metadata archive.
+- **v1 compatibility manifests:** commands, flags, configuration names, exit
+  codes, plugin API versions, and structured-output fields now have canonical
+  machine-readable inventories enforced by tests.
 - **Performance baseline:** deterministic benchmarks now cover `/proc/stat`, a
   1,000-process fixture walk, network and socket parsing, and 1,000-row table
   rendering, with documented comparison and regression rules.

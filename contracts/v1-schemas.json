@@ -1,0 +1,766 @@
+{
+  "model.CPUCache": {
+    "level": {
+      "type": "integer",
+      "required": true
+    },
+    "size_bytes": {
+      "type": "integer",
+      "required": true
+    },
+    "type": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "model.CPUFrequency": {
+    "cpu_id": {
+      "type": "integer",
+      "required": true
+    },
+    "current_mhz": {
+      "type": "number",
+      "required": false
+    },
+    "maximum_mhz": {
+      "type": "number",
+      "required": false
+    },
+    "minimum_mhz": {
+      "type": "number",
+      "required": false
+    }
+  },
+  "model.CPUInfo": {
+    "architecture": {
+      "type": "string",
+      "required": true
+    },
+    "caches": {
+      "type": "array<object<model.CPUCache>>",
+      "required": false
+    },
+    "collected_at": {
+      "type": "string<date-time>",
+      "required": true
+    },
+    "flags": {
+      "type": "array<string>",
+      "required": false
+    },
+    "frequencies": {
+      "type": "array<object<model.CPUFrequency>>",
+      "required": false
+    },
+    "logical_cores": {
+      "type": "integer",
+      "required": true
+    },
+    "model": {
+      "type": "string",
+      "required": true
+    },
+    "physical_cores": {
+      "type": "integer",
+      "required": false
+    },
+    "sockets": {
+      "type": "integer",
+      "required": false
+    },
+    "times": {
+      "type": "array<object<model.CPUTime>>",
+      "required": false
+    }
+  },
+  "model.CPUTime": {
+    "cpu_id": {
+      "type": "string",
+      "required": true
+    },
+    "guest": {
+      "type": "integer",
+      "required": true
+    },
+    "guest_nice": {
+      "type": "integer",
+      "required": true
+    },
+    "idle": {
+      "type": "integer",
+      "required": true
+    },
+    "iowait": {
+      "type": "integer",
+      "required": true
+    },
+    "irq": {
+      "type": "integer",
+      "required": true
+    },
+    "nice": {
+      "type": "integer",
+      "required": true
+    },
+    "softirq": {
+      "type": "integer",
+      "required": true
+    },
+    "steal": {
+      "type": "integer",
+      "required": true
+    },
+    "system": {
+      "type": "integer",
+      "required": true
+    },
+    "total": {
+      "type": "integer",
+      "required": true
+    },
+    "user": {
+      "type": "integer",
+      "required": true
+    },
+    "utilization_percent": {
+      "type": "number",
+      "required": false
+    }
+  },
+  "model.ContainerDetail": {
+    "id": {
+      "type": "string",
+      "required": true
+    },
+    "metrics": {
+      "type": "object<model.ContainerMetrics>",
+      "required": false
+    },
+    "partial": {
+      "type": "boolean",
+      "required": true
+    },
+    "pids": {
+      "type": "integer",
+      "required": true
+    },
+    "processes": {
+      "type": "array<object<model.Process>>|null",
+      "required": true
+    },
+    "runtime": {
+      "type": "string",
+      "required": false
+    }
+  },
+  "model.ContainerInfo": {
+    "id": {
+      "type": "string",
+      "required": true
+    },
+    "metrics": {
+      "type": "object<model.ContainerMetrics>",
+      "required": false
+    },
+    "pids": {
+      "type": "integer",
+      "required": true
+    },
+    "runtime": {
+      "type": "string",
+      "required": false
+    }
+  },
+  "model.ContainerList": {
+    "containers": {
+      "type": "array<object<model.ContainerInfo>>|null",
+      "required": true
+    },
+    "partial": {
+      "type": "boolean",
+      "required": true
+    }
+  },
+  "model.ContainerMetrics": {
+    "cpu_usage_nanoseconds": {
+      "type": "integer",
+      "required": false
+    },
+    "memory_current_bytes": {
+      "type": "integer",
+      "required": false
+    },
+    "read_bytes": {
+      "type": "integer",
+      "required": false
+    },
+    "written_bytes": {
+      "type": "integer",
+      "required": false
+    }
+  },
+  "model.DiagnosticFinding": {
+    "category": {
+      "type": "string",
+      "required": true
+    },
+    "evidence": {
+      "type": "string",
+      "required": true
+    },
+    "id": {
+      "type": "string",
+      "required": true
+    },
+    "recommendation": {
+      "type": "string",
+      "required": true
+    },
+    "severity": {
+      "type": "string",
+      "required": true
+    },
+    "sources": {
+      "type": "array<string>|null",
+      "required": true
+    },
+    "summary": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "model.DiagnosticReport": {
+    "findings": {
+      "type": "array<object<model.DiagnosticFinding>>|null",
+      "required": true
+    }
+  },
+  "model.DiskDevice": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "read_bytes": {
+      "type": "integer",
+      "required": true
+    },
+    "read_bytes_per_second": {
+      "type": "number",
+      "required": false
+    },
+    "read_operations": {
+      "type": "integer",
+      "required": true
+    },
+    "written_bytes": {
+      "type": "integer",
+      "required": true
+    },
+    "written_bytes_per_second": {
+      "type": "number",
+      "required": false
+    },
+    "written_operations": {
+      "type": "integer",
+      "required": true
+    }
+  },
+  "model.DiskInfo": {
+    "collected_at": {
+      "type": "string<date-time>",
+      "required": true
+    },
+    "devices": {
+      "type": "array<object<model.DiskDevice>>|null",
+      "required": true
+    },
+    "mounts": {
+      "type": "array<object<model.MountInfo>>|null",
+      "required": true
+    }
+  },
+  "model.MemoryInfo": {
+    "available_bytes": {
+      "type": "integer",
+      "required": false
+    },
+    "buffers_bytes": {
+      "type": "integer",
+      "required": true
+    },
+    "cache_bytes": {
+      "type": "integer",
+      "required": true
+    },
+    "free_bytes": {
+      "type": "integer",
+      "required": true
+    },
+    "pressure": {
+      "type": "object<model.MemoryPSI>",
+      "required": false
+    },
+    "swap_free_bytes": {
+      "type": "integer",
+      "required": true
+    },
+    "swap_total_bytes": {
+      "type": "integer",
+      "required": true
+    },
+    "swap_used_bytes": {
+      "type": "integer",
+      "required": true
+    },
+    "total_bytes": {
+      "type": "integer",
+      "required": true
+    },
+    "used_bytes": {
+      "type": "integer",
+      "required": false
+    }
+  },
+  "model.MemoryPSI": {
+    "full_avg10": {
+      "type": "number",
+      "required": true
+    },
+    "full_avg60": {
+      "type": "number",
+      "required": true
+    },
+    "some_avg10": {
+      "type": "number",
+      "required": true
+    },
+    "some_avg60": {
+      "type": "number",
+      "required": true
+    }
+  },
+  "model.MountInfo": {
+    "available_bytes": {
+      "type": "integer",
+      "required": false
+    },
+    "filesystem_type": {
+      "type": "string",
+      "required": true
+    },
+    "free_inodes": {
+      "type": "integer",
+      "required": false
+    },
+    "mount_point": {
+      "type": "string",
+      "required": true
+    },
+    "options": {
+      "type": "array<string>|null",
+      "required": true
+    },
+    "source": {
+      "type": "string",
+      "required": true
+    },
+    "total_bytes": {
+      "type": "integer",
+      "required": false
+    },
+    "total_inodes": {
+      "type": "integer",
+      "required": false
+    },
+    "use_percent": {
+      "type": "number",
+      "required": false
+    },
+    "used_bytes": {
+      "type": "integer",
+      "required": false
+    }
+  },
+  "model.NetworkInfo": {
+    "collected_at": {
+      "type": "string<date-time>",
+      "required": true
+    },
+    "interfaces": {
+      "type": "array<object<model.NetworkInterface>>|null",
+      "required": true
+    },
+    "nameservers": {
+      "type": "array<string>",
+      "required": false
+    },
+    "routes": {
+      "type": "array<object<model.Route>>",
+      "required": false
+    }
+  },
+  "model.NetworkInterface": {
+    "addresses": {
+      "type": "array<string>",
+      "required": false
+    },
+    "mac_address": {
+      "type": "string",
+      "required": false
+    },
+    "mtu": {
+      "type": "integer",
+      "required": false
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "rx_bytes": {
+      "type": "integer",
+      "required": true
+    },
+    "rx_bytes_per_second": {
+      "type": "number",
+      "required": false
+    },
+    "rx_drops": {
+      "type": "integer",
+      "required": true
+    },
+    "rx_errors": {
+      "type": "integer",
+      "required": true
+    },
+    "rx_packets": {
+      "type": "integer",
+      "required": true
+    },
+    "state": {
+      "type": "string",
+      "required": false
+    },
+    "tx_bytes": {
+      "type": "integer",
+      "required": true
+    },
+    "tx_bytes_per_second": {
+      "type": "number",
+      "required": false
+    },
+    "tx_drops": {
+      "type": "integer",
+      "required": true
+    },
+    "tx_errors": {
+      "type": "integer",
+      "required": true
+    },
+    "tx_packets": {
+      "type": "integer",
+      "required": true
+    }
+  },
+  "model.PortInfo": {
+    "owner_mapping_partial": {
+      "type": "boolean",
+      "required": true
+    },
+    "sockets": {
+      "type": "array<object<model.Socket>>|null",
+      "required": true
+    }
+  },
+  "model.Process": {
+    "command": {
+      "type": "string",
+      "required": true
+    },
+    "container_id": {
+      "type": "string",
+      "required": false
+    },
+    "container_runtime": {
+      "type": "string",
+      "required": false
+    },
+    "cpu_percent": {
+      "type": "number",
+      "required": false
+    },
+    "cpu_time": {
+      "type": "integer",
+      "required": true
+    },
+    "memory_percent": {
+      "type": "number",
+      "required": false
+    },
+    "pid": {
+      "type": "integer",
+      "required": true
+    },
+    "ppid": {
+      "type": "integer",
+      "required": true
+    },
+    "resident_bytes": {
+      "type": "integer",
+      "required": true
+    },
+    "start_time_ticks": {
+      "type": "integer",
+      "required": true
+    },
+    "state": {
+      "type": "string",
+      "required": true
+    },
+    "threads": {
+      "type": "integer",
+      "required": true
+    },
+    "uid": {
+      "type": "integer",
+      "required": true
+    },
+    "user": {
+      "type": "string",
+      "required": false
+    }
+  },
+  "model.ProcessList": {
+    "cpu_time_total": {
+      "type": "integer",
+      "required": true
+    },
+    "partial": {
+      "type": "boolean",
+      "required": true
+    },
+    "processes": {
+      "type": "array<object<model.Process>>|null",
+      "required": true
+    },
+    "total_memory_bytes": {
+      "type": "integer",
+      "required": true
+    }
+  },
+  "model.Route": {
+    "default": {
+      "type": "boolean",
+      "required": true
+    },
+    "destination": {
+      "type": "string",
+      "required": true
+    },
+    "gateway": {
+      "type": "string",
+      "required": true
+    },
+    "interface": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "model.Socket": {
+    "inode": {
+      "type": "integer",
+      "required": true
+    },
+    "local_address": {
+      "type": "string",
+      "required": true
+    },
+    "local_port": {
+      "type": "integer",
+      "required": true
+    },
+    "owners": {
+      "type": "array<object<model.SocketOwner>>",
+      "required": false
+    },
+    "protocol": {
+      "type": "string",
+      "required": true
+    },
+    "raw_state": {
+      "type": "string",
+      "required": true
+    },
+    "remote_address": {
+      "type": "string",
+      "required": true
+    },
+    "remote_port": {
+      "type": "integer",
+      "required": true
+    },
+    "state": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "model.SocketOwner": {
+    "command": {
+      "type": "string",
+      "required": false
+    },
+    "pid": {
+      "type": "integer",
+      "required": true
+    }
+  },
+  "model.SystemInfo": {
+    "architecture": {
+      "type": "string",
+      "required": true
+    },
+    "boot_time": {
+      "type": "string<date-time>",
+      "required": true
+    },
+    "hostname": {
+      "type": "string",
+      "required": true
+    },
+    "kernel_release": {
+      "type": "string",
+      "required": true
+    },
+    "kernel_version": {
+      "type": "string",
+      "required": true
+    },
+    "load_average_1": {
+      "type": "number",
+      "required": true
+    },
+    "load_average_15": {
+      "type": "number",
+      "required": true
+    },
+    "load_average_5": {
+      "type": "number",
+      "required": true
+    },
+    "os_name": {
+      "type": "string",
+      "required": false
+    },
+    "os_version": {
+      "type": "string",
+      "required": false
+    },
+    "uptime_seconds": {
+      "type": "number",
+      "required": true
+    }
+  },
+  "plugin.Info": {
+    "api_version": {
+      "type": "string",
+      "required": true
+    },
+    "author": {
+      "type": "string",
+      "required": false
+    },
+    "collectors": {
+      "type": "array<string>",
+      "required": false
+    },
+    "executable": {
+      "type": "string",
+      "required": false
+    },
+    "license": {
+      "type": "string",
+      "required": false
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "output_schemas": {
+      "type": "object<string,string>",
+      "required": false
+    },
+    "path": {
+      "type": "string",
+      "required": true
+    },
+    "permissions": {
+      "type": "array<string>",
+      "required": false
+    },
+    "status": {
+      "type": "string",
+      "required": true
+    },
+    "version": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "plugin.Manifest": {
+    "api_version": {
+      "type": "string",
+      "required": true
+    },
+    "author": {
+      "type": "string",
+      "required": false
+    },
+    "collectors": {
+      "type": "array<string>",
+      "required": false
+    },
+    "executable": {
+      "type": "string",
+      "required": false
+    },
+    "license": {
+      "type": "string",
+      "required": false
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "output_schemas": {
+      "type": "object<string,string>",
+      "required": false
+    },
+    "permissions": {
+      "type": "array<string>",
+      "required": false
+    },
+    "version": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "plugin.Request": {
+    "action": {
+      "type": "string",
+      "required": true
+    },
+    "api_version": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "service.ProcessTreeNode": {
+    "children": {
+      "type": "array<object<service.ProcessTreeNode>>",
+      "required": false
+    },
+    "process": {
+      "type": "object<model.Process>",
+      "required": true
+    }
+  }
+}
