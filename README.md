@@ -3,7 +3,7 @@
 > A modern, Linux-first command-line toolkit for system inspection, resource monitoring, and diagnostics — built with Go.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Go](https://img.shields.io/badge/Go-1.22+-00ADD8?logo=go&logoColor=white)](https://go.dev)
+[![Go](https://img.shields.io/badge/Go-1.26.3+-00ADD8?logo=go&logoColor=white)](https://go.dev)
 [![Linux](https://img.shields.io/badge/Platform-Linux-FCC624?logo=linux&logoColor=black)](https://kernel.org)
 [![Status](https://img.shields.io/badge/Status-v0.1.0%20released-brightgreen)]()
 
@@ -71,7 +71,7 @@ This approach ensures:
 
 | Component | Technology |
 |---|---|
-| Language | [Go](https://go.dev) 1.22+ |
+| Language | [Go](https://go.dev) 1.26.3+ |
 | Data Sources | `/proc`, `/sys`, Netlink, kernel APIs |
 | CLI Framework | [Cobra](https://github.com/spf13/cobra) |
 | Terminal UI | [Bubble Tea](https://github.com/charmbracelet/bubbletea) |

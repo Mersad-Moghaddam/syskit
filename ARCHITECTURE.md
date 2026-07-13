@@ -6,7 +6,7 @@
 
 ## 1. Executive Summary
 
-SysKit is a Linux-only, read-only command-line toolkit — a single statically linked Go 1.22+ binary — that inspects system state (CPU, memory, disk, filesystem, processes, network, ports, containers) by reading native kernel interfaces (`/proc`, `/sys`, Netlink, cgroups) directly rather than shelling out to utilities, and renders results as table, JSON, YAML, or an interactive terminal dashboard. It is organized as a strict six-layer architecture (CLI → Command → Service → Collector → Platform → kernel) with independent per-domain collectors behind Go interfaces, holding no persistent state, cache, queue, or background service. This design is chosen for testability (collectors read fixtures through a `SysFS` seam), modularity (a new format or collector is an additive change), and a shared data path that feeds both the non-interactive CLI and the future TUI — deliberately no more machinery than a per-invocation inspection tool requires.
+SysKit is a Linux-only, read-only command-line toolkit — a single statically linked Go 1.26.3+ binary — that inspects system state (CPU, memory, disk, filesystem, processes, network, ports, containers) by reading native kernel interfaces (`/proc`, `/sys`, Netlink, cgroups) directly rather than shelling out to utilities, and renders results as table, JSON, YAML, or an interactive terminal dashboard. It is organized as a strict six-layer architecture (CLI → Command → Service → Collector → Platform → kernel) with independent per-domain collectors behind Go interfaces, holding no persistent state, cache, queue, or background service. This design is chosen for testability (collectors read fixtures through a `SysFS` seam), modularity (a new format or collector is an additive change), and a shared data path that feeds both the non-interactive CLI and the future TUI — deliberately no more machinery than a per-invocation inspection tool requires.
 
 ## 2. Context & Constraints
 
@@ -137,7 +137,7 @@ erDiagram
 
 ## 6. Key Design Decisions (ADR summaries)
 
-**ADR 001 — Go 1.22+.** *Context:* need fast startup, single static binary, easy concurrency, strong file/socket stdlib, productive learning language. *Decision:* Go ≥1.22. *Alternatives:* Rust (steeper curve, less iteration speed), C (memory-safety burden), Python (startup/runtime cost), Zig (pre-1.0). *Trade-offs:* GC pauses and a binary-size floor accepted for a read-mostly tool. *Consequences:* static binary, trivial cross-compile, low dependency surface.
+**ADR 001 — Go 1.26.3+.** *Context:* need fast startup, single static binary, easy concurrency, strong file/socket stdlib, productive learning language. *Decision:* Go ≥1.26.3. *Alternatives:* Rust (steeper curve, less iteration speed), C (memory-safety burden), Python (startup/runtime cost), Zig (pre-1.0). *Trade-offs:* GC pauses and a binary-size floor accepted for a read-mostly tool. *Consequences:* static binary, trivial cross-compile, low dependency surface.
 
 **ADR 002 — Linux only.** *Context:* value comes from Linux-specific interfaces with no cross-OS overlap. *Decision:* target Linux exclusively; no OS branching/shims. *Alternatives:* gopsutil-style abstraction (flattens the richness we exist to expose), "portable later" (abstraction tax up front), Linux+BSD. *Trade-offs:* excludes non-Linux users; reversal is expensive. *Consequences:* full use of native interfaces, no CI matrix, concentrated depth.
 

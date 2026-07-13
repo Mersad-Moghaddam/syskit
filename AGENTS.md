@@ -4,7 +4,7 @@ Guidance for AI coding agents and automated contributors working in this reposit
 
 ## Project Context
 
-SysKit is a Linux-first command-line toolkit for system inspection, monitoring, and diagnostics, planned in Go 1.22+. The project follows Specification-Driven Development: design, documentation, and architecture come before implementation.
+SysKit is a Linux-first command-line toolkit for system inspection, monitoring, and diagnostics, built with Go 1.26.3+. The project follows Specification-Driven Development: design, documentation, and architecture come before implementation.
 
 The repository is currently in the design and specification phase. Treat the documents under `specs/`, `docs/`, `standards/`, `decisions/`, and `learning/` as the source of truth.
 

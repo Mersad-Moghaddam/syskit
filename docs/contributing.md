@@ -2,7 +2,12 @@
 
 > How to propose changes, review designs, and prepare implementation work.
 
-SysKit has entered its implementation phase (v0.1 Foundation). Contributions are welcome across code and planning: implementing features against accepted specs, clarifying requirements, strengthening architecture, adding Linux references, tightening acceptance criteria, or improving project process. Production Go code must build on the approved layout and satisfy the Definition of Done.
+SysKit is in its implementation phase, with v0.1 released and later milestones
+under active development. Contributions are welcome across code and planning:
+implementing features against accepted specs, clarifying requirements,
+strengthening architecture, adding Linux references, tightening acceptance
+criteria, or improving project process. Production Go code must build on the
+approved layout and satisfy the Definition of Done.
 
 ## Before You Start
 

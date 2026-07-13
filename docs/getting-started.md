@@ -1,9 +1,10 @@
 # Getting Started
 
-> How to build and explore SysKit during its v0.1 implementation phase.
+> How to build and explore the current SysKit development preview.
 
-SysKit is a Linux-first Go project. v0.1.0 is available to build from source
-with system, CPU, memory, disk, and filesystem inspection commands.
+SysKit is a Linux-first Go project. The current development preview is available
+to build from source with system, process, network, port, live-monitoring, and
+cgroup-derived container inspection commands.
 
 ## Current State
 
@@ -13,7 +14,7 @@ with system, CPU, memory, disk, and filesystem inspection commands.
 | Architecture | Defined |
 | Feature specifications | Defined for planned core features |
 | Engineering standards | Defined |
-| Production code | v0.1.0 released |
+| Production code | v0.1.0 released; later milestones in development |
 | Installable releases | Source build available; packages planned |
 
 ## Development Environment
@@ -35,8 +36,8 @@ go test -race ./...
 go run ./cmd/syskit --help
 ```
 
-The CLI currently exposes the v0.1 commands plus in-progress v0.2 process,
-network, and ports commands. For example:
+The CLI exposes the v0.1 commands plus process, network, port, live-monitoring,
+and cgroup-derived container commands. For example:
 
 ```sh
 go run ./cmd/syskit system
