@@ -24,6 +24,9 @@ their milestone is tagged, then recorded in a dated release entry below.
 
 - **Diagnostics:** `syskit diagnostics` reports explainable, read-only memory
   pressure, swap-use, and filesystem-capacity findings.
+- **Cross-domain diagnostics:** findings now include CPU load, process memory
+  concentration, network errors/drops, wildcard listeners, and an explicit
+  unavailable disk-saturation check.
 
 ## [0.5.0] - 2026-07-13
 

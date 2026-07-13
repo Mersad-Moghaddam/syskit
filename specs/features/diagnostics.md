@@ -64,6 +64,20 @@ Structured output should include `id`, `severity`, `category`, `summary`, `evide
 - JSON output is suitable for automation.
 - The command performs no writes and executes no repair action.
 
+## Initial Thresholds
+
+- CPU load: warning above one-minute load per logical CPU; critical above twice
+  logical CPU count.
+- Memory PSI: warning when full-stall `avg10` is at least 10%.
+- Swap: warning at 80% used.
+- Filesystem capacity: warning at 85% used and critical at 95%.
+- Process concentration: warning when one process holds at least 50% of visible
+  physical memory.
+- Network: warning when cumulative interface errors or drops are non-zero.
+- Ports: informational when listening sockets bind wildcard addresses.
+- Disk saturation: informational unavailable finding until device busy-time
+  utilization is collected; throughput alone is not treated as saturation.
+
 ## Learning Objectives
 
 - Learn the difference between metric collection and diagnosis.

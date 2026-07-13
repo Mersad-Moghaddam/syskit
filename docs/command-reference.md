@@ -61,7 +61,7 @@ sets `partial: true` when permissions prevent a complete process mapping.
 | `plugins list` | Discover manifests from documented or explicit plugin directories. |
 | `plugins inspect <name>` | View plugin API compatibility and requested permissions. |
 | `plugins run <name>` | Explicitly execute one compatible plugin through the bounded JSON protocol. |
-| `diagnostics` | Explainable memory-pressure, swap, and filesystem-capacity findings; `--category` accepts `memory` or `filesystem`, and `--severity` accepts `info`, `warning`, or `critical`. |
+| `diagnostics` | Explainable CPU, memory, disk, filesystem, process, network, and port findings; `--category` selects one domain and `--severity` accepts `info`, `warning`, or `critical`. |
 
 Plugin discovery never executes plugin code. Use `--plugin-dir` to inspect a
 specific directory; world-writable directories are rejected.
