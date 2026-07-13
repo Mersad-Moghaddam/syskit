@@ -18,6 +18,8 @@ recorded here with its date and categorized changes.
 
 ### Added
 
+- **Interactive top:** `syskit top` refreshes a filterable process view with
+  keyboard sort controls for CPU, memory, name, and PID.
 - **Watch mode:** `syskit watch <command> --interval` continuously refreshes
   the same in-process table command until interrupted.
 - **Dashboard foundation:** `syskit dashboard` starts a Bubble Tea/Lip Gloss

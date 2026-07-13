@@ -57,6 +57,7 @@ go run ./cmd/syskit ports --address 127.0.0.1 --state listen
 go run ./cmd/syskit dashboard --interval 2s
 go run ./cmd/syskit dashboard --panel processes
 go run ./cmd/syskit watch network --interval 2s
+go run ./cmd/syskit top --sort memory --limit 20
 ```
 
 `dashboard` requires an interactive terminal; use the one-shot commands with
@@ -65,6 +66,8 @@ It switches to a compact resize notice below 48×12 cells instead of overlapping
 dashboard panels.
 `watch` also requires an interactive terminal and refreshes a one-shot command
 as a table until Ctrl-C.
+`top` is an interactive process monitor; use `c`, `m`, `n`, or `p` to change
+the CPU, memory, name, or PID sort respectively.
 
 When permissions hide a process, structured process output sets `partial: true`
 while retaining every process it could read.

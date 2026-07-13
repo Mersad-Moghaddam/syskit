@@ -101,7 +101,7 @@ Interactive terminal UI, live refresh, and monitor commands.
 | RT-01 | Real-time refresh pipeline (concurrent, race-safe, backpressure). | 8 | 7 | Backlog | `../specs/features/dashboard.md`, `../specs/testing-strategy.md` |
 | WCH-01 | `syskit watch <command> --interval` — continuous refresh. | 5 | 7 | In Progress | `../specs/features/dashboard.md`, `../specs/cli-conventions.md` |
 | DSH-01 | `syskit dashboard` — layout/widget system, real-time metrics. | 13 | 8 | Backlog | `../specs/features/dashboard.md` |
-| TOP-01 | `syskit top` — interactive process monitor, sort/filter/keys. | 13 | 9 | Backlog | `../specs/features/process.md`, `../specs/features/dashboard.md` |
+| TOP-01 | `syskit top` — interactive process monitor, sort/filter/keys. | 13 | 9 | In Progress | `../specs/features/process.md`, `../specs/features/dashboard.md` |
 | REL-v03 | Release v0.3.0 — hardening, CHANGELOG, tag. | 3 | 9 | Backlog | `../docs/release-process.md` |
 
 Subtotal: **50 pts**.

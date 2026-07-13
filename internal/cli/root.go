@@ -16,6 +16,7 @@ import (
 	"github.com/Mersad-Moghaddam/syskit/internal/collector/port"
 	processcollector "github.com/Mersad-Moghaddam/syskit/internal/collector/process"
 	systemcollector "github.com/Mersad-Moghaddam/syskit/internal/collector/system"
+	"github.com/Mersad-Moghaddam/syskit/internal/model"
 	"github.com/Mersad-Moghaddam/syskit/internal/platform"
 	"github.com/Mersad-Moghaddam/syskit/internal/service"
 )
@@ -159,6 +160,9 @@ filesystem, process, network, and port information as a table, JSON, or YAML.`,
 		child.SetOut(out)
 		child.SetErr(out)
 		return child.Execute()
+	}))
+	cmd.AddCommand(newTopCmd(func(options service.ProcessOptions) (*model.ProcessList, error) {
+		return service.NewProcess(processcollector.NewCollector(platform.RealFS())).List(options)
 	}))
 
 	return cmd
