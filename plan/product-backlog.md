@@ -116,8 +116,8 @@ Container runtime inspection and cgroup-based resource views.
 |---|---|---|---|---|---|
 | CG-01 | cgroup v1/v2 parsing in platform layer. | 13 | 10 | In Progress | `../specs/features/containers.md` |
 | CNT-01 | Container-to-process mapping + container-aware process views. | 8 | 10 | In Progress | `../specs/features/containers.md` |
-| DOC-01 | `syskit docker` — container listing, resource usage, status. | 8 | 11 | Backlog | `../specs/features/containers.md` |
-| DOC-02 | `syskit docker inspect <id>` — detailed inspection. | 8 | 11 | Backlog | `../specs/features/containers.md` |
+| DOC-01 | `syskit containers` — container listing, resource usage, status. | 8 | 11 | In Progress | `../specs/features/containers.md` |
+| DOC-02 | `syskit containers inspect <id>` — detailed inspection. | 8 | 11 | Backlog | `../specs/features/containers.md` |
 | REL-v04 | Release v0.4.0 — hardening, CHANGELOG, tag. | 3 | 11 | Backlog | `../docs/release-process.md` |
 | DOC-v04 | v0.4 docs + container concepts in learning notes. | 2 | 11 | Backlog | `../learning/roadmap.md` |
 

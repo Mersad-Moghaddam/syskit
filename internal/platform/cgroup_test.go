@@ -58,3 +58,11 @@ func TestContainerIDFromCgroupPath(t *testing.T) {
 	assert.Equal(t, id, ContainerIDFromCgroupPath("/kubepods/cri-containerd-"+id+".scope"))
 	assert.Empty(t, ContainerIDFromCgroupPath("/user.slice/not-a-container"))
 }
+
+func TestContainerRuntimeFromCgroupPath(t *testing.T) {
+	id := "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+	assert.Equal(t, "docker", ContainerRuntimeFromCgroupPath("/system.slice/docker-"+id+".scope"))
+	assert.Equal(t, "containerd", ContainerRuntimeFromCgroupPath("/kubepods/cri-containerd-"+id+".scope"))
+	assert.Equal(t, "cri-o", ContainerRuntimeFromCgroupPath("/crio-"+id+".scope"))
+	assert.Empty(t, ContainerRuntimeFromCgroupPath("/user.slice/not-a-container"))
+}

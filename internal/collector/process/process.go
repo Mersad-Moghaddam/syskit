@@ -110,6 +110,7 @@ func (c *Collector) collectPID(pid int) (*model.Process, error) {
 		for _, membership := range platform.ParseCgroupMembership(cgroup) {
 			if id := platform.ContainerIDFromCgroupPath(membership.Path); id != "" {
 				p.ContainerID = id
+				p.ContainerRuntime = platform.ContainerRuntimeFromCgroupPath(membership.Path)
 				break
 			}
 		}

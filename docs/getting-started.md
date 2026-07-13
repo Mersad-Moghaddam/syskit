@@ -59,6 +59,7 @@ go run ./cmd/syskit dashboard --panel processes
 go run ./cmd/syskit watch network --interval 2s
 go run ./cmd/syskit top --sort memory --limit 20
 go run ./cmd/syskit process --containers
+go run ./cmd/syskit containers
 ```
 
 `dashboard` requires an interactive terminal; use the one-shot commands with
@@ -69,6 +70,8 @@ dashboard panels.
 as a table until Ctrl-C.
 `top` is an interactive process monitor; use `c`, `m`, `n`, or `p` to change
 the CPU, memory, name, or PID sort respectively.
+`containers` is a best-effort, cgroup-derived listing: it reports recognized
+runtime-style IDs and process counts without requiring runtime socket access.
 
 When permissions hide a process, structured process output sets `partial: true`
 while retaining every process it could read.

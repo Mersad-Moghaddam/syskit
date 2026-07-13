@@ -23,6 +23,8 @@ recorded here with its date and categorized changes.
   memory, CPU, and I/O counters for container-aware work.
 - **Container-aware processes:** `syskit process --containers` limits results
   to processes with a recognizable runtime-style container ID in cgroup paths.
+- **Container listing:** `syskit containers` groups cgroup-associated processes
+  by recognizable container ID and reports a conservative runtime hint.
 - **Interactive top:** `syskit top` refreshes a filterable process view with
   keyboard sort controls for CPU, memory, name, and PID.
 - **Watch mode:** `syskit watch <command> --interval` continuously refreshes

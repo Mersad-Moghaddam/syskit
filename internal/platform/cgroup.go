@@ -126,6 +126,22 @@ func ContainerIDFromCgroupPath(path string) string {
 	}
 	return ""
 }
+
+// ContainerRuntimeFromCgroupPath returns a conservative runtime hint inferred
+// from common cgroup naming conventions. An empty result means unknown.
+func ContainerRuntimeFromCgroupPath(path string) string {
+	for _, part := range strings.Split(path, "/") {
+		switch {
+		case strings.HasPrefix(part, "docker-") || part == "docker":
+			return "docker"
+		case strings.HasPrefix(part, "cri-containerd-") || strings.Contains(part, "containerd"):
+			return "containerd"
+		case strings.HasPrefix(part, "crio-") || strings.Contains(part, "crio"):
+			return "cri-o"
+		}
+	}
+	return ""
+}
 func isHex(value string) bool {
 	for _, r := range value {
 		if !(r >= '0' && r <= '9' || r >= 'a' && r <= 'f' || r >= 'A' && r <= 'F') {
