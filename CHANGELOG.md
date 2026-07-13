@@ -7,10 +7,8 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-SysKit is in its early design and specification phase. No versioned releases have been
-published yet. Until the first release, changes are tracked under the `Unreleased`
-section below. Once implementation begins and versions are tagged, each release will be
-recorded here with its date and categorized changes.
+SysKit is in active development. Changes are tracked under `Unreleased` until
+their milestone is tagged, then recorded in a dated release entry below.
 
 ---
 
@@ -33,8 +31,11 @@ recorded here with its date and categorized changes.
   live view backed by the existing system, memory, disk, process, and network
   services, with a bounded refresh interval, overview/process panels, clean
   keyboard exit, and a clear non-TTY refusal.
-- **Network addresses:** `syskit network interfaces` now includes IPv4 and
-  IPv6 CIDR addresses collected through a native `RTM_GETADDR` Netlink dump.
+
+## [0.2.0] - 2026-07-13
+
+### Added
+
 - **Process identities:** `syskit process` resolves UID values to names from
   `/etc/passwd`, supports `--user <name>`, and includes raw start-time ticks.
 - **Process resource usage:** `syskit process` reports memory percentage and
@@ -47,6 +48,8 @@ recorded here with its date and categorized changes.
 - **Network views:** `syskit network interfaces`, `syskit network routes`, and
   `syskit network dns` expose the collected interface, route, and resolver
   data as focused table, JSON, or YAML views.
+- **Network addresses:** `syskit network interfaces` includes IPv4 and IPv6
+  CIDR addresses collected through a native `RTM_GETADDR` Netlink dump.
 - **Port ownership:** `syskit ports` now reads TCP, UDP, IPv6, and Unix socket
   tables and best-effort associates socket inodes with owning process IDs and
   commands. Use `--pid`, `--address`, or `--state` to limit results; structured

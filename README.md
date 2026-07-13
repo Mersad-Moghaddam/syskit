@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Go](https://img.shields.io/badge/Go-1.26.3+-00ADD8?logo=go&logoColor=white)](https://go.dev)
 [![Linux](https://img.shields.io/badge/Platform-Linux-FCC624?logo=linux&logoColor=black)](https://kernel.org)
-[![Status](https://img.shields.io/badge/Status-v0.1.0%20released-brightgreen)]()
+[![Status](https://img.shields.io/badge/Status-v0.2.0%20released-brightgreen)]()
 
 ---
 
@@ -80,12 +80,12 @@ This approach ensures:
 
 ## Project Status
 
-**v0.1.0 released**
+**v0.2.0 released**
 
-SysKit v0.1.0 provides native Linux inspection commands for `system`, `cpu`,
-`memory`, `disk`, and `filesystem`, in table and JSON formats. The layered
+SysKit v0.2.0 adds process listing and trees, network interfaces/routes/DNS,
+and port inspection with table, JSON, and YAML output. The layered
 architecture, fixture-backed collectors, golden output contracts, and Linux
-integration coverage are in place for future milestones.
+integration coverage are in place for later milestones.
 
 See the [Roadmap](specs/roadmap.md) for planned milestones.
 
@@ -146,7 +146,7 @@ Beyond the tool itself, SysKit is designed to be a living reference for building
 
 ## Contributing
 
-SysKit has entered its implementation phase (v0.1 Foundation). Contributions are
+SysKit is in its implementation phase. Contributions are
 welcome across code, specs, architecture, Linux explanations, documentation, and
 repository process. Production code must follow the architecture boundaries and
 meet the [Definition of Done](standards/definition-of-done.md). See

@@ -24,9 +24,9 @@ Milestones are sequential — each builds on the foundation established by the p
 
 **Features:**
 - [x] `syskit system` — Host information, kernel version, OS release, uptime, load averages
-- [ ] `syskit cpu` — Core count, architecture, model, frequency, cache info
-- [ ] `syskit memory` — Physical/swap usage, buffers, caches, available memory
-- [ ] `syskit disk` — Partition layout, filesystem usage, mount points
+- [x] `syskit cpu` — Core count, architecture, model, frequency, cache info
+- [x] `syskit memory` — Physical/swap usage, buffers, caches, available memory
+- [x] `syskit disk` — Partition layout, filesystem usage, mount points
 
 **Technical:**
 - [x] CLI framework with Cobra
@@ -47,16 +47,16 @@ Milestones are sequential — each builds on the foundation established by the p
 - Introduce filtering and sorting across commands
 
 **Features:**
-- [ ] `syskit process` — Process listing, filtering by name/PID/user, resource usage
-- [ ] `syskit process tree` — Process tree visualization
-- [ ] `syskit network` — Interface statistics, active connections, routing table
-- [ ] `syskit ports` — Listening ports, socket states, associated processes
+- [x] `syskit process` — Process listing, filtering by name/PID/user, resource usage
+- [x] `syskit process tree` — Process tree visualization
+- [x] `syskit network` — Interface statistics, addresses, routes, and DNS configuration
+- [x] `syskit ports` — Listening ports, socket states, associated processes
 
 **Technical:**
-- [ ] Netlink integration for network data
-- [ ] `/proc/[pid]` parsing for process data
-- [ ] Filtering and sorting framework
-- [ ] YAML output formatter
+- [x] Netlink integration for network data
+- [x] `/proc/[pid]` parsing for process data
+- [x] Filtering and sorting framework
+- [x] YAML output formatter
 
 ---
 

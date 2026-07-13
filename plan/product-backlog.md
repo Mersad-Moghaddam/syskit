@@ -78,14 +78,14 @@ Process inspection, network visibility, and the filtering/sorting framework shar
 | ID | Story | Pts | Sprint | Status | Spec / Ref |
 |---|---|---|---|---|---|
 | FLT-01 | Filtering & sorting framework (reusable across list commands). | 8 | 4 | Done | `../specs/cli-conventions.md` |
-| PRC-01 | `syskit process` — listing, resource usage, filter by name/PID/user. | 13 | 4 | Backlog | `../specs/features/process.md` |
-| PRC-02 | `syskit process tree` — tree view, handle disappearing PIDs. | 8 | 5 | Backlog | `../specs/features/process.md` |
-| NET-01 | Netlink platform integration (sockets, message parse). | 13 | 5 | Backlog | `../specs/features/network.md`, `../decisions/003-native-apis-over-shell.md` |
-| NET-02 | `syskit network` — interface stats, connections, routing. | 8 | 5 | Backlog | `../specs/features/network.md` |
-| PRT-01 | `syskit ports` — listening ports, socket states, owning process. | 8 | 6 | Backlog | `../specs/features/ports.md` |
+| PRC-01 | `syskit process` — listing, resource usage, filter by name/PID/user. | 13 | 4 | Done | `../specs/features/process.md` |
+| PRC-02 | `syskit process tree` — tree view, handle disappearing PIDs. | 8 | 5 | Done | `../specs/features/process.md` |
+| NET-01 | Netlink platform integration (sockets, message parse). | 13 | 5 | Done | `../specs/features/network.md`, `../decisions/003-native-apis-over-shell.md` |
+| NET-02 | `syskit network` — interface stats, connections, routing. | 8 | 5 | Done | `../specs/features/network.md` |
+| PRT-01 | `syskit ports` — listening ports, socket states, owning process. | 8 | 6 | Done | `../specs/features/ports.md` |
 | OUT-03 | YAML output formatter. | 5 | 6 | Done | `../specs/features/output-formats.md` |
-| REL-v02 | Release v0.2.0 — hardening, CHANGELOG, tag. | 3 | 6 | Backlog | `../docs/release-process.md` |
-| DOC-v02 | v0.2 docs + glossary updates. | 2 | 6 | Backlog | `../docs/glossary.md` |
+| REL-v02 | Release v0.2.0 — hardening, CHANGELOG, tag. | 3 | 6 | Done | `../docs/release-process.md` |
+| DOC-v02 | v0.2 docs + glossary updates. | 2 | 6 | Done | `../docs/glossary.md` |
 
 Subtotal: **68 pts**.
 
