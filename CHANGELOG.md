@@ -33,6 +33,8 @@ their milestone is tagged, then recorded in a dated release entry below.
   compatible, path-confined plugin with bounded JSON stdin/stdout and timeout.
 - **Plugin SDK example:** a buildable protocol-v1 collector and authoring guide
   document manifests, schemas, permissions, lifecycle, and trust boundaries.
+- **Manifest validation:** discovery rejects manifests missing executable,
+  collector, permission, schema, author, or license declarations.
 
 ## [0.4.0] - 2026-07-13
 

@@ -8,8 +8,9 @@ inspection are read-only; execution occurs only through `plugins run`.
 
 Declare `name`, `version`, `api_version`, `executable`, provided `collectors`,
 required `permissions`, human-readable `output_schemas`, `author`, and
-`license`. Executable paths are relative to the plugin directory and may not
-escape it.
+`license`. All fields are required; use an empty permissions array when no
+special host access is needed. Executable paths are relative to the plugin
+directory and may not escape it.
 
 ## Protocol
 

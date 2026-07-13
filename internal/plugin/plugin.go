@@ -82,6 +82,9 @@ func Discover(dirs []string) ([]Info, error) {
 			if manifest.Name == "" || manifest.Version == "" || manifest.APIVersion == "" {
 				return nil, fmt.Errorf("plugin manifest %s requires name, version, and api_version", path)
 			}
+			if manifest.Executable == "" || len(manifest.Collectors) == 0 || manifest.Permissions == nil || len(manifest.Schemas) == 0 || manifest.Author == "" || manifest.License == "" {
+				return nil, fmt.Errorf("plugin manifest %s requires executable, collectors, permissions, output_schemas, author, and license", path)
+			}
 			status := "compatible"
 			if manifest.APIVersion != APIVersion {
 				status = "incompatible"
