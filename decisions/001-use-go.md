@@ -38,13 +38,11 @@ The forces that bear on this decision:
 
 ## Decision
 
-We will implement SysKit in **Go, targeting version 1.22 or later**.
+We will implement SysKit in **Go, targeting version 1.26.3 or later**.
 
-Go 1.22 is the baseline because it stabilises the revised `for` loop variable
-semantics (eliminating a long-standing class of closure bugs) and includes
-routing enhancements and math/rand improvements we are comfortable depending on.
-We will track the toolchain via the `go` directive in `go.mod` and will not use
-language features newer than the declared minimum.
+Go 1.26.3 is the baseline used by the project and CI. We track the toolchain
+via the `go` directive in `go.mod` and do not use language features newer than
+the declared minimum.
 
 ---
 
@@ -57,8 +55,8 @@ language features newer than the declared minimum.
 - Sub-millisecond process startup keeps interactive and scripted use snappy.
 - Goroutines and channels give us cheap, readable concurrency for parallel
   collectors and the real-time refresh pipeline.
-- The standard library covers buffered file reading, raw sockets (needed for
-  Netlink via `golang.org/x/sys/unix`), JSON/text encoding, and testing,
+- The standard library covers buffered file reading, raw sockets, JSON/text
+  encoding, and testing,
   keeping the dependency count low.
 - Idiomatic Go is simple and widely known, lowering the contribution barrier and
   supporting the constitution's *Clean Go* principle.
@@ -70,8 +68,8 @@ language features newer than the declared minimum.
 - The garbage collector introduces non-deterministic pauses. For a read-mostly
   inspection tool the impact is negligible, but it rules Go out of hard
   real-time use cases we are not targeting anyway.
-- Go offers less low-level control than C or Rust; a few kernel interfaces are
-  accessed through `golang.org/x/sys/unix` rather than pure stdlib.
+- Go offers less low-level control than C or Rust; kernel interfaces still
+  require careful platform-layer adapters.
 - The runtime and GC add a fixed floor to binary size and memory footprint
   compared to C.
 - Generics and error handling are more verbose than some alternatives, though
@@ -113,4 +111,4 @@ language features newer than the declared minimum.
 - [Product Overview](../specs/product.md) — reference-project and performance goals
 - [Roadmap](../specs/roadmap.md) — v0.3 real-time monitoring, v1.0 packaging
 - [Effective Go](https://go.dev/doc/effective_go)
-- [Go 1.22 release notes](https://go.dev/doc/go1.22)
+- [Go release notes](https://go.dev/doc/devel/release)

@@ -20,7 +20,7 @@ with system, CPU, memory, disk, and filesystem inspection commands.
 
 Build and test on Linux with:
 
-- Go 1.22 or newer.
+- Go 1.26.3 or newer.
 - A Linux kernel with procfs and sysfs mounted in the standard locations.
 - Standard development tools such as `git`, `make` or shell, and a POSIX-compatible terminal.
 - Normal user permissions for inspection commands. Commands that read restricted process details may report partial data unless run with elevated permissions.

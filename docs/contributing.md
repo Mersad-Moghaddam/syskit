@@ -23,7 +23,7 @@ For documentation and planning work, install:
 - A Markdown-capable editor.
 - A terminal on Linux or any environment that can edit Markdown files.
 
-For implementation work, use Linux and Go 1.22 or newer. Build with
+For implementation work, use Linux and Go 1.26.3 or newer. Build with
 `go build ./...`, and run the test suite with `go test -race ./...`. The module
 path is `github.com/Mersad-Moghaddam/syskit`.
 

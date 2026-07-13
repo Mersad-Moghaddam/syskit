@@ -120,7 +120,7 @@ syskit/
 └── .gitignore
 ```
 
-The Go module (`github.com/Mersad-Moghaddam/syskit`) targets Go 1.22+ and builds
+The Go module (`github.com/Mersad-Moghaddam/syskit`) targets Go 1.26.3+ and builds
 to a single static binary. Dependencies flow strictly downward
 (CLI → Command → Service → Collector → Platform → kernel); lower layers never
 import higher ones.
