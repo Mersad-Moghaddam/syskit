@@ -149,7 +149,7 @@ Everything required to call SysKit stable and shippable to distros.
 
 | ID | Story | Pts | Sprint | Status | Spec / Ref |
 |---|---|---|---|---|---|
-| DIA-01 | `syskit diagnostics` — health checks, bottleneck detection. | 13 | 14 | In Progress | `../specs/features/diagnostics.md` |
+| DIA-01 | `syskit diagnostics` — health checks, bottleneck detection. | 13 | 14 | Done | `../specs/features/diagnostics.md` |
 | PERF-01 | Benchmark sweep + hot-path optimization to baseline targets. | 5 | 14 | Done | `../specs/testing-strategy.md` |
 | API-01 | CLI/output contract freeze + SemVer stability guarantees. | 5 | 14 | Done | `../standards/versioning.md` |
 | PKG-01 | Packaging: deb, rpm, AUR, static binaries, checksums. | 8 | 14 | Done | `../docs/release-process.md` |

@@ -63,6 +63,10 @@ sets `partial: true` when permissions prevent a complete process mapping.
 | `plugins run <name>` | Explicitly execute one compatible plugin through the bounded JSON protocol. |
 | `diagnostics` | Explainable CPU, memory, disk, filesystem, process, network, and port findings; `--category` selects one domain and `--severity` accepts `info`, `warning`, or `critical`. |
 
+Diagnostics never silently converts missing optional signals to healthy values.
+It emits informational unavailable findings with evidence and source paths, and
+a category filter avoids collecting unrelated domains.
+
 Plugin discovery never executes plugin code. Use `--plugin-dir` to inspect a
 specific directory; world-writable directories are rejected.
 Executables must stay inside their plugin directory, be regular executable

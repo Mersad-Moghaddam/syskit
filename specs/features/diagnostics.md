@@ -78,6 +78,13 @@ Structured output should include `id`, `severity`, `category`, `summary`, `evide
 - Disk saturation: informational unavailable finding until device busy-time
   utilization is collected; throughput alone is not treated as saturation.
 
+When the logical CPU count, memory PSI, filesystem usage percentage, total
+physical memory, or interface counters are unavailable, the corresponding check
+emits an informational `*-unavailable` finding with evidence and source paths.
+Disabled swap is a known host state rather than missing data and does not produce
+an unavailable finding. A category filter collects only the kernel domains needed
+for that category, so an unrelated inaccessible interface cannot block the result.
+
 ## Learning Objectives
 
 - Learn the difference between metric collection and diagnosis.

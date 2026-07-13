@@ -40,6 +40,10 @@ their milestone is tagged, then recorded in a dated release entry below.
 - **Cross-domain diagnostics:** findings now include CPU load, process memory
   concentration, network errors/drops, wildcard listeners, and an explicit
   unavailable disk-saturation check.
+- **Explicit unavailable diagnostics:** missing CPU topology, memory PSI,
+  filesystem capacity, process-memory totals, or network counters produce
+  evidence-bearing informational findings; category filters collect only their
+  required domains.
 
 ### Changed
 
