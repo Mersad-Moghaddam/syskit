@@ -152,7 +152,7 @@ Everything required to call SysKit stable and shippable to distros.
 | DIA-01 | `syskit diagnostics` — health checks, bottleneck detection. | 13 | 14 | In Progress | `../specs/features/diagnostics.md` |
 | PERF-01 | Benchmark sweep + hot-path optimization to baseline targets. | 5 | 14 | Backlog | `../specs/testing-strategy.md` |
 | API-01 | CLI/output contract freeze + SemVer stability guarantees. | 5 | 14 | Backlog | `../standards/versioning.md` |
-| PKG-01 | Packaging: deb, rpm, AUR, static binaries, checksums. | 8 | 14 | Backlog | `../docs/release-process.md` |
+| PKG-01 | Packaging: deb, rpm, AUR, static binaries, checksums. | 8 | 14 | In Progress | `../docs/release-process.md` |
 | REL-01 | Release automation + changelog generation. | 5 | 14 | In Progress | `../docs/release-process.md`, `../standards/commit-conventions.md` |
 | DOCS-01 | Documentation completion pass (all commands, install, man pages). | 3 | 14 | Backlog | `../docs/documentation-standards.md` |
 | REL-v10 | Release v1.0.0 — final gate, tag, announcement. | — | 14 | Backlog | `../docs/release-process.md` |

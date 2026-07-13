@@ -39,6 +39,11 @@ Run `scripts/build-release.sh vX.Y.Z` on a clean tagged checkout to create
 Linux amd64 and arm64 archives with embedded versions and a `SHA256SUMS` file.
 The tag-triggered release workflow publishes the same artifacts on GitHub.
 
+For Debian-family systems, run `scripts/build-deb.sh vX.Y.Z [amd64|arm64]`.
+The resulting package installs the static binary at `/usr/bin/syskit` and the
+MIT license under `/usr/share/doc/syskit`. Package creation does not install or
+modify the local system.
+
 ## Changelog Policy
 
 The changelog should group user-visible changes by:

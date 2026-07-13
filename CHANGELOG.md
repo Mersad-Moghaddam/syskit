@@ -21,6 +21,8 @@ their milestone is tagged, then recorded in a dated release entry below.
 
 - **Release artifacts:** tagged releases build Linux amd64/arm64 archives with
   embedded versions and SHA-256 checksums.
+- **Debian packaging:** a reproducible helper builds amd64/arm64 `.deb` packages
+  with the static binary, package metadata, and license.
 
 - **Diagnostics:** `syskit diagnostics` reports explainable, read-only memory
   pressure, swap-use, and filesystem-capacity findings.
