@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"io"
 	"log/slog"
 	"os"
 
@@ -149,6 +150,15 @@ filesystem, process, network, and port information as a table, JSON, or YAML.`,
 			top = processes.Processes[0].Command
 		}
 		return dashboardSnapshot{Hostname: system.Hostname, Uptime: system.UptimeSeconds, MemoryUsed: used, MemoryTotal: memory.TotalBytes, DiskUsed: diskUsed, DiskTotal: diskTotal, Interfaces: len(network.Interfaces), TopProcess: top}, nil
+	}))
+	cmd.AddCommand(newWatchCmd(func(args []string, out io.Writer) error {
+		// A fresh root preserves the normal command/service construction path for
+		// every refresh without sharing mutable Cobra invocation state.
+		child := newRootCmd()
+		child.SetArgs(append(args, "--format", "table"))
+		child.SetOut(out)
+		child.SetErr(out)
+		return child.Execute()
 	}))
 
 	return cmd

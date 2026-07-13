@@ -56,12 +56,15 @@ go run ./cmd/syskit ports --listening --pid 1234
 go run ./cmd/syskit ports --address 127.0.0.1 --state listen
 go run ./cmd/syskit dashboard --interval 2s
 go run ./cmd/syskit dashboard --panel processes
+go run ./cmd/syskit watch network --interval 2s
 ```
 
 `dashboard` requires an interactive terminal; use the one-shot commands with
 `--format json` or `--format yaml` when redirecting output.
 It switches to a compact resize notice below 48×12 cells instead of overlapping
 dashboard panels.
+`watch` also requires an interactive terminal and refreshes a one-shot command
+as a table until Ctrl-C.
 
 When permissions hide a process, structured process output sets `partial: true`
 while retaining every process it could read.
