@@ -50,7 +50,9 @@ Be able to explain:
 
 ## Step 4: Pick A Feature
 
-Read the feature spec in `specs/features/` and the related learning note in `learning/`.
+Read the feature spec in `specs/features/`, then use the
+[Learning Center coverage map](../learning/README.md#product-coverage) to find
+the domain lesson and engineering labs.
 
 Before writing code, confirm:
 

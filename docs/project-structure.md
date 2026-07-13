@@ -15,7 +15,7 @@ syskit/
 ├── decisions/            # Architecture Decision Records
 ├── docs/                 # User-facing and maintainer-facing documentation
 ├── internal/             # CLI, services, collectors, models, platform, rendering
-├── learning/             # Linux internals study material
+├── learning/             # Practical Linux, Go, and SysKit engineering course
 ├── plan/                 # Delivery plan, backlog, epics, and sprint records
 ├── scripts/              # Fixture, release, and packaging automation
 ├── specs/                # Product, architecture, and feature specifications
@@ -63,7 +63,7 @@ syskit/
 |---|---|---|
 | `docs/` | User clarity | Is the guidance understandable and accurate? |
 | `specs/` | Product and architecture correctness | Is the intended behavior complete and testable? |
-| `learning/` | Educational value | Does it teach the Linux concepts behind the feature? |
+| `learning/` | Educational value | Does it teach the Linux/Go concepts, investigation method, and evidence needed behind the feature? |
 | `standards/` | Engineering consistency | Does it set enforceable expectations? |
 | `decisions/` | Long-term design memory | Does the ADR capture context and consequences? |
 | `contracts/` | Public compatibility | Does a CLI or schema change obey SemVer? |

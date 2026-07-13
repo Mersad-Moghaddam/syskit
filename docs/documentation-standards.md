@@ -11,7 +11,7 @@ SysKit documentation is part of the product. It should help users understand wha
 | User docs | `docs/` | Explain how users and contributors work with SysKit |
 | Product specs | `specs/` | Define expected behavior and constraints |
 | Feature specs | `specs/features/` | Define one feature in enough detail to implement |
-| Learning notes | `learning/` | Teach Linux concepts needed for implementation |
+| Learning course | `learning/` | Teach Linux, Go, investigation, and engineering through evidence-based lessons and labs |
 | Standards | `standards/` | Define engineering and collaboration rules |
 | ADRs | `decisions/` | Record important architectural decisions |
 
@@ -63,6 +63,18 @@ When adding or renaming documents:
 - Update nearby "Further reading" lists.
 - Check relative links from both the source and target document.
 - Avoid links to files that do not exist yet.
+
+## Learning Lesson Requirements
+
+Substantial lessons should include:
+
+- audience level, prerequisites, expected time, and measurable objectives;
+- a mental model or small diagram when relationships are non-trivial;
+- source semantics, units, scope, version gates, permissions, and races;
+- safe practical work that distinguishes native sources from verification tools;
+- failure cases, exercises or a lab, and an evidence-based checkpoint;
+- links to canonical feature, architecture, and kernel sources without copying
+  their contracts.
 
 ## Review Checklist
 

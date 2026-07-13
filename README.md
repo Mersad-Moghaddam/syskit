@@ -121,7 +121,7 @@ syskit/
 │   ├── roadmap.md      # Development milestones
 │   ├── architecture.md # System architecture
 │   └── features/       # Individual feature specifications
-├── learning/           # Study notes on Linux internals
+├── learning/           # Practical Linux, Go, and SysKit engineering course
 ├── standards/          # Engineering standards and review policies
 ├── decisions/          # Architecture Decision Records
 ├── scripts/            # Development and build scripts
@@ -151,6 +151,7 @@ import higher ones.
 - [Collector architecture](specs/collectors.md)
 - [Rendering architecture](specs/rendering.md)
 - [Plugin architecture](specs/plugin-architecture.md)
+- [Learning Center](learning/README.md)
 - [Learning roadmap](learning/roadmap.md)
 - [Implementation readiness](docs/implementation-readiness.md)
 

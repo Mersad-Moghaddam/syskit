@@ -138,7 +138,9 @@ Start with the documents in this order:
 2. [Product overview](../specs/product.md) for goals, users, and non-goals.
 3. [Architecture overview](architecture.md) for the system shape.
 4. [Feature specifications](../specs/features/) for expected behavior.
-5. [Learning roadmap](../learning/roadmap.md) for Linux concepts to study before implementation.
+5. [Learning Center](../learning/README.md) for the complete Linux, Go, and
+   SysKit engineering course; use its [roadmap](../learning/roadmap.md) to choose
+   a starting stage.
 6. [Implementation readiness record](implementation-readiness.md) for the design-to-code transition.
 
 ## Command Roadmap
