@@ -62,6 +62,7 @@ go run ./cmd/syskit top --sort memory --limit 20
 go run ./cmd/syskit process --containers
 go run ./cmd/syskit containers
 go run ./cmd/syskit containers inspect <container-id>
+go run ./cmd/syskit plugins list --plugin-dir ./plugins
 ```
 
 `dashboard` requires an interactive terminal; use the one-shot commands with
@@ -80,6 +81,8 @@ without requiring runtime socket access.
 `containers inspect` expands that mapping into its associated processes; it
 does not claim runtime names or status, and unavailable cgroup controllers are
 omitted rather than reported as zero.
+`plugins list` discovers manifests from `--plugin-dir`, `SYSKIT_PLUGIN_DIR`,
+or the XDG data path. Discovery never executes plugin code.
 
 When permissions hide a process, structured process output sets `partial: true`
 while retaining every process it could read.

@@ -16,6 +16,9 @@ their milestone is tagged, then recorded in a dated release entry below.
 
 ### Added
 
+- **Plugin discovery:** `syskit plugins list` reads declared plugin manifests
+  from explicit or documented directories without executing plugin code.
+
 - **Cgroup foundation:** the platform layer now detects cgroup v1/v2 layouts,
   normalizes `/proc/<pid>/cgroup` memberships, and reads optional normalized
   memory, CPU, and I/O counters for container-aware work.
