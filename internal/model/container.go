@@ -13,3 +13,10 @@ type ContainerInfo struct {
 type ContainerList struct {
 	Containers []ContainerInfo `json:"containers"`
 }
+
+// ContainerDetail expands one cgroup-derived container with the processes
+// currently associated with its recognized ID.
+type ContainerDetail struct {
+	ContainerInfo
+	Processes []Process `json:"processes"`
+}

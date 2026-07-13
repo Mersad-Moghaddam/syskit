@@ -61,6 +61,7 @@ go run ./cmd/syskit watch network --interval 2s
 go run ./cmd/syskit top --sort memory --limit 20
 go run ./cmd/syskit process --containers
 go run ./cmd/syskit containers
+go run ./cmd/syskit containers inspect <container-id>
 ```
 
 `dashboard` requires an interactive terminal; use the one-shot commands with
@@ -75,6 +76,8 @@ as a table until Ctrl-C.
 the CPU, memory, name, or PID sort respectively, and `j`/`k` to scroll rows.
 `containers` is a best-effort, cgroup-derived listing: it reports recognized
 runtime-style IDs and process counts without requiring runtime socket access.
+`containers inspect` expands that mapping into its associated processes; it
+does not yet claim runtime names, status, or cgroup resource totals.
 
 When permissions hide a process, structured process output sets `partial: true`
 while retaining every process it could read.

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"sort"
 
 	"github.com/Mersad-Moghaddam/syskit/internal/model"
@@ -36,4 +37,27 @@ func (s *Container) List() (*model.ContainerList, error) {
 	}
 	sort.Slice(result.Containers, func(i, j int) bool { return result.Containers[i].ID < result.Containers[j].ID })
 	return result, nil
+}
+
+func (s *Container) Inspect(id string) (*model.ContainerDetail, error) {
+	processes, err := s.collector.Collect()
+	if err != nil {
+		return nil, err
+	}
+	detail := &model.ContainerDetail{}
+	for _, process := range processes.Processes {
+		if process.ContainerID != id {
+			continue
+		}
+		if detail.ID == "" {
+			detail.ID, detail.Runtime = process.ContainerID, process.ContainerRuntime
+		}
+		detail.PIDs++
+		detail.Processes = append(detail.Processes, process)
+	}
+	if detail.ID == "" {
+		return nil, fmt.Errorf("container %q not found", id)
+	}
+	sort.Slice(detail.Processes, func(i, j int) bool { return detail.Processes[i].PID < detail.Processes[j].PID })
+	return detail, nil
 }

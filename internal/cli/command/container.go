@@ -10,6 +10,7 @@ import (
 
 type ContainerService interface {
 	List() (*model.ContainerList, error)
+	Inspect(string) (*model.ContainerDetail, error)
 }
 
 type ContainerOptions struct {
@@ -18,7 +19,7 @@ type ContainerOptions struct {
 }
 
 func NewContainerCmd(s ContainerService, o ContainerOptions) *cobra.Command {
-	return &cobra.Command{Use: "containers", Short: "Show cgroup-associated containers", Args: cobra.NoArgs, RunE: func(c *cobra.Command, args []string) error {
+	cmd := &cobra.Command{Use: "containers", Short: "Show cgroup-associated containers", Args: cobra.NoArgs, RunE: func(c *cobra.Command, args []string) error {
 		containers, err := s.List()
 		if err != nil {
 			return fmt.Errorf("collecting containers: %w", err)
@@ -32,6 +33,25 @@ func NewContainerCmd(s ContainerService, o ContainerOptions) *cobra.Command {
 		}
 		return r.Render(c.OutOrStdout(), containers)
 	}}
+	cmd.AddCommand(&cobra.Command{Use: "inspect <id>", Short: "Show processes associated with one container", Args: cobra.ExactArgs(1), RunE: func(c *cobra.Command, args []string) error {
+		detail, err := s.Inspect(args[0])
+		if err != nil {
+			return fmt.Errorf("inspecting container: %w", err)
+		}
+		r, err := render.New(o.Format(), render.WithNoHeader(o.NoHeader()))
+		if err != nil {
+			return err
+		}
+		if o.Format() == "table" {
+			table := render.Table{Headers: []string{"CONTAINER", "RUNTIME", "PID", "COMMAND"}}
+			for _, process := range detail.Processes {
+				table.Rows = append(table.Rows, []string{detail.ID, detail.Runtime, fmt.Sprint(process.PID), process.Command})
+			}
+			return r.Render(c.OutOrStdout(), table)
+		}
+		return r.Render(c.OutOrStdout(), detail)
+	}})
+	return cmd
 }
 
 func containerTable(containers *model.ContainerList) render.Table {

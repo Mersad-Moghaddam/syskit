@@ -23,6 +23,8 @@ their milestone is tagged, then recorded in a dated release entry below.
   to processes with a recognizable runtime-style container ID in cgroup paths.
 - **Container listing:** `syskit containers` groups cgroup-associated processes
   by recognizable container ID and reports a conservative runtime hint.
+- **Container inspection:** `syskit containers inspect <id>` shows the
+  cgroup-associated processes currently mapped to a recognized container ID.
 - **Interactive top:** `syskit top` refreshes a filterable process view with
   keyboard sort controls for CPU, memory, name, and PID.
 - **Top navigation:** `syskit top` supports `j`/`k` scrolling and skips refresh
