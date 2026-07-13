@@ -45,7 +45,7 @@ go run ./cmd/syskit cpu
 go run ./cmd/syskit memory --format json
 go run ./cmd/syskit filesystem --show-pseudo
 go run ./cmd/syskit disk --io --interval 1s
-go run ./cmd/syskit process --limit 20
+go run ./cmd/syskit process --user root --limit 20
 go run ./cmd/syskit process tree
 go run ./cmd/syskit network
 go run ./cmd/syskit network interfaces --format json

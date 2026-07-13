@@ -55,7 +55,7 @@ func NewProcessCmd(s ProcessService, o ProcessOptions) *cobra.Command {
 	cmd.Flags().BoolVar(&reverse, "reverse", false, "reverse sort order")
 	cmd.Flags().IntVar(&limit, "limit", 0, "maximum results (0 is unlimited)")
 	cmd.Flags().IntVar(&pid, "pid", 0, "filter by PID")
-	cmd.Flags().StringVar(&user, "user", "", "filter by UID")
+	cmd.Flags().StringVar(&user, "user", "", "filter by user name or UID")
 	cmd.AddCommand(&cobra.Command{Use: "tree", Short: "Show processes as a parent-child tree", Args: cobra.NoArgs, RunE: func(c *cobra.Command, args []string) error {
 		tree, err := s.Tree()
 		if err != nil {
@@ -82,9 +82,13 @@ func writeTree(c *cobra.Command, node service.ProcessTreeNode, prefix string) {
 	}
 }
 func processTable(list *model.ProcessList) render.Table {
-	t := render.Table{Headers: []string{"PID", "PPID", "UID", "STATE", "CPU TICKS", "RSS BYTES", "THREADS", "COMMAND"}}
+	t := render.Table{Headers: []string{"PID", "PPID", "USER", "STATE", "CPU TICKS", "RSS BYTES", "START TICKS", "THREADS", "COMMAND"}}
 	for _, p := range list.Processes {
-		t.Rows = append(t.Rows, []string{strconv.Itoa(p.PID), strconv.Itoa(p.PPID), strconv.FormatUint(p.UID, 10), p.State, strconv.FormatUint(p.CPUTime, 10), strconv.FormatUint(p.ResidentBytes, 10), strconv.FormatUint(p.Threads, 10), p.Command})
+		user := p.User
+		if user == "" {
+			user = strconv.FormatUint(p.UID, 10)
+		}
+		t.Rows = append(t.Rows, []string{strconv.Itoa(p.PID), strconv.Itoa(p.PPID), user, p.State, strconv.FormatUint(p.CPUTime, 10), strconv.FormatUint(p.ResidentBytes, 10), strconv.FormatUint(p.StartTimeTicks, 10), strconv.FormatUint(p.Threads, 10), p.Command})
 	}
 	return t
 }

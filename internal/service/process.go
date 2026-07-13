@@ -25,7 +25,12 @@ func (s *Process) List(o ProcessOptions) (*model.ProcessList, error) {
 	if err != nil {
 		return nil, err
 	}
-	items, err := FilterItems(list.Processes, o.Filters, map[string]func(model.Process) string{"pid": func(p model.Process) string { return strconv.Itoa(p.PID) }, "user": func(p model.Process) string { return strconv.FormatUint(p.UID, 10) }, "name": func(p model.Process) string { return p.Command }, "state": func(p model.Process) string { return p.State }})
+	items, err := FilterItems(list.Processes, o.Filters, map[string]func(model.Process) string{"pid": func(p model.Process) string { return strconv.Itoa(p.PID) }, "user": func(p model.Process) string {
+		if p.User != "" {
+			return p.User
+		}
+		return strconv.FormatUint(p.UID, 10)
+	}, "name": func(p model.Process) string { return p.Command }, "state": func(p model.Process) string { return p.State }})
 	if err != nil {
 		return nil, err
 	}

@@ -22,6 +22,7 @@ func (c *Collector) Collect() (*model.ProcessList, error) {
 	if err != nil {
 		return nil, fmt.Errorf("listing /proc: %w", err)
 	}
+	users := c.users()
 	list := &model.ProcessList{}
 	for _, entry := range entries {
 		pid, err := strconv.Atoi(entry.Name())
@@ -35,6 +36,7 @@ func (c *Collector) Collect() (*model.ProcessList, error) {
 			}
 			return nil, err
 		}
+		p.User = users[p.UID]
 		list.Processes = append(list.Processes, *p)
 	}
 	return list, nil
@@ -83,7 +85,34 @@ func ParseStat(data []byte) (*model.Process, error) {
 	utime, _ := strconv.ParseUint(rest[11], 10, 64)
 	stime, _ := strconv.ParseUint(rest[12], 10, 64)
 	threads, _ := strconv.ParseUint(rest[17], 10, 64)
-	return &model.Process{PID: pid, PPID: ppid, State: rest[0], Command: raw[left+1 : right], CPUTime: utime + stime, Threads: threads}, nil
+	startTime, _ := strconv.ParseUint(rest[19], 10, 64)
+	return &model.Process{PID: pid, PPID: ppid, State: rest[0], Command: raw[left+1 : right], CPUTime: utime + stime, StartTimeTicks: startTime, Threads: threads}, nil
+}
+
+func (c *Collector) users() map[uint64]string {
+	data, err := c.fs.ReadFile("etc/passwd")
+	if err != nil {
+		return nil
+	}
+	return ParsePasswd(data)
+}
+
+// ParsePasswd returns the login name for each syntactically valid passwd row.
+// It intentionally accepts entries with an empty password field and ignores
+// malformed rows so an optional identity lookup cannot break process listing.
+func ParsePasswd(data []byte) map[uint64]string {
+	users := map[uint64]string{}
+	for _, line := range strings.Split(string(data), "\n") {
+		fields := strings.Split(line, ":")
+		if len(fields) < 3 || fields[0] == "" {
+			continue
+		}
+		uid, err := strconv.ParseUint(fields[2], 10, 64)
+		if err == nil {
+			users[uid] = fields[0]
+		}
+	}
+	return users
 }
 func applyStatus(p *model.Process, data []byte) {
 	for _, line := range strings.Split(string(data), "\n") {
