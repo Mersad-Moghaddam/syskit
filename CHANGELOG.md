@@ -16,6 +16,9 @@ their milestone is tagged, then recorded in a dated release entry below.
 
 ### Added
 
+- **Command reference:** consolidated documentation now covers every implemented
+  command, interactive keybinding, and plugin/container safety boundary.
+
 - **Release artifacts:** tagged releases build Linux amd64/arm64 archives with
   embedded versions and SHA-256 checksums.
 

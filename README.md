@@ -128,6 +128,7 @@ import higher ones.
 ## Documentation Map
 
 - [Getting started](docs/getting-started.md)
+- [Command reference](docs/command-reference.md)
 - [Architecture overview](docs/architecture.md)
 - [Developer onboarding](docs/developer-onboarding.md)
 - [Product overview](specs/product.md)

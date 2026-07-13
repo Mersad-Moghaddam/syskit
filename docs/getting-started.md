@@ -111,6 +111,9 @@ Start with the documents in this order:
 These commands show the intended product shape; `system`, `cpu`, `memory`,
 `disk`, `filesystem`, `process`, `network`, and `ports` are executable today.
 
+See the [command reference](command-reference.md) for every implemented command,
+interactive keybinding, and safety boundary.
+
 ```sh
 syskit system
 syskit cpu --format json
