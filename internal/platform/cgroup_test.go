@@ -26,3 +26,28 @@ func TestDetectCgroupV1(t *testing.T) {
 	assert.Equal(t, CgroupV1, info.Version)
 	assert.Equal(t, []string{"memory", "cpu"}, info.Memberships[0].Controllers)
 }
+
+func TestReadCgroupMetricsV2(t *testing.T) {
+	fsys := TestFS(fstest.MapFS{
+		"sys/fs/cgroup/workload/memory.current": &fstest.MapFile{Data: []byte("4096\n")},
+		"sys/fs/cgroup/workload/cpu.stat":       &fstest.MapFile{Data: []byte("usage_usec 12\n")},
+		"sys/fs/cgroup/workload/io.stat":        &fstest.MapFile{Data: []byte("8:0 rbytes=10 wbytes=20\n")},
+	})
+	metrics, err := ReadCgroupMetrics(fsys, &CgroupInfo{Version: CgroupV2, Memberships: []CgroupMembership{{Path: "/workload"}}})
+	require.NoError(t, err)
+	assert.Equal(t, uint64(4096), *metrics.MemoryCurrentBytes)
+	assert.Equal(t, uint64(12000), *metrics.CPUUsageNanoseconds)
+	assert.Equal(t, uint64(10), *metrics.ReadBytes)
+	assert.Equal(t, uint64(20), *metrics.WrittenBytes)
+}
+
+func TestReadCgroupMetricsV1(t *testing.T) {
+	fsys := TestFS(fstest.MapFS{
+		"sys/fs/cgroup/memory/docker/abc/memory.usage_in_bytes": &fstest.MapFile{Data: []byte("2048\n")},
+		"sys/fs/cgroup/cpuacct/docker/abc/cpuacct.usage":        &fstest.MapFile{Data: []byte("9000\n")},
+	})
+	metrics, err := ReadCgroupMetrics(fsys, &CgroupInfo{Version: CgroupV1, Memberships: []CgroupMembership{{Controllers: []string{"memory", "cpuacct"}, Path: "/docker/abc"}}})
+	require.NoError(t, err)
+	assert.Equal(t, uint64(2048), *metrics.MemoryCurrentBytes)
+	assert.Equal(t, uint64(9000), *metrics.CPUUsageNanoseconds)
+}

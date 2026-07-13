@@ -18,8 +18,9 @@ recorded here with its date and categorized changes.
 
 ### Added
 
-- **Cgroup foundation:** the platform layer now detects cgroup v1/v2 layouts
-  and normalizes `/proc/<pid>/cgroup` memberships for container-aware work.
+- **Cgroup foundation:** the platform layer now detects cgroup v1/v2 layouts,
+  normalizes `/proc/<pid>/cgroup` memberships, and reads optional normalized
+  memory, CPU, and I/O counters for container-aware work.
 - **Interactive top:** `syskit top` refreshes a filterable process view with
   keyboard sort controls for CPU, memory, name, and PID.
 - **Watch mode:** `syskit watch <command> --interval` continuously refreshes

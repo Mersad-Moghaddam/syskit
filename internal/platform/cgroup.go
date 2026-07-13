@@ -2,6 +2,7 @@ package platform
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -26,6 +27,15 @@ type CgroupMembership struct {
 type CgroupInfo struct {
 	Version     CgroupVersion
 	Memberships []CgroupMembership
+}
+
+// CgroupMetrics contains normalized controller counters. Nil fields mean the
+// relevant controller or statistic was unavailable on this host.
+type CgroupMetrics struct {
+	MemoryCurrentBytes  *uint64
+	CPUUsageNanoseconds *uint64
+	ReadBytes           *uint64
+	WrittenBytes        *uint64
 }
 
 // DetectCgroup determines the mounted cgroup layout and reads a process's
@@ -62,4 +72,91 @@ func ParseCgroupMembership(data []byte) []CgroupMembership {
 		result = append(result, CgroupMembership{Hierarchy: parts[0], Controllers: controllers, Path: parts[2]})
 	}
 	return result
+}
+
+// ReadCgroupMetrics reads the accounting files exposed for a normalized cgroup.
+// Missing optional controllers are represented by nil fields rather than errors.
+func ReadCgroupMetrics(fs SysFS, info *CgroupInfo) (*CgroupMetrics, error) {
+	if info == nil || info.Version == CgroupUnknown || len(info.Memberships) == 0 {
+		return nil, fmt.Errorf("cgroup layout: %w", ErrUnsupported)
+	}
+	metrics := &CgroupMetrics{}
+	if info.Version == CgroupV2 {
+		path := "sys/fs/cgroup/" + cgroupPath(info.Memberships[0].Path)
+		metrics.MemoryCurrentBytes = readUint(fs, path+"/memory.current")
+		if data, err := fs.ReadFile(path + "/cpu.stat"); err == nil {
+			metrics.CPUUsageNanoseconds = cpuUsageV2(data)
+		}
+		if data, err := fs.ReadFile(path + "/io.stat"); err == nil {
+			metrics.ReadBytes, metrics.WrittenBytes = ioUsage(data)
+		}
+		return metrics, nil
+	}
+	for _, membership := range info.Memberships {
+		path := cgroupPath(membership.Path)
+		for _, controller := range membership.Controllers {
+			switch controller {
+			case "memory":
+				metrics.MemoryCurrentBytes = readUint(fs, "sys/fs/cgroup/memory/"+path+"/memory.usage_in_bytes")
+			case "cpuacct":
+				metrics.CPUUsageNanoseconds = readUint(fs, "sys/fs/cgroup/cpuacct/"+path+"/cpuacct.usage")
+			case "blkio":
+				if data, err := fs.ReadFile("sys/fs/cgroup/blkio/" + path + "/blkio.throttle.io_service_bytes"); err == nil {
+					metrics.ReadBytes, metrics.WrittenBytes = ioUsage(data)
+				}
+			}
+		}
+	}
+	return metrics, nil
+}
+func cgroupPath(path string) string { return strings.TrimPrefix(path, "/") }
+func readUint(fs SysFS, path string) *uint64 {
+	data, err := fs.ReadFile(path)
+	if err != nil {
+		return nil
+	}
+	value, err := strconv.ParseUint(strings.TrimSpace(string(data)), 10, 64)
+	if err != nil {
+		return nil
+	}
+	return &value
+}
+func cpuUsageV2(data []byte) *uint64 {
+	for _, line := range strings.Split(string(data), "\n") {
+		fields := strings.Fields(line)
+		if len(fields) == 2 && fields[0] == "usage_usec" {
+			value, err := strconv.ParseUint(fields[1], 10, 64)
+			if err == nil {
+				value *= 1000
+				return &value
+			}
+		}
+	}
+	return nil
+}
+func ioUsage(data []byte) (*uint64, *uint64) {
+	var read, written uint64
+	foundRead, foundWritten := false, false
+	for _, field := range strings.Fields(string(data)) {
+		if value, ok := strings.CutPrefix(field, "rbytes="); ok {
+			if parsed, err := strconv.ParseUint(value, 10, 64); err == nil {
+				read += parsed
+				foundRead = true
+			}
+		}
+		if value, ok := strings.CutPrefix(field, "wbytes="); ok {
+			if parsed, err := strconv.ParseUint(value, 10, 64); err == nil {
+				written += parsed
+				foundWritten = true
+			}
+		}
+	}
+	var readResult, writtenResult *uint64
+	if foundRead {
+		readResult = &read
+	}
+	if foundWritten {
+		writtenResult = &written
+	}
+	return readResult, writtenResult
 }
