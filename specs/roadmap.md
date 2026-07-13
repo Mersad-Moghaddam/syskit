@@ -85,21 +85,21 @@ Milestones are sequential — each builds on the foundation established by the p
 
 ## v0.4 — Containers
 
-*Container runtime inspection and visibility.*
+*Container-aware inspection and visibility.*
 
 **Goals:**
-- Add Docker and container runtime support
+- Add cgroup-derived container inspection with optional runtime enrichment
 - Provide container-aware process and resource views
 - Support cgroup-based resource monitoring
 
 **Features:**
-- [ ] `syskit docker` — Container listing, resource usage, status
-- [ ] `syskit docker inspect <id>` — Detailed container inspection
+- [ ] `syskit containers` — Container listing, resource usage, status
+- [ ] `syskit containers inspect <id>` — Detailed container inspection
 - [ ] Container-aware process views
 - [ ] Cgroup resource monitoring
 
 **Technical:**
-- [ ] Docker API client integration
+- [ ] Optional runtime metadata integration
 - [ ] Cgroup v1/v2 parsing
 - [ ] Container-to-process mapping
 
