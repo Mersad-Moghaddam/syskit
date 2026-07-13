@@ -110,6 +110,30 @@ func ReadCgroupMetrics(fs SysFS, info *CgroupInfo) (*CgroupMetrics, error) {
 	return metrics, nil
 }
 func cgroupPath(path string) string { return strings.TrimPrefix(path, "/") }
+
+// ContainerIDFromCgroupPath extracts a runtime-style hexadecimal container ID
+// from a cgroup path. It is intentionally best-effort: runtime metadata remains
+// optional and callers must treat an empty result as unknown, not host scope.
+func ContainerIDFromCgroupPath(path string) string {
+	for _, part := range strings.Split(path, "/") {
+		part = strings.TrimSuffix(part, ".scope")
+		for _, prefix := range []string{"docker-", "cri-containerd-", "crio-"} {
+			part = strings.TrimPrefix(part, prefix)
+		}
+		if len(part) == 64 && isHex(part) {
+			return part
+		}
+	}
+	return ""
+}
+func isHex(value string) bool {
+	for _, r := range value {
+		if !(r >= '0' && r <= '9' || r >= 'a' && r <= 'f' || r >= 'A' && r <= 'F') {
+			return false
+		}
+	}
+	return true
+}
 func readUint(fs SysFS, path string) *uint64 {
 	data, err := fs.ReadFile(path)
 	if err != nil {

@@ -39,6 +39,14 @@ func TestProcessListPreservesPartialStatus(t *testing.T) {
 	assert.True(t, list.Partial)
 }
 
+func TestProcessListCanLimitToContainers(t *testing.T) {
+	s := NewProcess(processCollectorStub{list: &model.ProcessList{Processes: []model.Process{{PID: 1}, {PID: 2, ContainerID: "container"}}}})
+	list, err := s.List(ProcessOptions{Containers: true})
+	require.NoError(t, err)
+	require.Len(t, list.Processes, 1)
+	assert.Equal(t, 2, list.Processes[0].PID)
+}
+
 type processCollectorStub struct {
 	list *model.ProcessList
 	err  error

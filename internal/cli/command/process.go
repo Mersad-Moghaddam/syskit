@@ -28,6 +28,7 @@ func NewProcessCmd(s ProcessService, o ProcessOptions) *cobra.Command {
 	var limit, pid int
 	var user string
 	var interval time.Duration
+	var containers bool
 	cmd := &cobra.Command{Use: "process", Short: "List processes from procfs", Args: cobra.NoArgs, RunE: func(c *cobra.Command, args []string) error {
 		raw := append([]string(nil), filters...)
 		if pid > 0 {
@@ -40,7 +41,7 @@ func NewProcessCmd(s ProcessService, o ProcessOptions) *cobra.Command {
 		if err != nil {
 			return err
 		}
-		options := service.ProcessOptions{Filters: parsed, Sort: sort, Reverse: reverse, Limit: limit}
+		options := service.ProcessOptions{Filters: parsed, Sort: sort, Reverse: reverse, Limit: limit, Containers: containers}
 		var list *model.ProcessList
 		if interval > 0 {
 			list, err = s.Sample(interval, options)
@@ -66,6 +67,7 @@ func NewProcessCmd(s ProcessService, o ProcessOptions) *cobra.Command {
 	cmd.Flags().IntVar(&pid, "pid", 0, "filter by PID")
 	cmd.Flags().StringVar(&user, "user", "", "filter by user name or UID")
 	cmd.Flags().DurationVar(&interval, "interval", 0, "sample process CPU usage over this interval")
+	cmd.Flags().BoolVar(&containers, "containers", false, "show container-associated processes only")
 	cmd.AddCommand(&cobra.Command{Use: "tree", Short: "Show processes as a parent-child tree", Args: cobra.NoArgs, RunE: func(c *cobra.Command, args []string) error {
 		tree, err := s.Tree()
 		if err != nil {

@@ -51,3 +51,10 @@ func TestReadCgroupMetricsV1(t *testing.T) {
 	assert.Equal(t, uint64(2048), *metrics.MemoryCurrentBytes)
 	assert.Equal(t, uint64(9000), *metrics.CPUUsageNanoseconds)
 }
+
+func TestContainerIDFromCgroupPath(t *testing.T) {
+	id := "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+	assert.Equal(t, id, ContainerIDFromCgroupPath("/system.slice/docker-"+id+".scope"))
+	assert.Equal(t, id, ContainerIDFromCgroupPath("/kubepods/cri-containerd-"+id+".scope"))
+	assert.Empty(t, ContainerIDFromCgroupPath("/user.slice/not-a-container"))
+}

@@ -106,6 +106,14 @@ func (c *Collector) collectPID(pid int) (*model.Process, error) {
 	if err == nil && len(cmdline) > 0 {
 		p.Command = strings.ReplaceAll(strings.TrimRight(string(cmdline), "\x00"), "\x00", " ")
 	}
+	if cgroup, err := c.fs.ReadFile(base + "cgroup"); err == nil {
+		for _, membership := range platform.ParseCgroupMembership(cgroup) {
+			if id := platform.ContainerIDFromCgroupPath(membership.Path); id != "" {
+				p.ContainerID = id
+				break
+			}
+		}
+	}
 	return p, nil
 }
 

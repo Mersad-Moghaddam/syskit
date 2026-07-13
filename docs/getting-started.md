@@ -58,6 +58,7 @@ go run ./cmd/syskit dashboard --interval 2s
 go run ./cmd/syskit dashboard --panel processes
 go run ./cmd/syskit watch network --interval 2s
 go run ./cmd/syskit top --sort memory --limit 20
+go run ./cmd/syskit process --containers
 ```
 
 `dashboard` requires an interactive terminal; use the one-shot commands with

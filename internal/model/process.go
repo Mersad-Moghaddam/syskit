@@ -15,6 +15,7 @@ type Process struct {
 	ResidentBytes  uint64   `json:"resident_bytes"`
 	MemoryPercent  *float64 `json:"memory_percent,omitempty"`
 	Threads        uint64   `json:"threads"`
+	ContainerID    string   `json:"container_id,omitempty"`
 }
 type ProcessList struct {
 	Processes        []Process `json:"processes"`

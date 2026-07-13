@@ -13,10 +13,11 @@ type ProcessCollector interface {
 	Collect() (*model.ProcessList, error)
 }
 type ProcessOptions struct {
-	Filters []Filter
-	Sort    string
-	Reverse bool
-	Limit   int
+	Filters    []Filter
+	Sort       string
+	Reverse    bool
+	Limit      int
+	Containers bool
 }
 type Process struct{ collector ProcessCollector }
 
@@ -27,7 +28,20 @@ func (s *Process) List(o ProcessOptions) (*model.ProcessList, error) {
 		return nil, err
 	}
 	applyMemoryPercentages(list)
+	if o.Containers {
+		list = containerProcesses(list)
+	}
 	return s.list(list, o)
+}
+func containerProcesses(list *model.ProcessList) *model.ProcessList {
+	result := *list
+	result.Processes = nil
+	for _, process := range list.Processes {
+		if process.ContainerID != "" {
+			result.Processes = append(result.Processes, process)
+		}
+	}
+	return &result
 }
 func (s *Process) Sample(interval time.Duration, o ProcessOptions) (*model.ProcessList, error) {
 	if interval <= 0 {
@@ -43,6 +57,9 @@ func (s *Process) Sample(interval time.Duration, o ProcessOptions) (*model.Proce
 		return nil, err
 	}
 	applyProcessPercentages(before, after)
+	if o.Containers {
+		after = containerProcesses(after)
+	}
 	return s.list(after, o)
 }
 func (s *Process) list(list *model.ProcessList, o ProcessOptions) (*model.ProcessList, error) {
