@@ -15,7 +15,7 @@ cgroup-derived container inspection commands.
 | Feature specifications | Defined for planned core features |
 | Engineering standards | Defined |
 | Production code | v0.5.0 released; v1 stabilization in development |
-| Installable releases | Source build available; packages planned |
+| Installable releases | Archives and deb/rpm/AUR builds automated for the next tag |
 
 ## Development Environment
 
@@ -28,7 +28,32 @@ Build and test on Linux with:
 
 The project is Linux-first by design. macOS, Windows, and BSD support are out of scope for the core tool.
 
-## Build and Test
+## Install a Tagged Release
+
+Each tagged release publishes static Linux amd64 and arm64 archives, Debian and
+RPM packages, AUR build metadata, and `SHA256SUMS`. Verify a downloaded artifact
+before installing it:
+
+```sh
+sha256sum -c SHA256SUMS --ignore-missing
+```
+
+For a portable archive, extract the file matching your architecture and install
+the versioned binary as `syskit`:
+
+```sh
+tar -xzf syskit_VERSION_linux_amd64.tar.gz
+sudo install -m 0755 syskit_VERSION_linux_amd64 /usr/local/bin/syskit
+```
+
+On Debian-family systems, install the matching `.deb` with
+`sudo apt install ./syskit_VERSION_amd64.deb`. On RPM-based systems, use
+`sudo dnf install ./syskit-VERSION-1.x86_64.rpm`. The AUR archive contains the
+reviewable `PKGBUILD` and `.SRCINFO` for the `syskit-bin` package; extract it and
+run `makepkg -si` on Arch Linux. Replace `amd64`/`x86_64` with
+`arm64`/`aarch64` where appropriate.
+
+## Build and Test from Source
 
 ```sh
 go build ./...

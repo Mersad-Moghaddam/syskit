@@ -7,6 +7,7 @@ output_dir="${3:-dist}"
 if [[ -z "$version" ]]; then echo "usage: $0 <version> [amd64|arm64] [output-dir]" >&2; exit 2; fi
 case "$version" in v[0-9]*) ;; *) echo "version must start with v" >&2; exit 2;; esac
 case "$arch" in amd64|arm64) ;; *) echo "architecture must be amd64 or arm64" >&2; exit 2;; esac
+export SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-$(git log -1 --format=%ct)}"
 
 stage="$(mktemp -d)"
 trap 'rm -rf "$stage"' EXIT
@@ -14,6 +15,7 @@ install -d "$stage/DEBIAN" "$stage/usr/bin" "$stage/usr/share/doc/syskit"
 CGO_ENABLED=0 GOOS=linux GOARCH="$arch" go build -trimpath \
   -ldflags "-s -w -X github.com/Mersad-Moghaddam/syskit/internal/cli.version=$version" \
   -o "$stage/usr/bin/syskit" ./cmd/syskit
+chmod 0755 "$stage/usr/bin/syskit"
 install -m 0644 LICENSE "$stage/usr/share/doc/syskit/copyright"
 cat > "$stage/DEBIAN/control" <<EOF
 Package: syskit

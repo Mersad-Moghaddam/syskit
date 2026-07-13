@@ -15,6 +15,12 @@ jobs:
       - run: scripts/build-release.sh "${GITHUB_REF_NAME}"
       - run: scripts/build-deb.sh "${GITHUB_REF_NAME}" amd64 dist
       - run: scripts/build-deb.sh "${GITHUB_REF_NAME}" arm64 dist
+      - name: Install RPM tooling
+        run: sudo apt-get update && sudo apt-get install -y rpm
+      - run: scripts/build-rpm.sh "${GITHUB_REF_NAME}" amd64 dist
+      - run: scripts/build-rpm.sh "${GITHUB_REF_NAME}" arm64 dist
+      - run: scripts/build-aur.sh "${GITHUB_REF_NAME}" dist dist
+      - run: scripts/write-checksums.sh dist
       - uses: actions/upload-artifact@v4
         with:
           name: syskit-${{ github.ref_name }}

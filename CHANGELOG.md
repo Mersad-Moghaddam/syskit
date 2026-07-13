@@ -23,6 +23,10 @@ their milestone is tagged, then recorded in a dated release entry below.
   embedded versions and SHA-256 checksums.
 - **Debian packaging:** a reproducible helper builds amd64/arm64 `.deb` packages
   with the static binary, package metadata, and license.
+- **RPM and AUR packaging:** release automation builds x86_64/aarch64 RPMs and
+  checksum-pinned `syskit-bin` AUR metadata alongside Debian packages.
+- **Complete release checksums:** normalized binary archives include the license,
+  and `SHA256SUMS` covers every published package and metadata archive.
 - **Performance baseline:** deterministic benchmarks now cover `/proc/stat`, a
   1,000-process fixture walk, network and socket parsing, and 1,000-row table
   rendering, with documented comparison and regression rules.
