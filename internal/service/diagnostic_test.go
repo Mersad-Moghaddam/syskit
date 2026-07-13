@@ -15,3 +15,19 @@ func TestEvaluateDiagnosticsReportsDocumentedThresholds(t *testing.T) {
 	assert.Len(t, findings, 3)
 	assert.Equal(t, "critical", findings[0].Severity)
 }
+
+func TestDiagnosticRejectsUnknownFilters(t *testing.T) {
+	s := NewDiagnostic(memoryCollectorStub{}, diskCollectorStub{})
+	_, err := s.Collect("network", "")
+	assert.EqualError(t, err, "unknown diagnostics category \"network\"")
+	_, err = s.Collect("", "high")
+	assert.EqualError(t, err, "unknown diagnostics severity \"high\"")
+}
+
+type memoryCollectorStub struct{}
+
+func (memoryCollectorStub) Collect() (*model.MemoryInfo, error) { return &model.MemoryInfo{}, nil }
+
+type diskCollectorStub struct{}
+
+func (diskCollectorStub) Collect() (*model.DiskInfo, error) { return &model.DiskInfo{}, nil }

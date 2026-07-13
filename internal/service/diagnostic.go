@@ -16,6 +16,12 @@ func NewDiagnostic(memory MemoryCollector, disk DiskCollector) *Diagnostic {
 	return &Diagnostic{memory, disk}
 }
 func (s *Diagnostic) Collect(category, severity string) (*model.DiagnosticReport, error) {
+	if category != "" && category != "memory" && category != "filesystem" {
+		return nil, fmt.Errorf("unknown diagnostics category %q", category)
+	}
+	if severity != "" && severity != "info" && severity != "warning" && severity != "critical" {
+		return nil, fmt.Errorf("unknown diagnostics severity %q", severity)
+	}
 	memory, err := s.memory.Collect()
 	if err != nil {
 		return nil, fmt.Errorf("collecting memory: %w", err)

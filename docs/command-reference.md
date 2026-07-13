@@ -59,7 +59,7 @@ files remain unavailable rather than being reported as zero.
 |---|---|
 | `plugins list` | Discover manifests from documented or explicit plugin directories. |
 | `plugins inspect <name>` | View plugin API compatibility and requested permissions. |
-| `diagnostics` | Explainable memory-pressure, swap, and filesystem-capacity findings. |
+| `diagnostics` | Explainable memory-pressure, swap, and filesystem-capacity findings; `--category` accepts `memory` or `filesystem`, and `--severity` accepts `info`, `warning`, or `critical`. |
 
 Plugin discovery never executes plugin code. Use `--plugin-dir` to inspect a
 specific directory; world-writable directories are rejected.
