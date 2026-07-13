@@ -2,8 +2,16 @@ name: Release artifacts
 on:
   push:
     tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version to build without publishing (for example v1.0.0-rc.1)
+        required: true
+        type: string
 permissions:
   contents: write
+env:
+  RELEASE_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.version || github.ref_name }}
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -12,19 +20,23 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
-      - run: scripts/build-release.sh "${GITHUB_REF_NAME}"
-      - run: scripts/build-deb.sh "${GITHUB_REF_NAME}" amd64 dist
-      - run: scripts/build-deb.sh "${GITHUB_REF_NAME}" arm64 dist
+      - name: Validate release version
+        run: '[[ "$RELEASE_VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]'
+      - run: scripts/build-release.sh "$RELEASE_VERSION"
+      - run: scripts/build-deb.sh "$RELEASE_VERSION" amd64 dist
+      - run: scripts/build-deb.sh "$RELEASE_VERSION" arm64 dist
       - name: Install RPM tooling
         run: sudo apt-get update && sudo apt-get install -y rpm
-      - run: scripts/build-rpm.sh "${GITHUB_REF_NAME}" amd64 dist
-      - run: scripts/build-rpm.sh "${GITHUB_REF_NAME}" arm64 dist
-      - run: scripts/build-aur.sh "${GITHUB_REF_NAME}" dist dist
+      - run: scripts/build-rpm.sh "$RELEASE_VERSION" amd64 dist
+      - run: scripts/build-rpm.sh "$RELEASE_VERSION" arm64 dist
+      - run: scripts/build-aur.sh "$RELEASE_VERSION" dist dist
       - run: scripts/write-checksums.sh dist
       - uses: actions/upload-artifact@v4
         with:
-          name: syskit-${{ github.ref_name }}
+          name: syskit-${{ env.RELEASE_VERSION }}
           path: dist/
       - uses: softprops/action-gh-release@v2
+        if: github.event_name == 'push'
         with:
           files: dist/*
+          generate_release_notes: true

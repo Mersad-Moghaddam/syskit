@@ -145,7 +145,7 @@ Milestones are sequential — each builds on the foundation established by the p
 - [x] Installation packages (deb, rpm, AUR, binary releases)
 - [x] Performance benchmarks and optimization
 - [x] Contributing guide and community guidelines
-- [ ] Release automation and changelog generation
+- [x] Release automation and changelog generation
 
 ---
 

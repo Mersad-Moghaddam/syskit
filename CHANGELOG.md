@@ -32,6 +32,9 @@ their milestone is tagged, then recorded in a dated release entry below.
   machine-readable inventories enforced by tests.
 - **Manual page:** a comprehensive `syskit(1)` manual is included in binary
   archives, Debian/RPM packages, and AUR metadata.
+- **Release dry runs:** maintainers can manually build the complete artifact set
+  without publishing; tag releases attach every artifact and generated linked
+  release notes.
 - **Performance baseline:** deterministic benchmarks now cover `/proc/stat`, a
   1,000-process fixture walk, network and socket parsing, and 1,000-row table
   rendering, with documented comparison and regression rules.

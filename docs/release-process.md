@@ -41,6 +41,9 @@ Each archive includes the static binary, MIT license, and `syskit(1)` manual.
 Tar ownership,
 timestamps, ordering, and gzip metadata are normalized using `SOURCE_DATE_EPOCH`.
 The tag-triggered release workflow publishes the same artifacts on GitHub.
+Maintainers can run the workflow manually with a candidate version to build and
+upload all artifacts without creating a GitHub Release. This is the supported
+non-publishing release dry run.
 
 For Debian-family systems, run `scripts/build-deb.sh vX.Y.Z [amd64|arm64]`.
 The resulting package installs the static binary at `/usr/bin/syskit`, the MIT
@@ -71,6 +74,8 @@ The changelog should group user-visible changes by:
 - Security
 
 Internal refactors should appear only when they affect users, contributors, or extension authors.
+GitHub also generates linked release notes from merged changes when the tag
+workflow publishes a release; the curated `CHANGELOG.md` remains canonical.
 
 ## Release Notes
 
