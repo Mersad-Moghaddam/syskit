@@ -40,12 +40,13 @@ syskit containers --format json
 ## Expected Output
 
 ```text
-CONTAINER      RUNTIME  PIDS  CPU%  MEMORY    STATUS
-web-api        docker   12    3.4   420 MiB   running
-postgres       docker   8     1.2   1.8 GiB   running
+CONTAINER  RUNTIME    PIDS  MEMORY     CPU NS       READ       WRITE
+abc123...  containerd 12    440401920  3240000000   1048576    2097152
 ```
 
 Structured output should separate cgroup-derived metrics from runtime metadata.
+Runtime names and status remain unavailable unless a future optional metadata
+adapter can prove them; cgroup reporting never depends on such an adapter.
 
 ## Edge Cases
 

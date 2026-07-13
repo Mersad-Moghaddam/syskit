@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Go](https://img.shields.io/badge/Go-1.26.3+-00ADD8?logo=go&logoColor=white)](https://go.dev)
 [![Linux](https://img.shields.io/badge/Platform-Linux-FCC624?logo=linux&logoColor=black)](https://kernel.org)
-[![Status](https://img.shields.io/badge/Status-v0.2.0%20released-brightgreen)]()
+[![Status](https://img.shields.io/badge/Status-v0.4.0%20released-brightgreen)]()
 
 ---
 
@@ -80,10 +80,10 @@ This approach ensures:
 
 ## Project Status
 
-**v0.2.0 released**
+**v0.4.0 released**
 
-SysKit v0.2.0 adds process listing and trees, network interfaces/routes/DNS,
-and port inspection with table, JSON, and YAML output. The layered
+SysKit v0.4.0 includes process and network inspection, live dashboard/watch/top
+views, and cgroup-derived container inspection with table, JSON, and YAML output. The layered
 architecture, fixture-backed collectors, golden output contracts, and Linux
 integration coverage are in place for later milestones.
 

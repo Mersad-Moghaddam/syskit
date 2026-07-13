@@ -30,20 +30,19 @@ their milestone is tagged, then recorded in a dated release entry below.
 - **Plugin inspection:** `syskit plugins inspect <name>` displays manifest
   compatibility and declared permissions without executing the plugin.
 
-- **Cgroup foundation:** the platform layer now detects cgroup v1/v2 layouts,
-  normalizes `/proc/<pid>/cgroup` memberships, and reads optional normalized
-  memory, CPU, and I/O counters for container-aware work.
+## [0.4.0] - 2026-07-13
+
+### Added
+
+- **Cgroup foundation:** explicit cgroup v1/v2 detection, normalized process
+  memberships, and optional memory, CPU, read, and write counters.
 - **Container-aware processes:** `syskit process --containers` limits results
-  to processes with a recognizable runtime-style container ID in cgroup paths.
-- **Container listing:** `syskit containers` groups cgroup-associated processes
-  by recognizable container ID and reports a conservative runtime hint.
-- **Container inspection:** `syskit containers inspect <id>` shows the
-  cgroup-associated processes currently mapped to a recognized container ID.
-- **Container resource counters:** `syskit containers` and structured inspect
-  output include optional cgroup memory, CPU, read, and write counters when
-  the corresponding controller files are available.
-- **Container partial data:** structured container output marks incomplete
-  permission-restricted process mappings with `partial: true`.
+  to processes with a recognized runtime-style container ID.
+- **Container commands:** `syskit containers` groups processes and reports
+  cgroup counters; `containers inspect <id>` expands one mapping into processes.
+- **Partial data:** structured container output marks permission-restricted
+  mappings with `partial: true` and omits unavailable controllers.
+
 ## [0.3.0] - 2026-07-13
 
 ### Added

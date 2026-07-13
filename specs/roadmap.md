@@ -93,15 +93,15 @@ Milestones are sequential — each builds on the foundation established by the p
 - Support cgroup-based resource monitoring
 
 **Features:**
-- [ ] `syskit containers` — Container listing, resource usage, status
-- [ ] `syskit containers inspect <id>` — Detailed container inspection
-- [ ] Container-aware process views
-- [ ] Cgroup resource monitoring
+- [x] `syskit containers` — Cgroup-derived container listing and resource usage
+- [x] `syskit containers inspect <id>` — Detailed container process inspection
+- [x] Container-aware process views
+- [x] Cgroup resource monitoring
 
 **Technical:**
-- [ ] Optional runtime metadata integration
-- [ ] Cgroup v1/v2 parsing
-- [ ] Container-to-process mapping
+- [x] Runtime-independent operation with conservative runtime hints
+- [x] Cgroup v1/v2 parsing
+- [x] Container-to-process mapping
 
 ---
 
