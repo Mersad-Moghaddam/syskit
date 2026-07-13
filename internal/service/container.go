@@ -46,7 +46,7 @@ func (s *Container) List() (*model.ContainerList, error) {
 		container.PIDs++
 		byID[container.ID] = container
 	}
-	result := &model.ContainerList{Containers: make([]model.ContainerInfo, 0, len(byID))}
+	result := &model.ContainerList{Containers: make([]model.ContainerInfo, 0, len(byID)), Partial: processes.Partial}
 	for _, container := range byID {
 		container.Metrics = s.readMetrics(representatives[container.ID])
 		result.Containers = append(result.Containers, container)
@@ -60,7 +60,7 @@ func (s *Container) Inspect(id string) (*model.ContainerDetail, error) {
 	if err != nil {
 		return nil, err
 	}
-	detail := &model.ContainerDetail{}
+	detail := &model.ContainerDetail{Partial: processes.Partial}
 	for _, process := range processes.Processes {
 		if process.ContainerID != id {
 			continue

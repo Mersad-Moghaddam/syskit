@@ -22,6 +22,7 @@ type ContainerMetrics struct {
 // ContainerList is the collection returned by container inspection commands.
 type ContainerList struct {
 	Containers []ContainerInfo `json:"containers"`
+	Partial    bool            `json:"partial"`
 }
 
 // ContainerDetail expands one cgroup-derived container with the processes
@@ -29,4 +30,5 @@ type ContainerList struct {
 type ContainerDetail struct {
 	ContainerInfo
 	Processes []Process `json:"processes"`
+	Partial   bool      `json:"partial"`
 }

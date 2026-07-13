@@ -48,3 +48,13 @@ func TestContainerAddsBestEffortMetrics(t *testing.T) {
 	require.NotNil(t, list.Containers[0].Metrics)
 	assert.Equal(t, uint64(42), *list.Containers[0].Metrics.MemoryCurrentBytes)
 }
+
+func TestContainerPropagatesPartialProcessMapping(t *testing.T) {
+	s := NewContainer(processCollectorStub{list: &model.ProcessList{Partial: true, Processes: []model.Process{{PID: 1, ContainerID: "abc"}}}})
+	list, err := s.List()
+	require.NoError(t, err)
+	assert.True(t, list.Partial)
+	detail, err := s.Inspect("abc")
+	require.NoError(t, err)
+	assert.True(t, detail.Partial)
+}

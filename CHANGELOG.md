@@ -42,6 +42,8 @@ their milestone is tagged, then recorded in a dated release entry below.
 - **Container resource counters:** `syskit containers` and structured inspect
   output include optional cgroup memory, CPU, read, and write counters when
   the corresponding controller files are available.
+- **Container partial data:** structured container output marks incomplete
+  permission-restricted process mappings with `partial: true`.
 ## [0.3.0] - 2026-07-13
 
 ### Added

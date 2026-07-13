@@ -51,7 +51,8 @@ instead of emitting terminal control sequences into a file or pipe.
 | `containers inspect <id>` | Processes associated with one recognized cgroup container ID. |
 
 Container runtime names and status are not inferred. Missing cgroup controller
-files remain unavailable rather than being reported as zero.
+files remain unavailable rather than being reported as zero. Structured output
+sets `partial: true` when permissions prevent a complete process mapping.
 
 ## Plugins and diagnostics
 
