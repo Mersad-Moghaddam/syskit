@@ -55,6 +55,7 @@ go run ./cmd/syskit network dns --format yaml
 go run ./cmd/syskit ports --listening --pid 1234
 go run ./cmd/syskit ports --address 127.0.0.1 --state listen
 go run ./cmd/syskit dashboard --interval 2s
+go run ./cmd/syskit dashboard --panel processes
 ```
 
 When permissions hide a process, structured process output sets `partial: true`

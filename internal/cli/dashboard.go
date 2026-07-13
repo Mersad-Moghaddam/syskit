@@ -12,6 +12,8 @@ import (
 const (
 	minDashboardInterval = 500 * time.Millisecond
 	maxDashboardInterval = time.Minute
+	overviewPanel        = "overview"
+	processesPanel       = "processes"
 )
 
 type dashboardSnapshot struct {
@@ -32,6 +34,7 @@ type dashboardModel struct {
 	interval time.Duration
 	snapshot dashboardSnapshot
 	err      error
+	panel    string
 }
 
 type dashboardTick struct{}
@@ -42,15 +45,20 @@ type dashboardData struct {
 
 func newDashboardCmd(provider dashboardProvider) *cobra.Command {
 	var interval time.Duration
+	var panel string
 	cmd := &cobra.Command{Use: "dashboard", Short: "Show a live system dashboard", Args: cobra.NoArgs, RunE: func(cmd *cobra.Command, args []string) error {
 		if interval < minDashboardInterval || interval > maxDashboardInterval {
 			return fmt.Errorf("dashboard interval must be between %s and %s", minDashboardInterval, maxDashboardInterval)
 		}
-		model := dashboardModel{provider: provider, interval: interval}
+		if panel != overviewPanel && panel != processesPanel {
+			return fmt.Errorf("dashboard panel must be %q or %q", overviewPanel, processesPanel)
+		}
+		model := dashboardModel{provider: provider, interval: interval, panel: panel}
 		_, err := tea.NewProgram(model, tea.WithAltScreen()).Run()
 		return err
 	}}
 	cmd.Flags().DurationVar(&interval, "interval", time.Second, "dashboard refresh interval (500ms to 1m)")
+	cmd.Flags().StringVar(&panel, "panel", overviewPanel, "initial panel: overview or processes")
 	return cmd
 }
 
@@ -61,12 +69,21 @@ func (m dashboardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if value.String() == "q" || value.String() == "ctrl+c" {
 			return m, tea.Quit
 		}
+		if value.String() == "tab" || value.String() == "left" || value.String() == "right" {
+			m.panel = nextDashboardPanel(m.panel)
+		}
 	case dashboardData:
 		m.snapshot, m.err = value.snapshot, value.err
 	case dashboardTick:
 		return m, tea.Batch(m.fetch(), m.tick())
 	}
 	return m, nil
+}
+func nextDashboardPanel(panel string) string {
+	if panel == processesPanel {
+		return overviewPanel
+	}
+	return processesPanel
 }
 func (m dashboardModel) fetch() tea.Cmd {
 	return func() tea.Msg { snapshot, err := m.provider(); return dashboardData{snapshot, err} }
@@ -79,5 +96,8 @@ func (m dashboardModel) View() string {
 	if m.err != nil {
 		return title + "\n\ncollection error: " + m.err.Error() + "\n\nq: quit"
 	}
-	return fmt.Sprintf("%s\n\nhost: %s\nuptime: %s\nmemory: %d / %d bytes\ndisk: %d / %d bytes\nnetwork interfaces: %d\ntop process: %s\n\nrefresh: %s  •  q: quit", title, m.snapshot.Hostname, time.Duration(m.snapshot.Uptime*float64(time.Second)).Truncate(time.Second), m.snapshot.MemoryUsed, m.snapshot.MemoryTotal, m.snapshot.DiskUsed, m.snapshot.DiskTotal, m.snapshot.Interfaces, m.snapshot.TopProcess, m.interval)
+	if m.panel == processesPanel {
+		return fmt.Sprintf("%s — processes\n\ntop process: %s\n\nrefresh: %s  •  tab: switch panel  •  q: quit", title, m.snapshot.TopProcess, m.interval)
+	}
+	return fmt.Sprintf("%s — overview\n\nhost: %s\nuptime: %s\nmemory: %d / %d bytes\ndisk: %d / %d bytes\nnetwork interfaces: %d\n\nrefresh: %s  •  tab: switch panel  •  q: quit", title, m.snapshot.Hostname, time.Duration(m.snapshot.Uptime*float64(time.Second)).Truncate(time.Second), m.snapshot.MemoryUsed, m.snapshot.MemoryTotal, m.snapshot.DiskUsed, m.snapshot.DiskTotal, m.snapshot.Interfaces, m.interval)
 }
