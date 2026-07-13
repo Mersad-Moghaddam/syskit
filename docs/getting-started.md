@@ -58,7 +58,8 @@ go run ./cmd/syskit ports --address 127.0.0.1 --state listen
 
 `ports` reads TCP, UDP, IPv6, and Unix socket tables directly from procfs. It
 best-effort maps socket inodes to process IDs and commands; inaccessible or
-short-lived processes simply remain unmapped. The remaining commands below include both shipped and planned contracts; check
+short-lived processes simply remain unmapped. JSON and YAML mark permission-
+restricted scans with `owner_mapping_partial: true`. The remaining commands below include both shipped and planned contracts; check
 `--help` for the current supported flags.
 
 ## How to Explore This Repository

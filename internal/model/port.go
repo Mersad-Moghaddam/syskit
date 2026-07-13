@@ -1,7 +1,8 @@
 package model
 
 type PortInfo struct {
-	Sockets []Socket `json:"sockets"`
+	Sockets             []Socket `json:"sockets"`
+	OwnerMappingPartial bool     `json:"owner_mapping_partial"`
 }
 type Socket struct {
 	Protocol      string        `json:"protocol"`

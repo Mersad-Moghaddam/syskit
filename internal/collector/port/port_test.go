@@ -63,12 +63,26 @@ func TestCollectorMapsSocketOwners(t *testing.T) {
 	assert.Equal(t, "server --listen", info.Sockets[0].Owners[0].Command)
 }
 
+func TestCollectorReportsPartialOwnerMapping(t *testing.T) {
+	fsys := socketFS{MapFS: fstest.MapFS{
+		"proc/net/tcp":  &fstest.MapFile{Data: []byte("  sl local_address rem_address st tx_queue rx_queue tr tm->when retrnsmt uid timeout inode\n   0: 0100007F:1F90 00000000:0000 0A 00000000:00000000 00:00000000 00000000 0 0 42\n")},
+		"proc/123/fd/4": &fstest.MapFile{},
+	}, links: map[string]string{}, linkErrors: map[string]error{"proc/123/fd/4": fs.ErrPermission}}
+	info, err := NewCollector(platform.TestFS(fsys)).Collect()
+	require.NoError(t, err)
+	assert.True(t, info.OwnerMappingPartial)
+}
+
 type socketFS struct {
 	fstest.MapFS
-	links map[string]string
+	links      map[string]string
+	linkErrors map[string]error
 }
 
 func (s socketFS) ReadLink(name string) (string, error) {
+	if err, ok := s.linkErrors[name]; ok {
+		return "", err
+	}
 	target, ok := s.links[name]
 	if !ok {
 		return "", fs.ErrNotExist

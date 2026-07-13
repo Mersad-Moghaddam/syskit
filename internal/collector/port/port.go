@@ -43,7 +43,7 @@ func (c *Collector) Collect() (*model.PortInfo, error) {
 	if len(info.Sockets) == 0 {
 		return nil, fmt.Errorf("socket tables: %w", collector.ErrFieldMissing)
 	}
-	c.mapOwners(info)
+	info.OwnerMappingPartial = c.mapOwners(info)
 	return info, nil
 }
 func ParseSocketTable(data []byte, protocol string) ([]model.Socket, error) {
@@ -146,14 +146,15 @@ func unixState(raw string) string {
 	return raw
 }
 
-func (c *Collector) mapOwners(info *model.PortInfo) {
+func (c *Collector) mapOwners(info *model.PortInfo) bool {
+	partial := false
 	byInode := make(map[uint64]*model.Socket, len(info.Sockets))
 	for i := range info.Sockets {
 		byInode[info.Sockets[i].Inode] = &info.Sockets[i]
 	}
 	entries, err := c.fs.ReadDir("proc")
 	if err != nil {
-		return
+		return errors.Is(err, platform.ErrPermission)
 	}
 	for _, entry := range entries {
 		pid, err := strconv.Atoi(entry.Name())
@@ -162,6 +163,7 @@ func (c *Collector) mapOwners(info *model.PortInfo) {
 		}
 		fds, err := c.fs.ReadDir(fmt.Sprintf("proc/%d/fd", pid))
 		if err != nil {
+			partial = partial || errors.Is(err, platform.ErrPermission)
 			continue
 		}
 		command := c.command(pid)
@@ -169,6 +171,7 @@ func (c *Collector) mapOwners(info *model.PortInfo) {
 			target, err := c.fs.ReadLink(fmt.Sprintf("proc/%d/fd/%s", pid, fd.Name()))
 			if err != nil {
 				if errors.Is(err, platform.ErrPermission) || errors.Is(err, platform.ErrNotFound) {
+					partial = partial || errors.Is(err, platform.ErrPermission)
 					continue
 				}
 				continue
@@ -185,6 +188,7 @@ func (c *Collector) mapOwners(info *model.PortInfo) {
 	for i := range info.Sockets {
 		sort.Slice(info.Sockets[i].Owners, func(a, b int) bool { return info.Sockets[i].Owners[a].PID < info.Sockets[i].Owners[b].PID })
 	}
+	return partial
 }
 func (c *Collector) command(pid int) string {
 	data, err := c.fs.ReadFile(fmt.Sprintf("proc/%d/cmdline", pid))
