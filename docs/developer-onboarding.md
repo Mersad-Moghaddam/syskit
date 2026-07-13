@@ -72,12 +72,13 @@ Read:
 
 ## First Good Contributions
 
-During the planning phase, useful contributions include:
+Useful first contributions include:
 
 - Correcting Linux explanations.
-- Improving feature acceptance criteria.
-- Adding fixture planning notes.
-- Clarifying edge cases.
-- Adding ADRs for unresolved architecture decisions.
+- Extending fixture and error-path coverage for an existing collector.
+- Improving command examples or man-page wording.
+- Adding benchmark coverage for a measured hot path.
+- Clarifying feature acceptance criteria or edge cases.
 
-Production code should wait for the implementation readiness checklist.
+Production changes must follow an accepted specification and the
+[Definition of Done](../standards/definition-of-done.md).

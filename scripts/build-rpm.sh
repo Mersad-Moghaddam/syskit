@@ -27,6 +27,7 @@ CGO_ENABLED=0 GOOS=linux GOARCH="$arch" go build -trimpath \
   -ldflags "-s -w -X github.com/Mersad-Moghaddam/syskit/internal/cli.version=$version" \
   -o "$topdir/SOURCES/syskit" ./cmd/syskit
 install -m 0644 LICENSE "$topdir/SOURCES/LICENSE"
+install -m 0644 docs/man/syskit.1 "$topdir/SOURCES/syskit.1"
 
 cat > "$topdir/SPECS/syskit.spec" <<EOF
 %global debug_package %{nil}
@@ -40,6 +41,7 @@ License: MIT
 URL: https://github.com/Mersad-Moghaddam/syskit
 Source0: syskit
 Source1: LICENSE
+Source2: syskit.1
 
 %description
 SysKit reads procfs, sysfs, Netlink, and cgroups directly without shelling out.
@@ -51,10 +53,12 @@ SysKit reads procfs, sysfs, Netlink, and cgroups directly without shelling out.
 %install
 install -Dpm0755 %{SOURCE0} %{buildroot}%{_bindir}/syskit
 install -Dpm0644 %{SOURCE1} %{buildroot}%{_licensedir}/syskit/LICENSE
+install -Dpm0644 %{SOURCE2} %{buildroot}%{_mandir}/man1/syskit.1
 
 %files
 %{_bindir}/syskit
 %license %{_licensedir}/syskit/LICENSE
+%{_mandir}/man1/syskit.1*
 EOF
 
 rpmbuild -bb --target "$rpm_arch" --define "_topdir $topdir" \

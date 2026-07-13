@@ -30,6 +30,8 @@ their milestone is tagged, then recorded in a dated release entry below.
 - **v1 compatibility manifests:** commands, flags, configuration names, exit
   codes, plugin API versions, and structured-output fields now have canonical
   machine-readable inventories enforced by tests.
+- **Manual page:** a comprehensive `syskit(1)` manual is included in binary
+  archives, Debian/RPM packages, and AUR metadata.
 - **Performance baseline:** deterministic benchmarks now cover `/proc/stat`, a
   1,000-process fixture walk, network and socket parsing, and 1,000-row table
   rendering, with documented comparison and regression rules.

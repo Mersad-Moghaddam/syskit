@@ -11,12 +11,15 @@ export SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-$(git log -1 --format=%ct)}"
 
 stage="$(mktemp -d)"
 trap 'rm -rf "$stage"' EXIT
-install -d "$stage/DEBIAN" "$stage/usr/bin" "$stage/usr/share/doc/syskit"
+install -d "$stage/DEBIAN" "$stage/usr/bin" "$stage/usr/share/doc/syskit" \
+  "$stage/usr/share/man/man1"
 CGO_ENABLED=0 GOOS=linux GOARCH="$arch" go build -trimpath \
   -ldflags "-s -w -X github.com/Mersad-Moghaddam/syskit/internal/cli.version=$version" \
   -o "$stage/usr/bin/syskit" ./cmd/syskit
 chmod 0755 "$stage/usr/bin/syskit"
 install -m 0644 LICENSE "$stage/usr/share/doc/syskit/copyright"
+install -m 0644 docs/man/syskit.1 "$stage/usr/share/man/man1/syskit.1"
+gzip -n -9 "$stage/usr/share/man/man1/syskit.1"
 cat > "$stage/DEBIAN/control" <<EOF
 Package: syskit
 Version: ${version#v}

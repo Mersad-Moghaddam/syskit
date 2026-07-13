@@ -8,8 +8,8 @@ SysKit v0.5.0 is released with live monitoring, cgroup-derived container
 inspection, and bounded out-of-process plugins in addition to the core system,
 process, network, and port commands. v1 stabilization is in progress: diagnostics,
 release archives, deb/rpm/AUR packaging, and the performance baseline are
-implemented, and the v1 CLI/output contract is test-enforced; remaining work
-includes man pages and the final release gate.
+implemented, the v1 CLI/output contract is test-enforced, and installable user
+documentation includes `syskit(1)`. Remaining work is the final release gate.
 
 ## Planned Milestones
 

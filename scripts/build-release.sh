@@ -13,10 +13,12 @@ for arch in amd64 arm64; do
   CGO_ENABLED=0 GOOS=linux GOARCH="$arch" go build -trimpath -ldflags "-s -w -X github.com/Mersad-Moghaddam/syskit/internal/cli.version=$version" -o "$output_dir/$name" ./cmd/syskit
   chmod 0755 "$output_dir/$name"
   install -m 0644 LICENSE "$output_dir/LICENSE"
+  install -m 0644 docs/man/syskit.1 "$output_dir/syskit.1"
   tar -C "$output_dir" --sort=name --mtime="@$SOURCE_DATE_EPOCH" \
-    --owner=0 --group=0 --numeric-owner -cf - LICENSE "$name" |
+    --owner=0 --group=0 --numeric-owner -cf - LICENSE syskit.1 "$name" |
     gzip -n > "$output_dir/$name.tar.gz"
   rm "$output_dir/$name"
   rm "$output_dir/LICENSE"
+  rm "$output_dir/syskit.1"
 done
 scripts/write-checksums.sh "$output_dir"

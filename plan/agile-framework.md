@@ -41,7 +41,7 @@ Open-source projects rarely have a full, dedicated Scrum team. We map Scrum role
 
 ## The Scrum events
 
-Each event has a dedicated guide in [`ceremonies/`](ceremonies/). Summary:
+The project uses the following lightweight ceremony cadence:
 
 | Event | When | Timebox | Output |
 |---|---|---|---|

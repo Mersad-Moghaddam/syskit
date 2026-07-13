@@ -93,6 +93,7 @@ jobs:
             docs/plugin-authoring.md
             docs/performance.md
             docs/compatibility.md
+            docs/man/syskit.1
             docs/contributing.md
             docs/roadmap.md
             docs/developer-onboarding.md

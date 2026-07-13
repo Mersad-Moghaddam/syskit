@@ -161,7 +161,9 @@ collector/cpu/testdata/
 
 Multiple fixture sets capture meaningful variation: many cores vs. one, cgroup v1 vs. v2, kernel version differences, missing optional files. Capturing a diverse corpus is how SysKit satisfies "provide consistent data shapes regardless of kernel version variations" (architecture, Collector Layer).
 
-Fixture capture should be automated once implementation begins. The planned helper path is `scripts/capture-fixtures.sh`; when added, it must record provenance — kernel version, distribution, architecture, container status, and capture date — alongside each fixture set in a `SOURCE` file.
+Fixture capture is automated by `scripts/capture-fixtures.sh`. It records
+provenance — kernel version, distribution, architecture, container status, and
+capture date — alongside each fixture set in a `SOURCE` file.
 
 ---
 

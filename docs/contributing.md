@@ -1,9 +1,9 @@
 # Contributing to SysKit
 
-> How to propose changes, review designs, and prepare implementation work.
+> How to propose, implement, test, document, and review SysKit changes.
 
-SysKit is in its implementation phase, with v0.1 released and later milestones
-under active development. Contributions are welcome across code and planning:
+SysKit is in v1 stabilization after the v0.5 release. Contributions are welcome
+across code and planning:
 implementing features against accepted specs, clarifying requirements,
 strengthening architecture, adding Linux references, tightening acceptance
 criteria, or improving project process. Production Go code must build on the
@@ -70,13 +70,16 @@ Reviewers should focus on:
 - Alignment with project scope and non-goals.
 - Consistency with the architecture and CLI conventions.
 - Testability and acceptance criteria.
-- Whether the change makes future implementation clearer.
+- Whether the change keeps implementation and public contracts clear.
 
 See [code review standards](../standards/code-review.md) for the full review model.
 
 ## Reporting Issues
 
-Use the issue templates for bugs, feature proposals, design proposals, and documentation improvements. Since SysKit has no released implementation yet, bug reports should usually be about documentation errors, conflicting requirements, broken workflows, or repository process.
+Use the issue templates for bugs, feature proposals, design proposals, and
+documentation improvements. Include the SysKit version, Linux distribution,
+kernel version, command, expected result, and sanitized output when reporting a
+runtime defect.
 
 ## Conduct
 

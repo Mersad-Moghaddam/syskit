@@ -37,14 +37,16 @@ SysKit follows semantic versioning as described in [versioning standards](../sta
 
 Run `scripts/build-release.sh vX.Y.Z` on a clean tagged checkout to create
 Linux amd64 and arm64 archives with embedded versions and a `SHA256SUMS` file.
-Each archive includes the static binary and MIT license. Tar ownership,
+Each archive includes the static binary, MIT license, and `syskit(1)` manual.
+Tar ownership,
 timestamps, ordering, and gzip metadata are normalized using `SOURCE_DATE_EPOCH`.
 The tag-triggered release workflow publishes the same artifacts on GitHub.
 
 For Debian-family systems, run `scripts/build-deb.sh vX.Y.Z [amd64|arm64]`.
-The resulting package installs the static binary at `/usr/bin/syskit` and the
-MIT license under `/usr/share/doc/syskit`. Package creation does not install or
-modify the local system.
+The resulting package installs the static binary at `/usr/bin/syskit`, the MIT
+license under `/usr/share/doc/syskit`, and the compressed manual under
+`/usr/share/man/man1`. Package creation does not install or modify the local
+system.
 
 For RPM-family systems, install `rpmbuild` and run
 `scripts/build-rpm.sh vX.Y.Z [amd64|arm64]`. The result installs the binary under

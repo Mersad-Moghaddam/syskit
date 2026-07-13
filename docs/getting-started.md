@@ -118,8 +118,8 @@ while retaining every process it could read.
 `ports` reads TCP, UDP, IPv6, and Unix socket tables directly from procfs. It
 best-effort maps socket inodes to process IDs and commands; inaccessible or
 short-lived processes simply remain unmapped. JSON and YAML mark permission-
-restricted scans with `owner_mapping_partial: true`. The remaining commands below include both shipped and planned contracts; check
-`--help` for the current supported flags.
+restricted scans with `owner_mapping_partial: true`. Check `--help` for the
+current supported flags.
 
 ## How to Explore This Repository
 
@@ -130,12 +130,11 @@ Start with the documents in this order:
 3. [Architecture overview](architecture.md) for the system shape.
 4. [Feature specifications](../specs/features/) for expected behavior.
 5. [Learning roadmap](../learning/roadmap.md) for Linux concepts to study before implementation.
-6. [Implementation readiness checklist](implementation-readiness.md) before creating production code.
+6. [Implementation readiness record](implementation-readiness.md) for the design-to-code transition.
 
 ## Command Roadmap
 
-These commands show the intended product shape; `system`, `cpu`, `memory`,
-`disk`, `filesystem`, `process`, `network`, and `ports` are executable today.
+All commands in the [command reference](command-reference.md) are implemented.
 
 See the [command reference](command-reference.md) for every implemented command,
 interactive keybinding, and safety boundary.

@@ -45,6 +45,7 @@ package() {
   [[ "\$CARCH" == aarch64 ]] && goarch=arm64
   install -Dm755 "\$srcdir/syskit_${pkgver}_linux_\$goarch" "\$pkgdir/usr/bin/syskit"
   install -Dm644 "\$srcdir/LICENSE" "\$pkgdir/usr/share/licenses/syskit/LICENSE"
+  install -Dm644 "\$srcdir/syskit.1" "\$pkgdir/usr/share/man/man1/syskit.1"
 }
 EOF
 cat > "$stage/.SRCINFO" <<EOF

@@ -1,0 +1,160 @@
+.TH SYSKIT 1 "2026-07-13" "SysKit 1.0" "User Commands"
+.SH NAME
+syskit \- inspect Linux system state through native kernel interfaces
+.SH SYNOPSIS
+.B syskit
+.RI [ global-options ]
+.I command
+.RI [ command-options ]
+.SH DESCRIPTION
+SysKit is a Linux-only, read-only system inspection, monitoring, and diagnostics
+toolkit. It reads procfs, sysfs, Netlink, and cgroups directly instead of parsing
+the output of external system utilities.
+.PP
+One-shot commands support table, JSON, and YAML output. Use JSON or YAML for
+automation; table layout is intended for people. Interactive commands require a
+terminal.
+.SH GLOBAL OPTIONS
+.TP
+.BR \-\-format " " table|json|yaml
+Select the output format. The default is table.
+.TP
+.BR \-\-config " " path
+Read an explicit TOML configuration file.
+.TP
+.BR \-\-color " " auto|always|never
+Control table header styling. NO_COLOR disables color regardless of this option.
+.TP
+.B \-\-no-header
+Suppress headers in table output.
+.TP
+.BR \-v , " " \-\-verbose
+Enable informational diagnostics on standard error.
+.TP
+.B \-\-debug
+Enable debug diagnostics on standard error.
+.TP
+.BR \-q , " " \-\-quiet
+Suppress diagnostics and error messages. Exit status still reports failure.
+.SH COMMANDS
+.TP
+.B system
+Show hostname, operating system, kernel, architecture, uptime, and load.
+.TP
+.B cpu
+Show CPU topology, identity, counters, and sampled utilization. Supports
+\fB\-\-per-core\fR and \fB\-\-interval\fR.
+.TP
+.B memory
+Show memory, swap, cache, and optional pressure-stall information.
+.TP
+.B disk
+Show mounted capacity or sampled device I/O. Supports device, filesystem type,
+mount, and interval filters.
+.TP
+.B filesystem
+Show mount, inode, filesystem type, and option details.
+.TP
+.B process
+List and filter processes. The \fBprocess tree\fR subcommand shows parent/child
+relationships.
+.TP
+.B network
+Show interface counters. Subcommands \fBinterfaces\fR, \fBroutes\fR, and
+\fBdns\fR provide focused views.
+.TP
+.B ports
+Show TCP, UDP, IPv6, and Unix sockets with best-effort process ownership.
+.TP
+.B containers
+Show cgroup-derived container mappings and resource counters. Use
+\fBcontainers inspect ID\fR to list associated processes.
+.TP
+.B diagnostics
+Show explainable, read-only health findings. Filter with \fB\-\-category\fR or
+\fB\-\-severity\fR.
+.TP
+.B plugins
+Discover and inspect plugin manifests. \fBplugins run NAME\fR explicitly executes
+one compatible plugin through the bounded v1 JSON protocol.
+.TP
+.B dashboard
+Open the interactive system dashboard.
+.TP
+.B top
+Open the interactive process monitor.
+.TP
+.BI "watch " command
+Refresh a supported one-shot table command until interrupted.
+.TP
+.B version
+Print the embedded SysKit version.
+.TP
+.BI "completion " shell
+Generate completion source for bash, fish, powershell, or zsh.
+.SH CONFIGURATION
+The default file is \fI$XDG_CONFIG_HOME/syskit/config.toml\fR, or
+\fI$HOME/.config/syskit/config.toml\fR when XDG_CONFIG_HOME is unset.
+Precedence is command-line flag, environment, per-command TOML section, global
+TOML setting, then built-in default.
+.SH ENVIRONMENT
+.TP
+.B SYSKIT_FORMAT
+Default output format.
+.TP
+.B SYSKIT_COLOR
+Default color mode.
+.TP
+.B SYSKIT_CONFIG
+Explicit configuration path.
+.TP
+.B SYSKIT_NO_HEADER
+Boolean table-header default.
+.TP
+.B SYSKIT_REFRESH_INTERVAL
+Default interval for live commands.
+.TP
+.B SYSKIT_VERBOSITY
+One of quiet, normal, verbose, or debug.
+.TP
+.B NO_COLOR
+Disable terminal color when set to a non-empty value.
+.TP
+.B SYSKIT_PLUGIN_DIR
+Colon-separated plugin discovery directories.
+.SH EXIT STATUS
+.TP
+.B 0
+Success.
+.TP
+.B 1
+General runtime error.
+.TP
+.B 2
+Invalid usage, flag, argument, or filter.
+.TP
+.B 3
+Permission denied while reading a kernel interface.
+.TP
+.B 4
+Required kernel interface unsupported or unavailable.
+.TP
+.B 5
+Partial result; some requested data could not be collected.
+.SH FILES
+.TP
+.I ~/.config/syskit/config.toml
+Default user configuration when XDG_CONFIG_HOME is unset.
+.TP
+.I ~/.local/share/syskit/plugins
+Default user plugin directory when XDG_DATA_HOME is unset.
+.SH SECURITY
+SysKit inspection commands are read-only. Plugin execution is an explicit trust
+boundary: inspect manifests and executable ownership before running third-party
+plugins. Avoid world-writable plugin directories.
+.SH SEE ALSO
+The complete command reference, compatibility manifests, plugin authoring guide,
+and release documentation are distributed with the source repository at
+https://github.com/Mersad-Moghaddam/syskit.
+.SH AUTHORS
+SysKit contributors.

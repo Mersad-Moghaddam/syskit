@@ -106,6 +106,7 @@ syskit/
 ├── testdata/           # Shared fixtures
 ├── .github/            # GitHub templates and CI workflows
 ├── docs/               # User-facing documentation and maintainer guides
+├── contracts/          # Machine-readable v1 CLI and output contracts
 ├── specs/              # Specifications and architecture documents
 │   ├── constitution.md # Engineering principles
 │   ├── product.md      # Product overview
@@ -135,6 +136,7 @@ import higher ones.
 - [Developer onboarding](docs/developer-onboarding.md)
 - [Performance baseline](docs/performance.md)
 - [v1 compatibility contract](docs/compatibility.md)
+- [syskit(1) manual source](docs/man/syskit.1)
 - [Product overview](specs/product.md)
 - [Feature specifications](specs/features/)
 - [Collector architecture](specs/collectors.md)
