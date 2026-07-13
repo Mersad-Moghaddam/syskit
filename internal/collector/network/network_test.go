@@ -35,6 +35,24 @@ func TestCollectorEnrichesInterfacesFromSysfs(t *testing.T) {
 	assert.Equal(t, "02:00:00:00:00:01", info.Interfaces[0].MACAddress)
 }
 
+func TestCollectorAddsNetlinkAddresses(t *testing.T) {
+	fsys := platform.TestFS(fstest.MapFS{
+		"proc/net/dev": &fstest.MapFile{Data: []byte("Inter-|\n face |bytes\n eth0: 10 2 3 4 0 0 0 0 20 5 6 7 0 0 0 0\n")},
+	})
+	info, err := NewCollectorWithAddresses(fsys, addressSourceStub{addresses: []platform.InterfaceAddress{{Interface: "eth0", Address: "192.0.2.10/24"}}}).Collect()
+	require.NoError(t, err)
+	assert.Equal(t, []string{"192.0.2.10/24"}, info.Interfaces[0].Addresses)
+}
+
+type addressSourceStub struct {
+	addresses []platform.InterfaceAddress
+	err       error
+}
+
+func (s addressSourceStub) InterfaceAddresses() ([]platform.InterfaceAddress, error) {
+	return s.addresses, s.err
+}
+
 func TestRoutesAndResolvers(t *testing.T) {
 	routes, err := ParseRoutes([]byte("Iface Destination Gateway Flags\neth0 00000000 0100A8C0 0003\n"))
 	assert.NoError(t, err)

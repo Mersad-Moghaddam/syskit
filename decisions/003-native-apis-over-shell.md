@@ -50,7 +50,8 @@ and parsing external commands. Specifically:
 - Process, CPU, memory, and general statistics come from **`/proc`**.
 - Device, topology, and hardware information comes from **`/sys`**.
 - Network interfaces, addresses, routes, and socket state come from **Netlink**
-  (`AF_NETLINK`, via `golang.org/x/sys/unix`), not from parsing `ip`/`ss`.
+  (`AF_NETLINK`), not from parsing `ip`/`ss`. The address adapter currently
+  uses the standard library; see [ADR 011](011-stdlib-netlink-addresses.md).
 - Container and resource-control data comes from **cgroups** (v1 under
   `/sys/fs/cgroup`, and the v2 unified hierarchy).
 
@@ -89,9 +90,9 @@ as its own ADR — the constitution requires the exception to be explicit.
 
 ### Neutral
 
-- Netlink access requires `golang.org/x/sys/unix`, a dependency we accept under
-  the *Minimal Dependencies* policy because the standard library does not expose
-  raw Netlink sockets ergonomically.
+- Netlink access is kept behind the Platform Abstraction Layer. The current
+  address-dump adapter uses the standard library; a future dependency requires
+  review under the *Minimal Dependencies* policy.
 - Kernel-version variation is contained within the Platform Abstraction Layer
   (see [ADR 004](./004-layered-architecture.md)), keeping the quirks in one place.
 

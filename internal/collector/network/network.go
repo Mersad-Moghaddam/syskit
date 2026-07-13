@@ -12,11 +12,17 @@ import (
 	"github.com/Mersad-Moghaddam/syskit/internal/platform"
 )
 
-type Collector struct{ fs platform.SysFS }
+type Collector struct {
+	fs        platform.SysFS
+	addresses platform.AddressSource
+}
 
 var _ collector.Collector[*model.NetworkInfo] = (*Collector)(nil)
 
-func NewCollector(fs platform.SysFS) *Collector { return &Collector{fs} }
+func NewCollector(fs platform.SysFS) *Collector { return &Collector{fs: fs} }
+func NewCollectorWithAddresses(fs platform.SysFS, addresses platform.AddressSource) *Collector {
+	return &Collector{fs: fs, addresses: addresses}
+}
 func (c *Collector) Collect() (*model.NetworkInfo, error) {
 	data, err := c.fs.ReadFile("proc/net/dev")
 	if err != nil {
@@ -27,6 +33,7 @@ func (c *Collector) Collect() (*model.NetworkInfo, error) {
 		return nil, fmt.Errorf("parsing /proc/net/dev: %w", err)
 	}
 	c.enrichInterfaces(interfaces)
+	c.addAddresses(interfaces)
 	info := &model.NetworkInfo{Interfaces: interfaces, CollectedAt: time.Now().UTC()}
 	if routes, err := c.fs.ReadFile("proc/net/route"); err == nil {
 		info.Routes, _ = ParseRoutes(routes)
@@ -35,6 +42,24 @@ func (c *Collector) Collect() (*model.NetworkInfo, error) {
 		info.Nameservers = ParseResolvConf(resolv)
 	}
 	return info, nil
+}
+func (c *Collector) addAddresses(interfaces []model.NetworkInterface) {
+	if c.addresses == nil {
+		return
+	}
+	addresses, err := c.addresses.InterfaceAddresses()
+	if err != nil {
+		return
+	}
+	byName := make(map[string]*model.NetworkInterface, len(interfaces))
+	for i := range interfaces {
+		byName[interfaces[i].Name] = &interfaces[i]
+	}
+	for _, address := range addresses {
+		if iface := byName[address.Interface]; iface != nil {
+			iface.Addresses = append(iface.Addresses, address.Address)
+		}
+	}
 }
 
 // enrichInterfaces supplements procfs counters with stable per-interface

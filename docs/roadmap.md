@@ -8,7 +8,7 @@ SysKit v0.1.0 is released with system, CPU, memory, disk, and filesystem
 inspection commands in table and JSON formats. The next milestone is v0.2:
 processes, networking, ports, filtering, and YAML output. v0.2 implementation
 is in progress: filtering, process listing/tree with user identities, memory
-percentages, and sampled CPU percentages, interface counters plus state, MTU, MAC, route, and DNS
+percentages, and sampled CPU percentages, interface counters plus state, MTU, MAC, IPv4/IPv6 addresses, route, and DNS
 views, TCP/UDP/IPv6/Unix port listing with best-effort process ownership, and
 YAML output are available.
 

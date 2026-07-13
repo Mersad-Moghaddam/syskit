@@ -2,6 +2,7 @@ package command
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/Mersad-Moghaddam/syskit/internal/model"
@@ -98,7 +99,7 @@ func newNetworkDNSCmd(s NetworkService, o NetworkOptions) *cobra.Command {
 	}}
 }
 func networkTable(info *model.NetworkInfo) render.Table {
-	t := render.Table{Headers: []string{"IFACE", "STATE", "MTU", "MAC", "RX BYTES", "TX BYTES", "RX B/s", "TX B/s", "RX PACKETS", "TX PACKETS", "RX ERR", "TX ERR", "RX DROP", "TX DROP"}}
+	t := render.Table{Headers: []string{"IFACE", "STATE", "MTU", "MAC", "ADDRESSES", "RX BYTES", "TX BYTES", "RX B/s", "TX B/s", "RX PACKETS", "TX PACKETS", "RX ERR", "TX ERR", "RX DROP", "TX DROP"}}
 	for _, n := range info.Interfaces {
 		rx, tx := "unavailable", "unavailable"
 		mtu := "unavailable"
@@ -111,7 +112,7 @@ func networkTable(info *model.NetworkInfo) render.Table {
 		if n.TXBytesPerSecond != nil {
 			tx = fmt.Sprintf("%.0f", *n.TXBytesPerSecond)
 		}
-		t.Rows = append(t.Rows, []string{n.Name, n.State, mtu, n.MACAddress, fmt.Sprint(n.RXBytes), fmt.Sprint(n.TXBytes), rx, tx, fmt.Sprint(n.RXPackets), fmt.Sprint(n.TXPackets), fmt.Sprint(n.RXErrors), fmt.Sprint(n.TXErrors), fmt.Sprint(n.RXDrops), fmt.Sprint(n.TXDrops)})
+		t.Rows = append(t.Rows, []string{n.Name, n.State, mtu, n.MACAddress, strings.Join(n.Addresses, ","), fmt.Sprint(n.RXBytes), fmt.Sprint(n.TXBytes), rx, tx, fmt.Sprint(n.RXPackets), fmt.Sprint(n.TXPackets), fmt.Sprint(n.RXErrors), fmt.Sprint(n.TXErrors), fmt.Sprint(n.RXDrops), fmt.Sprint(n.TXDrops)})
 	}
 	return t
 }

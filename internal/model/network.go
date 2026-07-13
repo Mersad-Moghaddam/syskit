@@ -19,6 +19,7 @@ type NetworkInterface struct {
 	State            string   `json:"state,omitempty"`
 	MTU              *uint32  `json:"mtu,omitempty"`
 	MACAddress       string   `json:"mac_address,omitempty"`
+	Addresses        []string `json:"addresses,omitempty"`
 	RXBytes          uint64   `json:"rx_bytes"`
 	TXBytes          uint64   `json:"tx_bytes"`
 	RXPackets        uint64   `json:"rx_packets"`
