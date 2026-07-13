@@ -42,21 +42,6 @@ their milestone is tagged, then recorded in a dated release entry below.
 - **Container resource counters:** `syskit containers` and structured inspect
   output include optional cgroup memory, CPU, read, and write counters when
   the corresponding controller files are available.
-- **Interactive top:** `syskit top` refreshes a filterable process view with
-  keyboard sort controls for CPU, memory, name, and PID.
-- **Top navigation:** `syskit top` supports `j`/`k` scrolling and skips refresh
-  ticks while an earlier process collection remains in flight.
-- **Watch mode:** `syskit watch <command> --interval` continuously refreshes
-  the same in-process table command until interrupted.
-- **Dashboard foundation:** `syskit dashboard` starts a Bubble Tea/Lip Gloss
-  live view backed by the existing system, memory, disk, process, and network
-  services, with a bounded refresh interval, overview/process panels, clean
-  keyboard exit, and a clear non-TTY refusal.
-- **Dashboard backpressure:** refreshes skip a tick while collection is still
-  running, preventing overlapping reads and stale update buildup.
-- **Dashboard summaries:** overview now derives CPU utilization and aggregate
-  network throughput across refreshes and includes swap usage.
-
 ## [0.3.0] - 2026-07-13
 
 ### Added
@@ -65,6 +50,13 @@ their milestone is tagged, then recorded in a dated release entry below.
   process monitoring with bounded refresh intervals and clean terminal exit.
 - **Live summaries:** dashboard CPU, memory, swap, disk, network throughput,
   and top-process summaries; `top` supports keyboard sorting and scrolling.
+- **Interactive top:** `syskit top` refreshes a filterable process view with
+  CPU, memory, name, and PID sort controls plus `j`/`k` scrolling.
+- **Watch mode:** `syskit watch <command> --interval` continuously refreshes
+  the same in-process table command until interrupted.
+- **Dashboard foundation:** `syskit dashboard` uses the existing services,
+  handles terminal resizing and collection errors, refuses non-TTY output, and
+  prevents overlapping refresh collection.
 
 ## [0.2.0] - 2026-07-13
 
