@@ -2,7 +2,8 @@
 
 > How SysKit should move from unreleased planning work to stable open-source releases.
 
-SysKit has no released versions yet. This process defines the intended release flow once implementation begins.
+SysKit released its first preview, v0.1.0, on 2026-07-12. This process governs
+subsequent releases as implementation milestones are completed.
 
 ## Versioning
 
