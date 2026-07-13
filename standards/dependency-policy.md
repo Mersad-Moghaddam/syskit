@@ -47,8 +47,8 @@ These are the only external dependencies sanctioned for SysKit. Each maps to a c
 | Dependency | Purpose | License | Justification |
 |---|---|---|---|
 | `github.com/spf13/cobra` | CLI command framework | Apache-2.0 | The de facto standard for Go CLIs; provides consistent commands, flags, and help required by the **Consistent CLI Experience** principle. |
-| `github.com/charmbracelet/bubbletea` | Interactive TUI runtime | MIT | Powers the dashboard/interactive mode; building an equivalent event loop and renderer is unreasonable. |
-| `github.com/charmbracelet/lipgloss` | Terminal styling and layout | MIT | Declarative styling for TUI and table output; keeps rendering consistent and maintainable. |
+| `github.com/charmbracelet/bubbletea` | Interactive TUI runtime | MIT | Powers the dashboard/interactive mode; building an equivalent event loop and renderer is unreasonable. ADR 006; v1.3.10 adopted. |
+| `github.com/charmbracelet/lipgloss` | Terminal styling and layout | MIT | Declarative styling and layout for the TUI; keeps rendering consistent and maintainable. ADR 006; v1.1.0 adopted. |
 | `github.com/stretchr/testify` | Test assertions and mocks | MIT | Readable assertions (`require`, `assert`) for the table-driven tests mandated by **Test Everything**; test-only, not in the shipped binary. |
 | `github.com/goccy/go-yaml` | YAML output encoding | MIT | stdlib has no YAML encoder; YAML is a committed output format (roadmap v0.2 / FR-10). Actively maintained, pure-Go, minimal transitive deps; confined to the render layer. Recorded in [ADR 009](../decisions/009-yaml-encoding.md). |
 | `github.com/BurntSushi/toml` | Configuration file parsing | MIT | stdlib has no TOML decoder; TOML is the committed config-file format (`../specs/configuration.md`, FND-09). Actively maintained, pure-Go, **zero** transitive deps; confined to the CLI layer (input only, no output-schema obligations). Recorded in [ADR 010](../decisions/010-toml-config.md). |

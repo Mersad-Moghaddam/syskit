@@ -2,6 +2,11 @@
 
 **Status:** Accepted, 2026-07-01
 
+> **Adopted (2026-07-13):** Bubble Tea v1.3.10 and Lip Gloss v1.1.0 were
+> added for the v0.3 dashboard foundation. They require Go 1.26, matching the
+> project's declared Go 1.26.3 baseline; `go mod tidy` and the full test suite
+> passed at adoption.
+
 ---
 
 ## Context

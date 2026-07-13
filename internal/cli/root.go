@@ -107,6 +107,25 @@ filesystem, process, network, and port information as a table, JSON, or YAML.`,
 	cmd.AddCommand(command.NewProcessCmd(service.NewProcess(processcollector.NewCollector(platform.RealFS())), command.ProcessOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
 	cmd.AddCommand(command.NewNetworkCmd(service.NewNetwork(network.NewCollectorWithAddresses(platform.RealFS(), platform.RealNetlink())), command.NetworkOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
 	cmd.AddCommand(command.NewPortCmd(service.NewPort(port.NewCollector(platform.RealFS())), command.PortOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
+	cmd.AddCommand(newDashboardCmd(func() (dashboardSnapshot, error) {
+		system, err := service.NewSystem(systemcollector.NewCollector(platform.RealFS())).Collect()
+		if err != nil {
+			return dashboardSnapshot{}, err
+		}
+		memory, err := service.NewMemory(memory.NewCollector(platform.RealFS())).Collect()
+		if err != nil {
+			return dashboardSnapshot{}, err
+		}
+		network, err := service.NewNetwork(network.NewCollectorWithAddresses(platform.RealFS(), platform.RealNetlink())).Collect()
+		if err != nil {
+			return dashboardSnapshot{}, err
+		}
+		used := uint64(0)
+		if memory.UsedBytes != nil {
+			used = *memory.UsedBytes
+		}
+		return dashboardSnapshot{Hostname: system.Hostname, Uptime: system.UptimeSeconds, MemoryUsed: used, MemoryTotal: memory.TotalBytes, Interfaces: len(network.Interfaces)}, nil
+	}))
 
 	return cmd
 }
