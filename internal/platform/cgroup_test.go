@@ -43,13 +43,16 @@ func TestReadCgroupMetricsV2(t *testing.T) {
 
 func TestReadCgroupMetricsV1(t *testing.T) {
 	fsys := TestFS(fstest.MapFS{
-		"sys/fs/cgroup/memory/docker/abc/memory.usage_in_bytes": &fstest.MapFile{Data: []byte("2048\n")},
-		"sys/fs/cgroup/cpuacct/docker/abc/cpuacct.usage":        &fstest.MapFile{Data: []byte("9000\n")},
+		"sys/fs/cgroup/memory/docker/abc/memory.usage_in_bytes":          &fstest.MapFile{Data: []byte("2048\n")},
+		"sys/fs/cgroup/cpuacct/docker/abc/cpuacct.usage":                 &fstest.MapFile{Data: []byte("9000\n")},
+		"sys/fs/cgroup/blkio/docker/abc/blkio.throttle.io_service_bytes": &fstest.MapFile{Data: []byte("8:0 Read 12\n8:0 Write 34\n")},
 	})
-	metrics, err := ReadCgroupMetrics(fsys, &CgroupInfo{Version: CgroupV1, Memberships: []CgroupMembership{{Controllers: []string{"memory", "cpuacct"}, Path: "/docker/abc"}}})
+	metrics, err := ReadCgroupMetrics(fsys, &CgroupInfo{Version: CgroupV1, Memberships: []CgroupMembership{{Controllers: []string{"memory", "cpuacct", "blkio"}, Path: "/docker/abc"}}})
 	require.NoError(t, err)
 	assert.Equal(t, uint64(2048), *metrics.MemoryCurrentBytes)
 	assert.Equal(t, uint64(9000), *metrics.CPUUsageNanoseconds)
+	assert.Equal(t, uint64(12), *metrics.ReadBytes)
+	assert.Equal(t, uint64(34), *metrics.WrittenBytes)
 }
 
 func TestContainerIDFromCgroupPath(t *testing.T) {

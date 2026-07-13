@@ -177,17 +177,34 @@ func cpuUsageV2(data []byte) *uint64 {
 func ioUsage(data []byte) (*uint64, *uint64) {
 	var read, written uint64
 	foundRead, foundWritten := false, false
-	for _, field := range strings.Fields(string(data)) {
-		if value, ok := strings.CutPrefix(field, "rbytes="); ok {
-			if parsed, err := strconv.ParseUint(value, 10, 64); err == nil {
-				read += parsed
-				foundRead = true
+	for _, line := range strings.Split(string(data), "\n") {
+		fields := strings.Fields(line)
+		for _, field := range fields {
+			if value, ok := strings.CutPrefix(field, "rbytes="); ok {
+				if parsed, err := strconv.ParseUint(value, 10, 64); err == nil {
+					read += parsed
+					foundRead = true
+				}
+			}
+			if value, ok := strings.CutPrefix(field, "wbytes="); ok {
+				if parsed, err := strconv.ParseUint(value, 10, 64); err == nil {
+					written += parsed
+					foundWritten = true
+				}
 			}
 		}
-		if value, ok := strings.CutPrefix(field, "wbytes="); ok {
-			if parsed, err := strconv.ParseUint(value, 10, 64); err == nil {
-				written += parsed
-				foundWritten = true
+		// cgroup v1 blkio.throttle.io_service_bytes uses rows such as
+		// "8:0 Read 4096" rather than v2's key=value format.
+		if len(fields) >= 3 {
+			if value, err := strconv.ParseUint(fields[2], 10, 64); err == nil {
+				switch strings.ToLower(fields[1]) {
+				case "read":
+					read += value
+					foundRead = true
+				case "write":
+					written += value
+					foundWritten = true
+				}
 			}
 		}
 	}
