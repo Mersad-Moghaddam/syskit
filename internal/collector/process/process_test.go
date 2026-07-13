@@ -21,3 +21,8 @@ func TestParsePasswd(t *testing.T) {
 	users := ParsePasswd([]byte("root:x:0:0:root:/root:/bin/sh\nmersad:x:1000:1000::/home/mersad:/bin/bash\nbad\n"))
 	assert.Equal(t, map[uint64]string{0: "root", 1000: "mersad"}, users)
 }
+
+func TestParseCPUAndMemoryTotals(t *testing.T) {
+	assert.Equal(t, uint64(21), ParseCPUTotal([]byte("cpu  1 2 3 4 5 6\ncpu0 1 2\n")))
+	assert.Equal(t, uint64(4096), ParseMemoryTotal([]byte("MemTotal:       4 kB\n")))
+}

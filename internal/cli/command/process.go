@@ -3,6 +3,7 @@ package command
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/Mersad-Moghaddam/syskit/internal/model"
 	"github.com/Mersad-Moghaddam/syskit/internal/render"
@@ -12,6 +13,7 @@ import (
 
 type ProcessService interface {
 	List(service.ProcessOptions) (*model.ProcessList, error)
+	Sample(time.Duration, service.ProcessOptions) (*model.ProcessList, error)
 	Tree() ([]service.ProcessTreeNode, error)
 }
 type ProcessOptions struct {
@@ -25,6 +27,7 @@ func NewProcessCmd(s ProcessService, o ProcessOptions) *cobra.Command {
 	var reverse bool
 	var limit, pid int
 	var user string
+	var interval time.Duration
 	cmd := &cobra.Command{Use: "process", Short: "List processes from procfs", Args: cobra.NoArgs, RunE: func(c *cobra.Command, args []string) error {
 		raw := append([]string(nil), filters...)
 		if pid > 0 {
@@ -37,7 +40,13 @@ func NewProcessCmd(s ProcessService, o ProcessOptions) *cobra.Command {
 		if err != nil {
 			return err
 		}
-		list, err := s.List(service.ProcessOptions{Filters: parsed, Sort: sort, Reverse: reverse, Limit: limit})
+		options := service.ProcessOptions{Filters: parsed, Sort: sort, Reverse: reverse, Limit: limit}
+		var list *model.ProcessList
+		if interval > 0 {
+			list, err = s.Sample(interval, options)
+		} else {
+			list, err = s.List(options)
+		}
 		if err != nil {
 			return fmt.Errorf("collecting processes: %w", err)
 		}
@@ -56,6 +65,7 @@ func NewProcessCmd(s ProcessService, o ProcessOptions) *cobra.Command {
 	cmd.Flags().IntVar(&limit, "limit", 0, "maximum results (0 is unlimited)")
 	cmd.Flags().IntVar(&pid, "pid", 0, "filter by PID")
 	cmd.Flags().StringVar(&user, "user", "", "filter by user name or UID")
+	cmd.Flags().DurationVar(&interval, "interval", 0, "sample process CPU usage over this interval")
 	cmd.AddCommand(&cobra.Command{Use: "tree", Short: "Show processes as a parent-child tree", Args: cobra.NoArgs, RunE: func(c *cobra.Command, args []string) error {
 		tree, err := s.Tree()
 		if err != nil {
@@ -82,13 +92,20 @@ func writeTree(c *cobra.Command, node service.ProcessTreeNode, prefix string) {
 	}
 }
 func processTable(list *model.ProcessList) render.Table {
-	t := render.Table{Headers: []string{"PID", "PPID", "USER", "STATE", "CPU TICKS", "RSS BYTES", "START TICKS", "THREADS", "COMMAND"}}
+	t := render.Table{Headers: []string{"PID", "PPID", "USER", "STATE", "CPU %", "MEM %", "RSS BYTES", "START TICKS", "THREADS", "COMMAND"}}
 	for _, p := range list.Processes {
 		user := p.User
 		if user == "" {
 			user = strconv.FormatUint(p.UID, 10)
 		}
-		t.Rows = append(t.Rows, []string{strconv.Itoa(p.PID), strconv.Itoa(p.PPID), user, p.State, strconv.FormatUint(p.CPUTime, 10), strconv.FormatUint(p.ResidentBytes, 10), strconv.FormatUint(p.StartTimeTicks, 10), strconv.FormatUint(p.Threads, 10), p.Command})
+		cpu, memory := "unavailable", "unavailable"
+		if p.CPUPercent != nil {
+			cpu = fmt.Sprintf("%.1f", *p.CPUPercent)
+		}
+		if p.MemoryPercent != nil {
+			memory = fmt.Sprintf("%.1f", *p.MemoryPercent)
+		}
+		t.Rows = append(t.Rows, []string{strconv.Itoa(p.PID), strconv.Itoa(p.PPID), user, p.State, cpu, memory, strconv.FormatUint(p.ResidentBytes, 10), strconv.FormatUint(p.StartTimeTicks, 10), strconv.FormatUint(p.Threads, 10), p.Command})
 	}
 	return t
 }

@@ -20,6 +20,8 @@ recorded here with its date and categorized changes.
 
 - **Process identities:** `syskit process` resolves UID values to names from
   `/etc/passwd`, supports `--user <name>`, and includes raw start-time ticks.
+- **Process resource usage:** `syskit process` reports memory percentage and
+  can derive aggregate CPU percentage with `--interval`.
 - **Network interface metadata:** `syskit network` and `syskit network
   interfaces` now report sysfs operational state, MTU, and MAC address with
   procfs traffic counters.

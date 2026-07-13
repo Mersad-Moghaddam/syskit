@@ -22,6 +22,16 @@ func TestProcessListFiltersByUserName(t *testing.T) {
 	assert.Equal(t, 2, list.Processes[0].PID)
 }
 
+func TestApplyProcessPercentages(t *testing.T) {
+	before := &model.ProcessList{CPUTimeTotal: 1000, Processes: []model.Process{{PID: 1, CPUTime: 100}}}
+	after := &model.ProcessList{CPUTimeTotal: 1100, TotalMemoryBytes: 1000, Processes: []model.Process{{PID: 1, CPUTime: 125, ResidentBytes: 100}}}
+	applyProcessPercentages(before, after)
+	require.NotNil(t, after.Processes[0].CPUPercent)
+	assert.Equal(t, 25.0, *after.Processes[0].CPUPercent)
+	require.NotNil(t, after.Processes[0].MemoryPercent)
+	assert.Equal(t, 10.0, *after.Processes[0].MemoryPercent)
+}
+
 type processCollectorStub struct {
 	list *model.ProcessList
 	err  error

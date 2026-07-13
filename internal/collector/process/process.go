@@ -24,6 +24,12 @@ func (c *Collector) Collect() (*model.ProcessList, error) {
 	}
 	users := c.users()
 	list := &model.ProcessList{}
+	if data, err := c.fs.ReadFile("proc/stat"); err == nil {
+		list.CPUTimeTotal = ParseCPUTotal(data)
+	}
+	if data, err := c.fs.ReadFile("proc/meminfo"); err == nil {
+		list.TotalMemoryBytes = ParseMemoryTotal(data)
+	}
 	for _, entry := range entries {
 		pid, err := strconv.Atoi(entry.Name())
 		if err != nil || pid < 1 {
@@ -40,6 +46,46 @@ func (c *Collector) Collect() (*model.ProcessList, error) {
 		list.Processes = append(list.Processes, *p)
 	}
 	return list, nil
+}
+
+// ParseCPUTotal returns aggregate clock ticks from the first cpu row.
+func ParseCPUTotal(data []byte) uint64 {
+	for _, line := range strings.Split(string(data), "\n") {
+		fields := strings.Fields(line)
+		if len(fields) < 2 || fields[0] != "cpu" {
+			continue
+		}
+		var total uint64
+		for _, field := range fields[1:] {
+			value, err := strconv.ParseUint(field, 10, 64)
+			if err != nil {
+				return 0
+			}
+			total += value
+		}
+		return total
+	}
+	return 0
+}
+
+// ParseMemoryTotal returns MemTotal in bytes; procfs reports KiB.
+func ParseMemoryTotal(data []byte) uint64 {
+	for _, line := range strings.Split(string(data), "\n") {
+		key, value, ok := strings.Cut(line, ":")
+		if !ok || key != "MemTotal" {
+			continue
+		}
+		fields := strings.Fields(value)
+		if len(fields) == 0 {
+			return 0
+		}
+		amount, err := strconv.ParseUint(fields[0], 10, 64)
+		if err != nil {
+			return 0
+		}
+		return amount * 1024
+	}
+	return 0
 }
 func (c *Collector) collectPID(pid int) (*model.Process, error) {
 	base := fmt.Sprintf("proc/%d/", pid)

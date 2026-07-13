@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sort"
 	"strconv"
+	"time"
 
 	"github.com/Mersad-Moghaddam/syskit/internal/model"
 )
@@ -25,6 +26,26 @@ func (s *Process) List(o ProcessOptions) (*model.ProcessList, error) {
 	if err != nil {
 		return nil, err
 	}
+	applyMemoryPercentages(list)
+	return s.list(list, o)
+}
+func (s *Process) Sample(interval time.Duration, o ProcessOptions) (*model.ProcessList, error) {
+	if interval <= 0 {
+		return nil, fmt.Errorf("process sample interval must be positive")
+	}
+	before, err := s.collector.Collect()
+	if err != nil {
+		return nil, err
+	}
+	time.Sleep(interval)
+	after, err := s.collector.Collect()
+	if err != nil {
+		return nil, err
+	}
+	applyProcessPercentages(before, after)
+	return s.list(after, o)
+}
+func (s *Process) list(list *model.ProcessList, o ProcessOptions) (*model.ProcessList, error) {
 	items, err := FilterItems(list.Processes, o.Filters, map[string]func(model.Process) string{"pid": func(p model.Process) string { return strconv.Itoa(p.PID) }, "user": func(p model.Process) string {
 		if p.User != "" {
 			return p.User
@@ -38,7 +59,7 @@ func (s *Process) List(o ProcessOptions) (*model.ProcessList, error) {
 	if sortField == "" {
 		sortField = "pid"
 	}
-	items, err = SortItems(items, sortField, map[string]func(model.Process, model.Process) bool{"pid": func(a, b model.Process) bool { return a.PID < b.PID }, "cpu": func(a, b model.Process) bool { return a.CPUTime < b.CPUTime }, "memory": func(a, b model.Process) bool { return a.ResidentBytes < b.ResidentBytes }, "name": func(a, b model.Process) bool { return a.Command < b.Command }}, o.Reverse)
+	items, err = SortItems(items, sortField, map[string]func(model.Process, model.Process) bool{"pid": func(a, b model.Process) bool { return a.PID < b.PID }, "cpu": lessProcessCPU, "memory": func(a, b model.Process) bool { return a.ResidentBytes < b.ResidentBytes }, "name": func(a, b model.Process) bool { return a.Command < b.Command }}, o.Reverse)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +67,41 @@ func (s *Process) List(o ProcessOptions) (*model.ProcessList, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &model.ProcessList{Processes: items}, nil
+	return &model.ProcessList{Processes: items, CPUTimeTotal: list.CPUTimeTotal, TotalMemoryBytes: list.TotalMemoryBytes}, nil
+}
+func lessProcessCPU(a, b model.Process) bool {
+	if a.CPUPercent != nil && b.CPUPercent != nil {
+		return *a.CPUPercent < *b.CPUPercent
+	}
+	return a.CPUTime < b.CPUTime
+}
+func applyMemoryPercentages(list *model.ProcessList) {
+	if list.TotalMemoryBytes == 0 {
+		return
+	}
+	for i := range list.Processes {
+		percent := float64(list.Processes[i].ResidentBytes) * 100 / float64(list.TotalMemoryBytes)
+		list.Processes[i].MemoryPercent = &percent
+	}
+}
+func applyProcessPercentages(before, after *model.ProcessList) {
+	applyMemoryPercentages(after)
+	if after.CPUTimeTotal <= before.CPUTimeTotal {
+		return
+	}
+	old := make(map[int]uint64, len(before.Processes))
+	for _, process := range before.Processes {
+		old[process.PID] = process.CPUTime
+	}
+	totalDelta := after.CPUTimeTotal - before.CPUTimeTotal
+	for i := range after.Processes {
+		previous, ok := old[after.Processes[i].PID]
+		if !ok || after.Processes[i].CPUTime < previous {
+			continue
+		}
+		percent := float64(after.Processes[i].CPUTime-previous) * 100 / float64(totalDelta)
+		after.Processes[i].CPUPercent = &percent
+	}
 }
 func ParseProcessFilters(raw []string) ([]Filter, error) {
 	filters := make([]Filter, 0, len(raw))
