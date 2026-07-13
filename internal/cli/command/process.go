@@ -5,10 +5,11 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/spf13/cobra"
+
 	"github.com/Mersad-Moghaddam/syskit/internal/model"
 	"github.com/Mersad-Moghaddam/syskit/internal/render"
 	"github.com/Mersad-Moghaddam/syskit/internal/service"
-	"github.com/spf13/cobra"
 )
 
 type ProcessService interface {

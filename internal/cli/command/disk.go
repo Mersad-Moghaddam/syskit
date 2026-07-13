@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/spf13/cobra"
+
 	"github.com/Mersad-Moghaddam/syskit/internal/model"
 	"github.com/Mersad-Moghaddam/syskit/internal/render"
-	"github.com/spf13/cobra"
 )
 
 type DiskService interface {

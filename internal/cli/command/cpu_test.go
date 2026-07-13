@@ -3,8 +3,9 @@ package command
 import (
 	"testing"
 
-	"github.com/Mersad-Moghaddam/syskit/internal/model"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/Mersad-Moghaddam/syskit/internal/model"
 )
 
 func TestCPUTableMarksAbsentTopologyUnavailable(t *testing.T) {

@@ -2,8 +2,9 @@ package service
 
 import (
 	"fmt"
-	"github.com/Mersad-Moghaddam/syskit/internal/model"
 	"sort"
+
+	"github.com/Mersad-Moghaddam/syskit/internal/model"
 )
 
 type Diagnostic struct {

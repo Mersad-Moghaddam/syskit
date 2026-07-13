@@ -2,10 +2,12 @@ package command
 
 import (
 	"fmt"
+	"strings"
+
+	"github.com/spf13/cobra"
+
 	"github.com/Mersad-Moghaddam/syskit/internal/plugin"
 	"github.com/Mersad-Moghaddam/syskit/internal/render"
-	"github.com/spf13/cobra"
-	"strings"
 )
 
 type PluginService interface {

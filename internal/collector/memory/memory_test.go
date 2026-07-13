@@ -4,8 +4,9 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/Mersad-Moghaddam/syskit/internal/collector"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/Mersad-Moghaddam/syskit/internal/collector"
 )
 
 func TestParseMemInfo(t *testing.T) {

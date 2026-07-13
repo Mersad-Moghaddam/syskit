@@ -5,8 +5,9 @@ package memory
 import (
 	"testing"
 
-	"github.com/Mersad-Moghaddam/syskit/internal/platform"
 	"github.com/stretchr/testify/require"
+
+	"github.com/Mersad-Moghaddam/syskit/internal/platform"
 )
 
 func TestCollectorReadsLiveMemory(t *testing.T) {

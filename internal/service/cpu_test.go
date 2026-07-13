@@ -4,8 +4,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Mersad-Moghaddam/syskit/internal/model"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/Mersad-Moghaddam/syskit/internal/model"
 )
 
 type fakeCPUCollector struct{ info *model.CPUInfo }

@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/spf13/cobra"
+
 	"github.com/Mersad-Moghaddam/syskit/internal/model"
 	"github.com/Mersad-Moghaddam/syskit/internal/render"
 	"github.com/Mersad-Moghaddam/syskit/internal/service"
-	"github.com/spf13/cobra"
 )
 
 type PortService interface {

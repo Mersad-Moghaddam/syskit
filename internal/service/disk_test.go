@@ -3,8 +3,9 @@ package service
 import (
 	"testing"
 
-	"github.com/Mersad-Moghaddam/syskit/internal/model"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/Mersad-Moghaddam/syskit/internal/model"
 )
 
 type fakeDiskCollector struct{ info *model.DiskInfo }

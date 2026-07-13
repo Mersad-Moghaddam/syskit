@@ -5,8 +5,9 @@ package cpu
 import (
 	"testing"
 
-	"github.com/Mersad-Moghaddam/syskit/internal/platform"
 	"github.com/stretchr/testify/require"
+
+	"github.com/Mersad-Moghaddam/syskit/internal/platform"
 )
 
 func TestCollectorReadsLiveCPUInfo(t *testing.T) {

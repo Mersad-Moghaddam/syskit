@@ -1,9 +1,11 @@
 package service
 
 import (
-	"github.com/Mersad-Moghaddam/syskit/internal/model"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+
+	"github.com/Mersad-Moghaddam/syskit/internal/model"
 )
 
 func TestEvaluateDiagnosticsReportsDocumentedThresholds(t *testing.T) {
