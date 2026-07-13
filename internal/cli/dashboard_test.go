@@ -9,6 +9,8 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/Mersad-Moghaddam/syskit/internal/model"
 )
 
 func TestDashboardModelRendersSnapshotAndError(t *testing.T) {
@@ -21,6 +23,22 @@ func TestDashboardModelRendersSnapshotAndError(t *testing.T) {
 
 	updated, _ = m.Update(dashboardData{err: errors.New("fixture failure")})
 	assert.Contains(t, updated.(dashboardModel).View(), "collection error: fixture failure")
+}
+
+func TestDashboardDerivesCPUAndNetworkRates(t *testing.T) {
+	beforeCPU := &model.CPUInfo{Times: []model.CPUTime{{CPUID: "all", Total: 100, Idle: 40, IOWait: 10}}}
+	afterCPU := &model.CPUInfo{Times: []model.CPUTime{{CPUID: "all", Total: 200, Idle: 80, IOWait: 20}}}
+	utilization := dashboardCPUUtilization(beforeCPU, afterCPU)
+	assert.NotNil(t, utilization)
+	assert.Equal(t, 50.0, *utilization)
+
+	beforeNetwork := &model.NetworkInfo{CollectedAt: time.Unix(1, 0), Interfaces: []model.NetworkInterface{{Name: "eth0", RXBytes: 10, TXBytes: 20}}}
+	afterNetwork := &model.NetworkInfo{CollectedAt: time.Unix(3, 0), Interfaces: []model.NetworkInterface{{Name: "eth0", RXBytes: 30, TXBytes: 50}}}
+	rx, tx := dashboardNetworkRates(beforeNetwork, afterNetwork)
+	assert.NotNil(t, rx)
+	assert.NotNil(t, tx)
+	assert.Equal(t, 10.0, *rx)
+	assert.Equal(t, 15.0, *tx)
 }
 
 func TestDashboardNavigatesPanels(t *testing.T) {

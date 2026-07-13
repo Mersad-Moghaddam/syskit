@@ -33,6 +33,8 @@ their milestone is tagged, then recorded in a dated release entry below.
   keyboard exit, and a clear non-TTY refusal.
 - **Dashboard backpressure:** refreshes skip a tick while collection is still
   running, preventing overlapping reads and stale update buildup.
+- **Dashboard summaries:** overview now derives CPU utilization and aggregate
+  network throughput across refreshes and includes swap usage.
 
 ## [0.2.0] - 2026-07-13
 

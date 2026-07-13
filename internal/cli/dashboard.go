@@ -8,6 +8,8 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/spf13/cobra"
+
+	"github.com/Mersad-Moghaddam/syskit/internal/model"
 )
 
 const (
@@ -22,7 +24,12 @@ type dashboardSnapshot struct {
 	Uptime      float64
 	MemoryUsed  uint64
 	MemoryTotal uint64
+	SwapUsed    uint64
+	SwapTotal   uint64
+	CPUPercent  *float64
 	Interfaces  int
+	NetworkRX   *float64
+	NetworkTX   *float64
 	DiskUsed    uint64
 	DiskTotal   uint64
 	TopProcess  string
@@ -124,5 +131,71 @@ func (m dashboardModel) View() string {
 	if m.width > 0 && (m.width < 48 || m.height > 0 && m.height < 12) {
 		return fmt.Sprintf("%s\n\nterminal is too small (%dx%d)\nresize to at least 48x12\n\nq: quit", title, m.width, m.height)
 	}
-	return fmt.Sprintf("%s — overview\n\nhost: %s\nuptime: %s\nmemory: %d / %d bytes\ndisk: %d / %d bytes\nnetwork interfaces: %d\n\nrefresh: %s  •  tab: switch panel  •  q: quit", title, m.snapshot.Hostname, time.Duration(m.snapshot.Uptime*float64(time.Second)).Truncate(time.Second), m.snapshot.MemoryUsed, m.snapshot.MemoryTotal, m.snapshot.DiskUsed, m.snapshot.DiskTotal, m.snapshot.Interfaces, m.interval)
+	return fmt.Sprintf("%s — overview\n\nhost: %s\nuptime: %s\ncpu: %s\nmemory: %d / %d bytes\nswap: %d / %d bytes\ndisk: %d / %d bytes\nnetwork: %d interfaces%s\n\nrefresh: %s  •  tab: switch panel  •  q: quit", title, m.snapshot.Hostname, time.Duration(m.snapshot.Uptime*float64(time.Second)).Truncate(time.Second), dashboardPercent(m.snapshot.CPUPercent), m.snapshot.MemoryUsed, m.snapshot.MemoryTotal, m.snapshot.SwapUsed, m.snapshot.SwapTotal, m.snapshot.DiskUsed, m.snapshot.DiskTotal, m.snapshot.Interfaces, dashboardNetworkRatesText(m.snapshot.NetworkRX, m.snapshot.NetworkTX), m.interval)
+}
+
+func dashboardPercent(value *float64) string {
+	if value == nil {
+		return "sampling"
+	}
+	return fmt.Sprintf("%.1f%%", *value)
+}
+
+func dashboardNetworkRatesText(rx, tx *float64) string {
+	if rx == nil || tx == nil {
+		return " (sampling)"
+	}
+	return fmt.Sprintf(" (rx %.0f B/s, tx %.0f B/s)", *rx, *tx)
+}
+
+func dashboardCPUUtilization(before, after *model.CPUInfo) *float64 {
+	if before == nil || after == nil {
+		return nil
+	}
+	var old, current *model.CPUTime
+	for i := range before.Times {
+		if before.Times[i].CPUID == "all" {
+			old = &before.Times[i]
+		}
+	}
+	for i := range after.Times {
+		if after.Times[i].CPUID == "all" {
+			current = &after.Times[i]
+		}
+	}
+	if old == nil || current == nil || current.Total <= old.Total {
+		return nil
+	}
+	total := current.Total - old.Total
+	idle := (current.Idle + current.IOWait) - (old.Idle + old.IOWait)
+	if idle > total {
+		return nil
+	}
+	value := float64(total-idle) * 100 / float64(total)
+	return &value
+}
+
+func dashboardNetworkRates(before, after *model.NetworkInfo) (*float64, *float64) {
+	if before == nil || after == nil {
+		return nil, nil
+	}
+	elapsed := after.CollectedAt.Sub(before.CollectedAt).Seconds()
+	if elapsed <= 0 {
+		return nil, nil
+	}
+	previous := make(map[string]model.NetworkInterface, len(before.Interfaces))
+	for _, iface := range before.Interfaces {
+		previous[iface.Name] = iface
+	}
+	var rx, tx uint64
+	for _, iface := range after.Interfaces {
+		old, ok := previous[iface.Name]
+		if !ok || iface.RXBytes < old.RXBytes || iface.TXBytes < old.TXBytes {
+			continue
+		}
+		rx += iface.RXBytes - old.RXBytes
+		tx += iface.TXBytes - old.TXBytes
+	}
+	rxRate, txRate := float64(rx)/elapsed, float64(tx)/elapsed
+	return &rxRate, &txRate
 }

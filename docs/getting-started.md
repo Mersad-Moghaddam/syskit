@@ -66,7 +66,9 @@ go run ./cmd/syskit containers
 `dashboard` requires an interactive terminal; use the one-shot commands with
 `--format json` or `--format yaml` when redirecting output.
 It switches to a compact resize notice below 48×12 cells instead of overlapping
-dashboard panels.
+dashboard panels. Its overview derives CPU utilization and aggregate network
+RX/TX throughput after the first refresh, and includes memory, swap, disk, and
+the top memory process.
 `watch` also requires an interactive terminal and refreshes a one-shot command
 as a table until Ctrl-C.
 `top` is an interactive process monitor; use `c`, `m`, `n`, or `p` to change

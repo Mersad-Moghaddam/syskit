@@ -110,12 +110,18 @@ filesystem, process, network, and port information as a table, JSON, or YAML.`,
 	cmd.AddCommand(command.NewContainerCmd(service.NewContainer(processcollector.NewCollector(platform.RealFS())), command.ContainerOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
 	cmd.AddCommand(command.NewNetworkCmd(service.NewNetwork(network.NewCollectorWithAddresses(platform.RealFS(), platform.RealNetlink())), command.NetworkOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
 	cmd.AddCommand(command.NewPortCmd(service.NewPort(port.NewCollector(platform.RealFS())), command.PortOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
+	var previousDashboardCPU *model.CPUInfo
+	var previousDashboardNetwork *model.NetworkInfo
 	cmd.AddCommand(newDashboardCmd(func() (dashboardSnapshot, error) {
 		system, err := service.NewSystem(systemcollector.NewCollector(platform.RealFS())).Collect()
 		if err != nil {
 			return dashboardSnapshot{}, err
 		}
 		memory, err := service.NewMemory(memory.NewCollector(platform.RealFS())).Collect()
+		if err != nil {
+			return dashboardSnapshot{}, err
+		}
+		cpu, err := service.NewCPU(cpu.NewCollector(platform.RealFS())).Collect()
 		if err != nil {
 			return dashboardSnapshot{}, err
 		}
@@ -151,7 +157,10 @@ filesystem, process, network, and port information as a table, JSON, or YAML.`,
 		if len(processes.Processes) > 0 {
 			top = processes.Processes[0].Command
 		}
-		return dashboardSnapshot{Hostname: system.Hostname, Uptime: system.UptimeSeconds, MemoryUsed: used, MemoryTotal: memory.TotalBytes, DiskUsed: diskUsed, DiskTotal: diskTotal, Interfaces: len(network.Interfaces), TopProcess: top}, nil
+		cpuPercent := dashboardCPUUtilization(previousDashboardCPU, cpu)
+		rxRate, txRate := dashboardNetworkRates(previousDashboardNetwork, network)
+		previousDashboardCPU, previousDashboardNetwork = cpu, network
+		return dashboardSnapshot{Hostname: system.Hostname, Uptime: system.UptimeSeconds, CPUPercent: cpuPercent, MemoryUsed: used, MemoryTotal: memory.TotalBytes, SwapUsed: memory.SwapUsedBytes, SwapTotal: memory.SwapTotalBytes, DiskUsed: diskUsed, DiskTotal: diskTotal, Interfaces: len(network.Interfaces), NetworkRX: rxRate, NetworkTX: txRate, TopProcess: top}, nil
 	}))
 	cmd.AddCommand(newWatchCmd(func(args []string, out io.Writer) error {
 		// A fresh root preserves the normal command/service construction path for
