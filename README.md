@@ -133,6 +133,7 @@ import higher ones.
 - [Plugin authoring](docs/plugin-authoring.md)
 - [Architecture overview](docs/architecture.md)
 - [Developer onboarding](docs/developer-onboarding.md)
+- [Performance baseline](docs/performance.md)
 - [Product overview](specs/product.md)
 - [Feature specifications](specs/features/)
 - [Collector architecture](specs/collectors.md)

@@ -75,6 +75,11 @@ func BenchmarkParseProcStat(b *testing.B) {
 
 Benchmarks always call `b.ReportAllocs()` — allocation count is a first-class metric because the constitution requires minimizing allocations in hot paths.
 
+The canonical workloads, baseline environment, comparison procedure, and regression
+thresholds are maintained in the [performance baseline](../docs/performance.md).
+Wall-clock results are compared only between repeated runs on the same host; allocation
+regressions are reviewed separately because they are less sensitive to host noise.
+
 ### Golden-File & End-to-End Tests
 
 Golden-file tests capture the exact CLI output for a command and compare future runs against the stored "golden" file. They protect the output contracts described in [cli-conventions.md](cli-conventions.md): once `--format json` emits a shape, that shape is pinned.

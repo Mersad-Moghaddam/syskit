@@ -143,7 +143,7 @@ Milestones are sequential — each builds on the foundation established by the p
 - [ ] Stable CLI interface with semantic versioning
 - [ ] Complete user documentation
 - [ ] Installation packages (deb, rpm, AUR, binary releases)
-- [ ] Performance benchmarks and optimization
+- [x] Performance benchmarks and optimization
 - [ ] Contributing guide and community guidelines
 - [ ] Release automation and changelog generation
 

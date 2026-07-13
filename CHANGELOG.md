@@ -23,12 +23,20 @@ their milestone is tagged, then recorded in a dated release entry below.
   embedded versions and SHA-256 checksums.
 - **Debian packaging:** a reproducible helper builds amd64/arm64 `.deb` packages
   with the static binary, package metadata, and license.
-
+- **Performance baseline:** deterministic benchmarks now cover `/proc/stat`, a
+  1,000-process fixture walk, network and socket parsing, and 1,000-row table
+  rendering, with documented comparison and regression rules.
 - **Diagnostics:** `syskit diagnostics` reports explainable, read-only memory
   pressure, swap-use, and filesystem-capacity findings.
 - **Cross-domain diagnostics:** findings now include CPU load, process memory
   concentration, network errors/drops, wildcard listeners, and an explicit
   unavailable disk-saturation check.
+
+### Changed
+
+- **Table rendering performance:** rows are written without per-row field and
+  padding allocations, reducing the 1,000-row benchmark from 4,077 to 22
+  allocations while preserving golden output.
 
 ## [0.5.0] - 2026-07-13
 

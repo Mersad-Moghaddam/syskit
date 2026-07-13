@@ -3,8 +3,10 @@ package render
 import (
 	"bytes"
 	"flag"
+	"io"
 	"os"
 	"path/filepath"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -211,6 +213,24 @@ func TestNewReturnsRequestedRenderer(t *testing.T) {
 	require.NoError(t, err)
 	_, ok = tbl.(tableRenderer)
 	assert.True(t, ok)
+}
+
+func BenchmarkTableRenderer1000Rows(b *testing.B) {
+	rows := make([][]string, 1000)
+	for i := range rows {
+		rows[i] = []string{"worker-" + strconv.Itoa(i), strconv.Itoa(i + 1), strconv.FormatUint(uint64(i+1)*1048576, 10), "running"}
+	}
+	table := Table{Headers: []string{"NAME", "PID", "RSS_BYTES", "STATE"}, Rows: rows}
+	r, err := New("table")
+	require.NoError(b, err)
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		if err := r.Render(io.Discard, table); err != nil {
+			b.Fatal(err)
+		}
+	}
 }
 
 // --- small string helpers local to the test (no shared util package) ---

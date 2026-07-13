@@ -50,3 +50,12 @@ func BenchmarkParseCPUInfo(b *testing.B) {
 		_, _, _ = ParseCPUInfo(data)
 	}
 }
+
+func BenchmarkParseCPUStat(b *testing.B) {
+	data := []byte("cpu  120320 540 30210 1804000 2010 0 4820 0 0 0\ncpu0 30210 120 7210 451000 510 0 1210 0 0 0\ncpu1 30080 140 7610 450500 490 0 1190 0 0 0\ncpu2 29990 130 7700 451500 505 0 1200 0 0 0\ncpu3 30040 150 7690 451000 505 0 1220 0 0 0\n")
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, _ = ParseCPUStat(data)
+	}
+}

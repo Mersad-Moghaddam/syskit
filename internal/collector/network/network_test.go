@@ -60,3 +60,12 @@ func TestRoutesAndResolvers(t *testing.T) {
 	assert.Equal(t, "192.168.0.1", routes[0].Gateway)
 	assert.Equal(t, []string{"1.1.1.1", "8.8.8.8"}, ParseResolvConf([]byte("# comment\nnameserver 1.1.1.1\nnameserver 8.8.8.8 # public\n")))
 }
+
+func BenchmarkParseDev(b *testing.B) {
+	data := []byte("Inter-|   Receive                                                |  Transmit\n face |bytes packets errs drop fifo frame compressed multicast|bytes packets errs drop fifo colls carrier compressed\n    lo: 9088730 92100 0 0 0 0 0 0 9088730 92100 0 0 0 0 0 0\n  eth0: 837428734 724500 0 18 0 0 0 0 173428734 524100 0 2 0 0 0 0\n wlan0: 437428734 424500 2 8 0 0 0 0 273428734 324100 0 1 0 0 0 0\n")
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, _ = ParseDev(data)
+	}
+}

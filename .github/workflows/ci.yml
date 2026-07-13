@@ -91,6 +91,7 @@ jobs:
             docs/getting-started.md
             docs/command-reference.md
             docs/plugin-authoring.md
+            docs/performance.md
             docs/contributing.md
             docs/roadmap.md
             docs/developer-onboarding.md

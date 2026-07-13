@@ -4,10 +4,12 @@
 
 ## Current Status
 
-SysKit v0.2.0 is released with process inspection, network interface/route/DNS
-views, and port inspection alongside the v0.1 system commands. Table, JSON,
-and YAML output are available for one-shot commands. v0.3 and v0.4 work is in
-progress, including live monitoring and cgroup-derived container inspection.
+SysKit v0.5.0 is released with live monitoring, cgroup-derived container
+inspection, and bounded out-of-process plugins in addition to the core system,
+process, network, and port commands. v1 stabilization is in progress: diagnostics,
+release archives, Debian packaging, and the performance baseline are implemented;
+remaining work includes RPM/AUR packaging, contract freeze, man pages, and the final
+release gate.
 
 ## Planned Milestones
 
@@ -41,4 +43,4 @@ See [specs/roadmap.md](../specs/roadmap.md) for the full development roadmap wit
 
 ## Release History
 
-See the [CHANGELOG](../CHANGELOG.md) for v0.1.0 and v0.2.0 release notes.
+See the [CHANGELOG](../CHANGELOG.md) for all published release notes.

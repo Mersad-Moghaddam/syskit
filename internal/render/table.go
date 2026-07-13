@@ -144,11 +144,21 @@ func numericColumns(t Table, cols int) []bool {
 	return right
 }
 
-// writeRow renders one row padded to widths, right-aligning the columns flagged
-// in rightAlign, and trims trailing whitespace before the newline.
+// writeRow renders one row padded to widths and right-aligns the columns flagged
+// in rightAlign. It stops at the final non-empty cell so lines have no trailing
+// whitespace.
 func writeRow(b *strings.Builder, cells []string, cols int, widths []int, rightAlign []bool) {
-	fields := make([]string, cols)
-	for i := 0; i < cols; i++ {
+	last := -1
+	for i := cols - 1; i >= 0; i-- {
+		if i < len(cells) && cells[i] != "" {
+			last = i
+			break
+		}
+	}
+	for i := 0; i <= last; i++ {
+		if i > 0 {
+			b.WriteString("  ")
+		}
 		var cell string
 		if i < len(cells) {
 			cell = cells[i]
@@ -158,14 +168,22 @@ func writeRow(b *strings.Builder, cells []string, cols int, widths []int, rightA
 			pad = 0
 		}
 		if rightAlign[i] {
-			fields[i] = strings.Repeat(" ", pad) + cell
+			writePadding(b, pad)
+			b.WriteString(cell)
 		} else {
-			fields[i] = cell + strings.Repeat(" ", pad)
+			b.WriteString(cell)
+			if i < last {
+				writePadding(b, pad)
+			}
 		}
 	}
-	line := strings.TrimRight(strings.Join(fields, "  "), " ")
-	b.WriteString(line)
 	b.WriteByte('\n')
+}
+
+func writePadding(b *strings.Builder, count int) {
+	for range count {
+		b.WriteByte(' ')
+	}
 }
 
 // isNumeric reports whether s is a plain decimal number: optional leading sign,

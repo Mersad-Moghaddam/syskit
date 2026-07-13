@@ -73,6 +73,15 @@ func TestCollectorReportsPartialOwnerMapping(t *testing.T) {
 	assert.True(t, info.OwnerMappingPartial)
 }
 
+func BenchmarkParseSocketTable(b *testing.B) {
+	data := []byte("  sl local_address rem_address st tx_queue rx_queue tr tm->when retrnsmt uid timeout inode\n   0: 0100007F:1F90 00000000:0000 0A 00000000:00000000 00:00000000 00000000 0 0 42\n   1: 0F02000A:01BB 1502000A:C350 01 00000000:00000000 00:00000000 00000000 1000 0 43\n")
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, _ = ParseSocketTable(data, "tcp")
+	}
+}
+
 type socketFS struct {
 	fstest.MapFS
 	links      map[string]string
