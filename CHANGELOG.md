@@ -57,6 +57,15 @@ their milestone is tagged, then recorded in a dated release entry below.
 - **Dashboard summaries:** overview now derives CPU utilization and aggregate
   network throughput across refreshes and includes swap usage.
 
+## [0.3.0] - 2026-07-13
+
+### Added
+
+- **Live monitoring:** interactive dashboard, generic watch mode, and top-like
+  process monitoring with bounded refresh intervals and clean terminal exit.
+- **Live summaries:** dashboard CPU, memory, swap, disk, network throughput,
+  and top-process summaries; `top` supports keyboard sorting and scrolling.
+
 ## [0.2.0] - 2026-07-13
 
 ### Added

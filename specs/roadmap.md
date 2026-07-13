@@ -70,16 +70,16 @@ Milestones are sequential — each builds on the foundation established by the p
 - Implement top-like process monitoring
 
 **Features:**
-- [ ] `syskit dashboard` — Interactive terminal dashboard with real-time metrics
-- [ ] `syskit watch <command>` — Continuous monitoring with configurable refresh interval
-- [ ] `syskit top` — Interactive process monitor with sorting and filtering
+- [x] `syskit dashboard` — Interactive terminal dashboard with real-time metrics
+- [x] `syskit watch <command>` — Continuous monitoring with configurable refresh interval
+- [x] `syskit top` — Interactive process monitor with sorting and filtering
 
 **Technical:**
-- [ ] Bubble Tea integration for terminal UI
-- [ ] Lip Gloss styling system
-- [ ] Real-time data refresh pipeline
-- [ ] Keyboard navigation and interaction model
-- [ ] Layout system for dashboard widgets
+- [x] Bubble Tea integration for terminal UI
+- [x] Lip Gloss styling system
+- [x] Real-time data refresh pipeline
+- [x] Keyboard navigation and interaction model
+- [x] Layout system for dashboard widgets
 
 ---
 

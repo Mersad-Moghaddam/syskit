@@ -97,12 +97,12 @@ Interactive terminal UI, live refresh, and monitor commands.
 
 | ID | Story | Pts | Sprint | Status | Spec / Ref |
 |---|---|---|---|---|---|
-| TUI-01 | Bubble Tea + Lip Gloss foundation (model/update/view, styling). | 8 | 7 | In Progress | `../specs/features/dashboard.md`, `../decisions/006-bubbletea-for-tui.md` |
-| RT-01 | Real-time refresh pipeline (concurrent, race-safe, backpressure). | 8 | 7 | In Progress | `../specs/features/dashboard.md`, `../specs/testing-strategy.md` |
-| WCH-01 | `syskit watch <command> --interval` — continuous refresh. | 5 | 7 | In Progress | `../specs/features/dashboard.md`, `../specs/cli-conventions.md` |
-| DSH-01 | `syskit dashboard` — layout/widget system, real-time metrics. | 13 | 8 | In Progress | `../specs/features/dashboard.md` |
-| TOP-01 | `syskit top` — interactive process monitor, sort/filter/keys. | 13 | 9 | In Progress | `../specs/features/process.md`, `../specs/features/dashboard.md` |
-| REL-v03 | Release v0.3.0 — hardening, CHANGELOG, tag. | 3 | 9 | Backlog | `../docs/release-process.md` |
+| TUI-01 | Bubble Tea + Lip Gloss foundation (model/update/view, styling). | 8 | 7 | Done | `../specs/features/dashboard.md`, `../decisions/006-bubbletea-for-tui.md` |
+| RT-01 | Real-time refresh pipeline (concurrent, race-safe, backpressure). | 8 | 7 | Done | `../specs/features/dashboard.md`, `../specs/testing-strategy.md` |
+| WCH-01 | `syskit watch <command> --interval` — continuous refresh. | 5 | 7 | Done | `../specs/features/dashboard.md`, `../specs/cli-conventions.md` |
+| DSH-01 | `syskit dashboard` — layout/widget system, real-time metrics. | 13 | 8 | Done | `../specs/features/dashboard.md` |
+| TOP-01 | `syskit top` — interactive process monitor, sort/filter/keys. | 13 | 9 | Done | `../specs/features/process.md`, `../specs/features/dashboard.md` |
+| REL-v03 | Release v0.3.0 — hardening, CHANGELOG, tag. | 3 | 9 | Done | `../docs/release-process.md` |
 
 Subtotal: **50 pts**.
 
