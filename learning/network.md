@@ -1,9 +1,33 @@
-# Network — Learning Notes
+# Networking: Links, Routes, Sockets, And Ownership
 
 > Study notes on networking, Linux network interfaces, and related internals.
 > Written for the implementer of SysKit's `network` and `ports` collectors.
 
 ---
+
+| Attribute | Value |
+|---|---|
+| Level | Domain |
+| Prerequisites | [Kernel interfaces](kernel-interfaces.md) |
+| Time | 3–4 hours plus socket-correlation lab |
+| Product contracts | [Network](../specs/features/network.md), [ports](../specs/features/ports.md) |
+
+## Learning Objectives
+
+- Separate links, addresses, routes, sockets, ports, and DNS configuration.
+- Decode interface counters and derive rates with reset/rollover safety.
+- Explain routing Netlink and socket diagnostics at a practical level.
+- Correlate socket ownership to processes while respecting permissions/races.
+- Interpret wildcard binds, IPv4/IPv6, TCP states, and network namespaces.
+
+```mermaid
+flowchart LR
+    L[Netlink links and addresses] --> N[Network view]
+    R[Netlink routes] --> N
+    S[Socket diagnostics] --> O[Socket records]
+    F[/proc PID fd ownership] --> O
+    O --> P[Ports and connections view]
+```
 
 ## Concepts
 
@@ -246,4 +270,26 @@ collector's output.
 
 ---
 
-## Personal Notes
+## Practical Lab
+
+Choose a listening socket. Trace protocol, local address/port, state, socket
+identity, owning file descriptor, process, and cgroup where permissions allow.
+Compare with `syskit ports`, `ss`, and `ip` while recording that external tools
+are verification only and may sample at different times.
+
+## Failure-Mode Matrix
+
+| Case | Correct behavior |
+|---|---|
+| interface counter decreases | Reset/recreation/wrap handling; no underflow |
+| process exits during socket join | Owner unavailable; socket may remain in snapshot |
+| fd access denied | Preserve socket with partial ownership |
+| wildcard address | Report bind semantics; do not invent one destination address |
+| network namespace differs | State scope; do not merge unrelated socket tables |
+| unknown Netlink attribute | Safely ignore optional unknown type after length validation |
+
+## Checkpoint
+
+Draw and demonstrate the link → address → route and socket → fd → process
+chains. Label the source, key, namespace, race, and permission boundary at every
+join.

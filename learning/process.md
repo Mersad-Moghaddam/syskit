@@ -1,4 +1,4 @@
-# Process — Learning Notes
+# Processes: Identity, State, Accounting, And Races
 
 > Study notes on process management, Linux process interfaces, and related
 > internals. Written for the implementer of SysKit's `process` collector. Read
@@ -7,6 +7,30 @@
 > hostile process name and a moving target.
 
 ---
+
+| Attribute | Value |
+|---|---|
+| Level | Domain |
+| Prerequisites | [Kernel interfaces](kernel-interfaces.md) |
+| Time | 3–4 hours plus race lab |
+| Product contract | [Process feature](../specs/features/process.md) |
+
+## Learning Objectives
+
+- Distinguish processes, threads, PIDs, TGIDs, parentage, and namespaces.
+- Parse `stat`, `status`, `cmdline`, `comm`, and file descriptors safely.
+- Interpret process states, CPU ticks, RSS, start time, and command identity.
+- Treat disappearance and permission denial as normal partial-observation paths.
+- Build trees and resource rates in services rather than collectors.
+
+```mermaid
+flowchart LR
+    L[List numeric PID dirs] --> S[Read stat and status]
+    S --> C[Read cmdline and comm]
+    C --> F[Optional fd ownership]
+    F --> P[Flat process snapshot]
+    P --> V[Service: rates, filters, tree]
+```
 
 ## Concepts
 
@@ -352,4 +376,26 @@ last-`)` parser still recovers the correct state and PPID.
 
 ---
 
-## Personal Notes
+## Practical Lab
+
+Inspect `/proc/self/stat`, `status`, `cmdline`, `comm`, and `fd`. Annotate every
+SysKit field with its source and unit. Then run repeated process listings while
+short-lived processes exit and identify the code/tests that classify `ENOENT`,
+`ESRCH`, `EACCES`, and `EPERM`.
+
+## Failure-Mode Matrix
+
+| Case | Correct behavior |
+|---|---|
+| `comm` contains spaces or `)` | Use the documented robust boundary rule |
+| PID vanishes mid-read | Skip entity; continue snapshot |
+| restricted `fd` or detail | Mark field/ownership partial, not zero |
+| empty `cmdline` | Fall back to `comm` for kernel thread/zombie context |
+| PID reused between samples | Match identity with start time, not PID alone |
+| parent absent from snapshot | Build a valid forest/orphan representation |
+
+## Checkpoint
+
+Parse an adversarial stat line correctly and explain why a process snapshot is
+best effort. Demonstrate how the service avoids attributing an old PID's counter
+delta to a newly reused PID.

@@ -1,4 +1,4 @@
-# Dashboard And Watch Mode — Learning Notes
+# Live Monitoring: Dashboard, Top, And Watch
 
 > Study notes on live terminal UIs, sampling cadence, and the stream/rendering
 > discipline SysKit's interactive modes depend on.
@@ -11,6 +11,34 @@
 > dashboard is that model on a loop, on a screen.
 
 ---
+
+| Attribute | Value |
+|---|---|
+| Level | Engineering/domain integration |
+| Prerequisites | [CPU](cpu.md), [disk](disk.md), [Go for SysKit](go-systems.md) |
+| Time | 3–4 hours |
+| Product contract | [Dashboard feature](../specs/features/dashboard.md) |
+
+## Learning Objectives
+
+- Model live views as repeated service snapshots, not new collectors.
+- Use real elapsed time and monotonic timestamps across refresh jitter.
+- Separate update state, commands, rendering, and terminal side effects.
+- Handle resize, small terminals, cancellation, errors, and backpressure.
+- Preserve stdout/stderr, no-color, and non-TTY behavior.
+
+```mermaid
+sequenceDiagram
+    participant T as Ticker or event
+    participant M as TUI model
+    participant S as Service
+    participant R as View
+    T->>M: refresh
+    M->>S: collect next snapshot
+    S-->>M: result or error
+    M->>R: deterministic state
+    R-->>M: terminal frame
+```
 
 ## Concepts
 
@@ -363,4 +391,25 @@ delta, not the configured one.
 
 ---
 
-## Personal Notes
+## Practical Lab
+
+Run `syskit dashboard`, `syskit top`, and one `syskit watch` command. Resize to
+narrow/wide dimensions, interrupt during loading, test no-color behavior, and
+redirect a non-interactive invocation. Map each observation to an event/state
+transition and a test.
+
+## Failure-Mode Matrix
+
+| Case | Correct behavior |
+|---|---|
+| refresh takes longer than interval | Bound work; avoid unbounded queued refreshes |
+| terminal becomes tiny or zero-sized | Stable compact/empty layout without panic |
+| service returns partial data | Render identified partial state; keep loop responsive |
+| context cancelled | Stop ticker/work and restore terminal cleanly |
+| stdout is redirected | No control sequences or interactive menu |
+| color disabled | Icons/text/layout still convey meaning |
+
+## Checkpoint
+
+Draw the live state machine, explain ownership of collection versus rendering,
+and show test evidence for resize, cancellation, errors, and slow refresh.

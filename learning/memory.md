@@ -1,4 +1,4 @@
-# Memory — Learning Notes
+# Memory: Capacity, Reclaim, Swap, And Pressure
 
 > Study notes on Linux memory accounting and the kernel interfaces SysKit's
 > memory collector will read. Read this before you write a line of the collector.
@@ -6,6 +6,33 @@
 > operator actually needs to interpret it.
 
 ---
+
+| Attribute | Value |
+|---|---|
+| Level | Domain |
+| Prerequisites | [Kernel interfaces](kernel-interfaces.md) |
+| Time | 2–3 hours plus pressure analysis |
+| Product contract | [Memory feature](../specs/features/memory.md) |
+
+## Learning Objectives
+
+- Explain free, available, reclaimable, cache, slab, swap, and working set.
+- Use `MemAvailable` rather than inventing a misleading free-memory measure.
+- Interpret PSI some/full alongside capacity and paging signals.
+- Preserve absent fields and container-relative scope as explicit limitations.
+- Test unit conversion, missing sources, malformed values, and pressure parsing.
+
+```mermaid
+flowchart LR
+    M[/proc/meminfo] --> C[Capacity and composition]
+    P[/proc/pressure/memory] --> S[Observed stalls]
+    V[/proc/vmstat deltas] --> A[Paging activity]
+    G[cgroup memory files] --> L[Scoped usage and limit]
+    C --> D[Memory diagnosis]
+    S --> D
+    A --> D
+    L --> D
+```
 
 ## Concepts
 
@@ -235,4 +262,25 @@ and test-verification tools only.
 
 ---
 
-## Personal Notes
+## Practical Lab
+
+Run `syskit memory`, inspect `/proc/meminfo` and PSI, and record free,
+available, reclaimable, swap occupancy/activity, stall evidence, and whether the
+view is host- or cgroup-relative. Do not generate memory pressure on a shared
+host. Missing PSI is a valid unavailable observation.
+
+## Failure-Mode Matrix
+
+| Case | Correct behavior |
+|---|---|
+| `MemAvailable` absent | Unavailable; never silently substitute `MemFree` |
+| No swap configured | Explicit zero totals, not an error |
+| PSI file absent | Pressure unavailable, not zero pressure |
+| Bare-count field | Do not multiply by 1024 without a `kB` unit |
+| cgroup `memory.max` is `max` | Unlimited, not a parse error or zero |
+| arithmetic would underflow | Reject inconsistent input rather than wrap |
+
+## Checkpoint
+
+Diagnose a memory snapshot using capacity, reclaimability, activity, and
+pressure as separate dimensions. Explain what each signal cannot prove.

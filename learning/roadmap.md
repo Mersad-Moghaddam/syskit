@@ -1,81 +1,200 @@
 # Learning Roadmap
 
-> Concepts to study before and during SysKit implementation.
+> A staged route from Linux fundamentals to independently engineering a SysKit
+> feature. Start at the first stage whose exit criteria you cannot yet prove.
 
-SysKit is both a tool and a learning project. The roadmap below follows the order in which concepts are most useful for implementation.
+Read the [Learning Center](README.md) first for course conventions, safe lab
+setup, and the competency model.
 
-## Stage 1: Linux Inspection Basics
+## Roadmap At A Glance
 
-- Understand procfs and sysfs as virtual filesystems.
-- Learn how counters differ from gauges.
-- Study `/proc/uptime`, `/proc/loadavg`, `/proc/stat`, and `/proc/meminfo`.
-- Practice identifying units, monotonic counters, and kernel-provided fields.
+```mermaid
+gantt
+    title Suggested six-week learning path
+    dateFormat  YYYY-MM-DD
+    axisFormat  Week %W
+    section Foundations
+    Linux and Go                 :f1, 2026-01-05, 7d
+    Kernel interfaces            :f2, after f1, 4d
+    section Domains
+    CPU and memory               :d1, after f2, 6d
+    Storage and processes        :d2, after d1, 6d
+    Network and containers       :d3, after d2, 6d
+    section Engineering
+    TUI, tests, performance      :e1, after d3, 5d
+    Integrated capstone          :e2, after e1, 5d
+```
 
-Recommended docs:
+The dates are placeholders used only to show sequencing. Compress or expand the
+path according to prior experience.
 
-- [CPU](cpu.md)
-- [Memory](memory.md)
+| Phase | Focus | Deliverable | Exit gate |
+|---:|---|---|---|
+| 0 | Orientation | Local toolchain and baseline | Build and tests pass |
+| 1 | Linux + Go foundations | Vocabulary and small parser | Explain units and error flow |
+| 2 | Native kernel interfaces | Source-selection worksheet | Defend procfs/sysfs/Netlink/cgroup choice |
+| 3 | Host resources | CPU/memory investigation | Derive a rate and interpret PSI |
+| 4 | Storage + processes | Cross-source correlation | Handle mounts and PID races |
+| 5 | Network + containers | Ownership and scope map | Trace socket and cgroup membership |
+| 6 | Live UI + engineering | Tested vertical slice | All relevant quality gates pass |
+| 7 | Capstone | Incident report or feature study | Evidence reviewed against rubric |
 
-## Stage 2: Filesystems And Storage
+## Phase 0 — Orientation
 
-- Learn mount tables, block devices, partitions, and filesystem statistics.
-- Compare `/proc/mounts`, `/proc/self/mountinfo`, `/proc/diskstats`, and `/sys/block`.
-- Understand inode exhaustion and why free bytes are not the whole story.
+Read:
 
-Recommended docs:
+1. [Project README](../README.md)
+2. [Engineering constitution](../specs/constitution.md)
+3. [Canonical architecture](../ARCHITECTURE.md)
+4. [Learning Center](README.md)
 
-- [Disk](disk.md)
-- [Filesystem](filesystem.md)
+Run:
 
-## Stage 3: Processes
+```bash
+go version
+go build ./...
+go test ./...
+go run ./cmd/syskit --help
+```
 
-- Study `/proc/[pid]` lifetime races.
-- Learn process states, parent-child relationships, command lines, and file descriptors.
-- Understand why process inspection can produce partial data under normal permissions.
+**Exit criteria:** you can locate the CLI, service, collector, platform, model,
+renderer, fixtures, feature specification, and tests for one command.
 
-Recommended docs:
+## Phase 1 — Linux And Go Foundations
 
-- [Process](process.md)
+Read [Linux foundations](linux-foundations.md), then [Go for SysKit](go-systems.md).
 
-## Stage 4: Networking
+Focus on:
 
-- Learn interface counters, routing tables, sockets, and DNS resolver configuration.
-- Compare procfs networking files with Netlink.
-- Understand IPv4, IPv6, TCP states, UDP sockets, and socket inode mapping.
+- processes, filesystems, devices, namespaces, permissions, and signals;
+- bytes vs. sectors vs. pages vs. ticks;
+- counters, gauges, rates, ratios, estimates, and missing values;
+- Go parsing, interfaces, errors, contexts, tests, and package boundaries.
 
-Recommended docs:
+**Practice:** choose one small procfs file, save a sanitized fixture, parse one
+field, and write table-driven tests for valid, missing, and malformed input.
 
-- [Network](network.md)
+**Exit criteria:** explain why `0`, unavailable, malformed, and permission denied
+are four different states and show how the code preserves that distinction.
 
-## Stage 5: Live Monitoring
+## Phase 2 — Kernel Interfaces
 
-- Learn sampling, deltas, refresh intervals, and terminal rendering constraints.
-- Understand how to avoid misleading rates from short sampling windows.
-- Study terminal resize behavior and keyboard interaction models.
+Read [Kernel interfaces](kernel-interfaces.md).
 
-Recommended specs:
+```mermaid
+flowchart TD
+    Q{What kind of data?}
+    Q -->|process or global counters| P[procfs]
+    Q -->|device topology / configuration| S[sysfs]
+    Q -->|network objects and events| N[Netlink]
+    Q -->|resource-control scope| C[cgroups]
+```
 
-- [Dashboard feature](../specs/features/dashboard.md)
-- [Rendering architecture](../specs/rendering.md)
+**Practice:** for CPU frequency, interface addresses, and container memory,
+identify the primary source, its unit, optionality, permission behavior, and a
+verification-only command.
 
-## Stage 6: Containers And Extensions
+**Exit criteria:** produce a source table that a collector implementer could use
+without guessing or parsing external command output.
 
-- Learn cgroup v1 and v2 differences.
-- Study container runtime metadata and process-to-container mapping.
-- Understand the trust model for executable plugins.
+## Phase 3 — Host Identity And Resources
 
-Recommended specs:
+Read [system and diagnostics](system-diagnostics.md), [CPU](cpu.md), and
+[memory](memory.md).
 
-- [Containers feature](../specs/features/containers.md)
-- [Plugin architecture](../specs/plugin-architecture.md)
+Focus on:
 
-## Study Loop
+- logical CPUs, topology, jiffies, load average, and two-snapshot utilization;
+- kernel/distribution identity, uptime clocks, and explainable diagnostic rules;
+- `MemAvailable`, cache, swap, PSI, and container-relative memory;
+- overflow-safe subtraction, real elapsed time, hotplug, and unavailable fields.
 
-For each feature:
+**Practice:** trace a system identity/load field, manually calculate aggregate
+CPU utilization from two `/proc/stat` samples, then explain whether low
+`MemFree` is a problem using `MemAvailable` and PSI as evidence.
 
-1. Read the feature spec.
-2. Read the related learning document.
-3. Identify Linux data sources.
-4. Capture representative fixtures.
-5. Define parser tests before implementation.
-6. Implement the smallest useful vertical slice.
+**Exit criteria:** your result agrees with SysKit within a defensible sampling
+tolerance, your memory conclusion distinguishes capacity from pressure, and one
+diagnostic finding is explained with evidence and limitations.
+
+## Phase 4 — Storage And Processes
+
+Read [disk](disk.md), [filesystem](filesystem.md), and [processes](process.md).
+
+Focus on:
+
+- devices → partitions → filesystems → mounts;
+- sectors, blocks, byte capacity, inodes, and cumulative I/O counters;
+- PID/TID, process states, stat parsing, permissions, and disappearing PIDs.
+
+**Practice:** trace one mounted filesystem back to its device and trace one
+process from `/proc/<pid>/stat` through its file descriptors.
+
+**Exit criteria:** explain why full bytes, full inodes, and high I/O latency are
+different failures; parse an adversarial process name correctly.
+
+## Phase 5 — Network And Containers
+
+Read [network](network.md) and [containers and plugins](containers.md).
+
+Focus on:
+
+- interfaces, addresses, routes, sockets, ports, TCP states, and network namespaces;
+- socket inode-to-PID correlation and its races/permission limits;
+- cgroup v1/v2 discovery, membership, controllers, limits, and `max`;
+- plugin process isolation, protocol versioning, and trust boundaries.
+
+**Practice:** locate a listening socket, correlate it to a process, and identify
+that process's cgroup without using the verification utility as a data source.
+
+**Exit criteria:** draw the complete correlation chain and label every place
+where data may disappear, be unavailable, or belong to another namespace.
+
+## Phase 6 — Live Views And Engineering
+
+Read [dashboard and watch](dashboard.md) and [engineering SysKit](engineering.md).
+
+Focus on:
+
+- monotonic time, refresh cadence, jitter, cancellation, resize, and backpressure;
+- architecture boundaries and deterministic rendering;
+- fixtures, unit/integration/golden tests, fuzzing, race tests, and benchmarks;
+- error classification, stdout/stderr separation, and compatibility contracts.
+
+**Practice:** follow one existing feature from source bytes to a golden file.
+Change only a fixture value and predict every affected test before running it.
+
+**Exit criteria:** complete the feature review worksheet in `engineering.md` and
+run the relevant Definition of Done checks successfully.
+
+## Phase 7 — Integrated Labs
+
+Complete at least two [integrated labs](labs.md):
+
+- one incident investigation;
+- one implementation or test-design lab.
+
+Recommended capstone: create a sanitized fixture scenario representing a real
+operational symptom, document the source semantics, add or improve a parser
+test, and explain the result in table and structured-output terms.
+
+**Exit criteria:** score at least “competent” on every capstone rubric dimension
+and leave reproducible evidence another contributor can follow.
+
+## The Feature Study Loop
+
+Use this loop for every new feature after the course:
+
+1. Read the feature spec and acceptance criteria.
+2. Read its domain lesson and authoritative kernel references.
+3. Inventory sources, units, version gates, permissions, and races.
+4. Capture sanitized fixtures with provenance.
+5. Define model semantics, especially unavailable and partial data.
+6. Write parser tests before or with implementation.
+7. Implement the smallest vertical slice through every architecture layer.
+8. Add service, command, renderer, golden, and integration coverage as needed.
+9. Benchmark hot paths and inspect allocations.
+10. Update specs, user docs, learning notes, and changelog where applicable.
+
+Track progress with [learning checklists](checklists.md). Completion is evidence,
+not a checked box without a reproducible artifact.

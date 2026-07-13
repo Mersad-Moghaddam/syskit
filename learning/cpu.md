@@ -1,4 +1,4 @@
-# CPU — Learning Notes
+# CPU: Topology, Time, And Utilization
 
 > Study notes on CPU architecture, Linux CPU interfaces, and related internals.
 > Written to prepare you to implement SysKit's `cpu` collector. Read the CPU
@@ -6,6 +6,31 @@
 > (`specs/collectors.md`) alongside this.
 
 ---
+
+| Attribute | Value |
+|---|---|
+| Level | Domain |
+| Prerequisites | [Kernel interfaces](kernel-interfaces.md) |
+| Time | 2–3 hours plus sampling lab |
+| Product contract | [CPU feature](../specs/features/cpu.md) |
+
+## Learning Objectives
+
+- Distinguish identity/topology gauges from cumulative activity counters.
+- Derive aggregate and per-core utilization from timestamped snapshots.
+- Interpret jiffies, load average, frequency scaling, steal, and iowait.
+- Handle CPU hotplug, missing cpufreq, resets, and guest accounting honestly.
+- Design fixture and service tests for raw and derived CPU values.
+
+```mermaid
+flowchart LR
+    A[/proc/cpuinfo and sysfs topology] --> I[Static identity]
+    B[/proc/stat at t1] --> D[Counter deltas]
+    C[/proc/stat at t2] --> D
+    D --> U[Utilization and state percentages]
+    I --> V[CPU view]
+    U --> V
+```
 
 ## Concepts
 
@@ -267,4 +292,27 @@ per-second activity, and `busy/total` of the deltas is the utilization.
 
 ---
 
-## Personal Notes
+## Practical Lab
+
+Capture the aggregate `cpu` line twice with timestamps one second apart.
+Calculate every field delta, total delta, idle delta, and busy percentage. Then
+compare with `syskit cpu` and `mpstat 1` as independently timed observations.
+Record why a difference is expected and which layer owns parsing versus
+subtraction.
+
+## Failure-Mode Matrix
+
+| Case | Correct behavior |
+|---|---|
+| cpufreq directory absent | Frequency unavailable, never zero |
+| CPU appears or disappears | Match by CPU ID; derived value may be unavailable |
+| Second counter is smaller | Treat as reset/replacement; avoid underflow |
+| `total_delta` is zero | Utilization unavailable for the interval |
+| Older line has fewer trailing fields | Accept the documented minimum safely |
+| `/proc/stat` malformed | Contextual parse error, not a partial percentage |
+
+## Checkpoint
+
+Explain and demonstrate the two-snapshot algorithm, including real elapsed time,
+counter reset, hotplug, and the distinction between load average and CPU
+utilization. Record evidence in [checklists.md](checklists.md).

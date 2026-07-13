@@ -1,9 +1,35 @@
-# Containers And Plugins — Learning Notes
+# Containers, Cgroups, And Plugin Boundaries
 
 > Study notes on cgroups, container identity, and SysKit's out-of-process plugin model.
 > Written for the implementer of SysKit's `containers` collector and the Stage 6 (v0.4–v0.5) plugin system.
 
 ---
+
+| Attribute | Value |
+|---|---|
+| Level | Advanced domain |
+| Prerequisites | [Kernel interfaces](kernel-interfaces.md), [processes](process.md) |
+| Time | 3–4 hours |
+| Product contracts | [Containers](../specs/features/containers.md), [plugins](../specs/features/plugins.md) |
+
+## Learning Objectives
+
+- Explain why a container is a composition, not one kernel object.
+- Detect cgroup v1/v2 membership and interpret scoped usage and limits.
+- Separate kernel evidence from runtime-derived container identity.
+- Handle hierarchy, delegation, `max`, process movement, and missing controllers.
+- Explain executable-plugin discovery, trust, timeouts, and schema versioning.
+
+```mermaid
+flowchart LR
+    P[Process] --> N[Namespaces: what it sees]
+    P --> C[Cgroup: what it uses]
+    P --> R[Runtime metadata: identity]
+    N --> V[Container view]
+    C --> V
+    R --> V
+    X[Plugin executable] -->|versioned JSON protocol| S[SysKit service]
+```
 
 ## Concepts
 
@@ -253,4 +279,26 @@ them by hand and diff against your parser.
 
 ---
 
-## Personal Notes
+## Practical Lab
+
+For the current process, identify namespace links, cgroup version/path,
+available controllers, memory usage/limit, and CPU accounting. If a container
+runtime is present, compare runtime identity with kernel evidence and mark which
+mapping is heuristic. Do not modify limits or container state.
+
+## Failure-Mode Matrix
+
+| Case | Correct behavior |
+|---|---|
+| cgroup v2 value is `max` | Represent unlimited, not zero |
+| controller not delegated | Field unavailable without claiming no usage |
+| process moves during collection | Snapshot is partial/time-scoped |
+| runtime metadata absent | Preserve cgroup evidence; identity may be unknown |
+| plugin hangs or emits invalid JSON | Bounded timeout/classified protocol error |
+| protocol version unsupported | Reject explicitly; do not guess schema |
+
+## Checkpoint
+
+Produce a scope map separating namespace, cgroup, and runtime evidence. Explain
+the out-of-process plugin trust boundary and why protocol versioning is a
+compatibility requirement.

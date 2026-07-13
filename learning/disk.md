@@ -1,4 +1,4 @@
-# Disk — Learning Notes
+# Disk: Block Topology And I/O Accounting
 
 > Study notes on block devices, partitions, and the disk I/O subsystem — the
 > layer *below* filesystems. This file leads on **block devices, partitions, and
@@ -7,6 +7,31 @@
 > collector; together they cover the whole "Disk And Filesystem" checklist.
 
 ---
+
+| Attribute | Value |
+|---|---|
+| Level | Domain |
+| Prerequisites | [Kernel interfaces](kernel-interfaces.md) |
+| Time | 2–3 hours with [filesystem](filesystem.md) |
+| Product contract | [Disk feature](../specs/features/disk.md) |
+
+## Learning Objectives
+
+- Separate block devices, partitions, filesystems, and mounts.
+- Convert fixed 512-byte ABI sectors without confusing hardware block size.
+- Derive IOPS, throughput, and busy time from diskstats snapshots.
+- Handle virtual devices, partitions, hotplug, resets, and extra fields.
+- Join device identity to filesystem data without erasing layer boundaries.
+
+```mermaid
+flowchart LR
+    S[/sys/block topology] --> D[Device snapshot]
+    A[/proc/diskstats t1] --> R[Counter deltas]
+    B[/proc/diskstats t2] --> R
+    R --> IO[IOPS, throughput, busy time]
+    D --> V[Disk view]
+    IO --> V
+```
 
 ## Concepts
 
@@ -279,4 +304,25 @@ architecture spec forbids shelling out to `df`/`lsblk`/`iostat` for core data).
 
 ---
 
-## Personal Notes
+## Practical Lab
+
+Choose one non-loop device. Record its sysfs topology and two diskstats samples.
+Convert sectors to bytes and calculate operations and bytes per second using
+actual elapsed time. State whether the device is physical, partitioned,
+virtual, or layered and which conclusions remain uncertain.
+
+## Failure-Mode Matrix
+
+| Case | Correct behavior |
+|---|---|
+| Device removed between reads | Skip/partial; never reuse another device's delta |
+| Counter decreases | Reset/replacement; derived rate unavailable |
+| Extra modern fields | Parse known prefix and tolerate documented tail |
+| Size multiplication overflows | Return contextual conversion error |
+| device-mapper, loop, or NVMe names | Use topology, not one name regex |
+| no I/O during interval | Valid zero rate when counters are present and equal |
+
+## Checkpoint
+
+Trace one disk row to sysfs and diskstats, state every unit, and derive one rate
+without confusing device capacity with filesystem usage.

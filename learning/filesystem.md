@@ -1,4 +1,4 @@
-# Filesystem — Learning Notes
+# Filesystem: Mounts, Capacity, And Inodes
 
 > Study notes on filesystem internals, VFS, and related Linux interfaces.
 > Focus for SysKit: how to enumerate mounts robustly, read mount options, and
@@ -6,6 +6,32 @@
 > "disk full?" check would miss.
 
 ---
+
+| Attribute | Value |
+|---|---|
+| Level | Domain |
+| Prerequisites | [Disk](disk.md), [kernel interfaces](kernel-interfaces.md) |
+| Time | 2–3 hours |
+| Product contract | [Filesystem feature](../specs/features/filesystem.md) |
+
+## Learning Objectives
+
+- Explain VFS, filesystem type, mount, bind mount, and mount namespace.
+- Parse mountinfo including separators and octal escapes.
+- Calculate byte and inode usage using the correct statfs fields.
+- Distinguish virtual, remote, overlay, and block-backed filesystems.
+- Test zero totals, vanished mounts, long options, and observer-relative views.
+
+```mermaid
+flowchart LR
+    M[/proc/self/mountinfo] --> E[Mount entries]
+    E --> S[statfs per mount]
+    S --> B[Byte capacity]
+    S --> I[Inode capacity]
+    E --> J[Joined filesystem view]
+    B --> J
+    I --> J
+```
 
 ## Concepts
 
@@ -275,4 +301,25 @@ with "No space left on device" while `df -h` still shows free bytes.
 
 ---
 
-## Personal Notes
+## Practical Lab
+
+Select `/` and one virtual or overlay mount. Parse their mountinfo rows by hand,
+decode escaped fields, and compare statfs byte/inode results with `syskit
+filesystem`, `df`, and `findmnt`. Explain why the two mounts require different
+operational interpretation.
+
+## Failure-Mode Matrix
+
+| Case | Correct behavior |
+|---|---|
+| Mount disappears before statfs | Skip or partial; continue other mounts |
+| total blocks or inodes is zero | Avoid division by zero; percentage unavailable |
+| spaces in mount point | Decode mountinfo octal escapes |
+| bind or overlay mount | Preserve source/type/options; avoid false physical mapping |
+| permission denied below mount | Do not infer that mount statistics are absent |
+| namespace differs | State observer-relative scope, not global truth |
+
+## Checkpoint
+
+Demonstrate why bytes-full, inodes-full, device-full, and slow I/O are four
+different diagnoses and identify the sources needed for each.
