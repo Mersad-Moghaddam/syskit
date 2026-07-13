@@ -115,16 +115,16 @@ Milestones are sequential — each builds on the foundation established by the p
 - Enable community extensions
 
 **Features:**
-- [ ] Plugin discovery and loading
-- [ ] Plugin API and SDK
-- [ ] Custom collector registration
-- [ ] Plugin configuration system
+- [x] Plugin discovery and explicit loading
+- [x] Plugin API and SDK
+- [x] Custom collector execution
+- [x] Plugin directory and timeout configuration
 
 **Technical:**
-- [ ] Plugin interface definition
-- [ ] Dynamic loading mechanism
-- [ ] Plugin isolation and security model
-- [ ] Plugin documentation and examples
+- [x] Plugin interface definition
+- [x] Out-of-process loading mechanism
+- [x] Plugin isolation and security model
+- [x] Plugin documentation and examples
 
 ---
 

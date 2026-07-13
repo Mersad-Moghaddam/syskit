@@ -14,7 +14,7 @@ cgroup-derived container inspection commands.
 | Architecture | Defined |
 | Feature specifications | Defined for planned core features |
 | Engineering standards | Defined |
-| Production code | v0.4.0 released; later milestones in development |
+| Production code | v0.5.0 released; v1 stabilization in development |
 | Installable releases | Source build available; packages planned |
 
 ## Development Environment

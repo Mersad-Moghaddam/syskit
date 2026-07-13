@@ -17,7 +17,7 @@ progress, including live monitoring and cgroup-derived container inspection.
 | v0.2 | Processes, networking, ports, filtering, sorting, YAML | Released (v0.2.0) |
 | v0.3 | Watch mode, terminal dashboard, live process monitor | Released (v0.3.0) |
 | v0.4 | Container-aware inspection and cgroup resource visibility | Released (v0.4.0) |
-| v0.5 | Plugin architecture and external collectors | Planned |
+| v0.5 | Plugin architecture and external collectors | Released (v0.5.0) |
 | v1.0 | Stable CLI contracts, packaging, complete documentation | Planned |
 
 ## v0.1.0 Contents

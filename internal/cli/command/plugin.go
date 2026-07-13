@@ -36,9 +36,9 @@ func NewPluginCmd(s PluginService, format func() string, noHeader func() bool) *
 		if format() != "table" {
 			return r.Render(c.OutOrStdout(), items)
 		}
-		t := render.Table{Headers: []string{"NAME", "VERSION", "API", "STATUS", "PATH"}}
+		t := render.Table{Headers: []string{"NAME", "VERSION", "API", "STATUS", "PERMISSIONS", "PATH"}}
 		for _, item := range items {
-			t.Rows = append(t.Rows, []string{item.Name, item.Version, item.APIVersion, item.Status, item.Path})
+			t.Rows = append(t.Rows, []string{item.Name, item.Version, item.APIVersion, item.Status, strings.Join(item.Permissions, ","), item.Path})
 		}
 		return r.Render(c.OutOrStdout(), t)
 	}})

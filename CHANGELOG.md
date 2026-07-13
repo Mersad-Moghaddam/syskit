@@ -25,16 +25,16 @@ their milestone is tagged, then recorded in a dated release entry below.
 - **Diagnostics:** `syskit diagnostics` reports explainable, read-only memory
   pressure, swap-use, and filesystem-capacity findings.
 
-- **Plugin discovery:** `syskit plugins list` reads declared plugin manifests
-  from explicit or documented directories without executing plugin code.
-- **Plugin inspection:** `syskit plugins inspect <name>` displays manifest
-  compatibility and declared permissions without executing the plugin.
-- **Plugin protocol:** `syskit plugins run <name>` explicitly executes a
-  compatible, path-confined plugin with bounded JSON stdin/stdout and timeout.
-- **Plugin SDK example:** a buildable protocol-v1 collector and authoring guide
-  document manifests, schemas, permissions, lifecycle, and trust boundaries.
-- **Manifest validation:** discovery rejects manifests missing executable,
-  collector, permission, schema, author, or license declarations.
+## [0.5.0] - 2026-07-13
+
+### Added
+
+- **Plugin discovery and inspection:** compatible manifests are discovered from
+  explicit, environment, or XDG paths without executing plugin code.
+- **Plugin protocol:** `plugins run` explicitly executes compatible,
+  path-confined plugins through bounded JSON stdin/stdout with a timeout.
+- **Plugin SDK:** complete manifest validation, a buildable example collector,
+  authoring documentation, core rendering, and documented trust boundaries.
 
 ## [0.4.0] - 2026-07-13
 
