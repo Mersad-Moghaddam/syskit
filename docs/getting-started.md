@@ -64,6 +64,7 @@ go run ./cmd/syskit containers
 go run ./cmd/syskit containers inspect <container-id>
 go run ./cmd/syskit plugins list --plugin-dir ./plugins
 go run ./cmd/syskit plugins inspect example --plugin-dir ./plugins
+go run ./cmd/syskit diagnostics --severity warning
 ```
 
 `dashboard` requires an interactive terminal; use the one-shot commands with

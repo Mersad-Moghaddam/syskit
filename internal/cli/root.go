@@ -111,6 +111,7 @@ filesystem, process, network, and port information as a table, JSON, or YAML.`,
 	cmd.AddCommand(command.NewContainerCmd(service.NewContainer(processcollector.NewCollector(containerFS), cgroupMetricsReader(containerFS)), command.ContainerOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
 	cmd.AddCommand(command.NewNetworkCmd(service.NewNetwork(network.NewCollectorWithAddresses(platform.RealFS(), platform.RealNetlink())), command.NetworkOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
 	cmd.AddCommand(command.NewPortCmd(service.NewPort(port.NewCollector(platform.RealFS())), command.PortOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
+	cmd.AddCommand(command.NewDiagnosticCmd(service.NewDiagnostic(memory.NewCollector(platform.RealFS()), disk.NewCollector(platform.RealFS())), func() string { return opts.format }, func() bool { return opts.cfg != nil && opts.cfg.NoHeader }))
 	cmd.AddCommand(command.NewPluginCmd(service.NewPlugin(), func() string { return opts.format }, func() bool { return opts.cfg != nil && opts.cfg.NoHeader }))
 	var previousDashboardCPU *model.CPUInfo
 	var previousDashboardNetwork *model.NetworkInfo

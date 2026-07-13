@@ -16,6 +16,9 @@ their milestone is tagged, then recorded in a dated release entry below.
 
 ### Added
 
+- **Diagnostics:** `syskit diagnostics` reports explainable, read-only memory
+  pressure, swap-use, and filesystem-capacity findings.
+
 - **Plugin discovery:** `syskit plugins list` reads declared plugin manifests
   from explicit or documented directories without executing plugin code.
 - **Plugin inspection:** `syskit plugins inspect <name>` displays manifest
