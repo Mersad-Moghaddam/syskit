@@ -27,6 +27,18 @@ func TestPortListRejectsNegativePID(t *testing.T) {
 	require.EqualError(t, err, "PID must not be negative")
 }
 
+func TestPortListFiltersByAddressAndState(t *testing.T) {
+	s := NewPort(portCollectorStub{info: &model.PortInfo{Sockets: []model.Socket{
+		{LocalAddress: "127.0.0.1", State: "LISTEN"},
+		{LocalAddress: "192.0.2.10", RemoteAddress: "198.51.100.5", State: "ESTABLISHED"},
+	}}})
+
+	info, err := s.List(PortOptions{Address: "198.51.100.5", State: "established"})
+	require.NoError(t, err)
+	require.Len(t, info.Sockets, 1)
+	assert.Equal(t, "192.0.2.10", info.Sockets[0].LocalAddress)
+}
+
 type portCollectorStub struct {
 	info *model.PortInfo
 	err  error

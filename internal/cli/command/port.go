@@ -23,8 +23,10 @@ func NewPortCmd(s PortService, o PortOptions) *cobra.Command {
 	var protocol string
 	var port int
 	var pid int
+	var address string
+	var state string
 	cmd := &cobra.Command{Use: "ports", Short: "Show TCP and UDP sockets", Args: cobra.NoArgs, RunE: func(c *cobra.Command, args []string) error {
-		info, err := s.List(service.PortOptions{Listening: listening, Protocol: protocol, Port: port, PID: pid})
+		info, err := s.List(service.PortOptions{Listening: listening, Protocol: protocol, Port: port, PID: pid, Address: address, State: state})
 		if err != nil {
 			return fmt.Errorf("collecting ports: %w", err)
 		}
@@ -41,6 +43,8 @@ func NewPortCmd(s PortService, o PortOptions) *cobra.Command {
 	cmd.Flags().StringVar(&protocol, "protocol", "", "filter by protocol (tcp, tcp6, udp, udp6, unix)")
 	cmd.Flags().IntVar(&port, "port", 0, "filter by local port")
 	cmd.Flags().IntVar(&pid, "pid", 0, "filter by owning process ID")
+	cmd.Flags().StringVar(&address, "address", "", "filter by local or remote address")
+	cmd.Flags().StringVar(&state, "state", "", "filter by socket state")
 	return cmd
 }
 func portTable(info *model.PortInfo) render.Table {

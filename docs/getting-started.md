@@ -52,6 +52,7 @@ go run ./cmd/syskit network interfaces --format json
 go run ./cmd/syskit network routes
 go run ./cmd/syskit network dns --format yaml
 go run ./cmd/syskit ports --listening --pid 1234
+go run ./cmd/syskit ports --address 127.0.0.1 --state listen
 ```
 
 `ports` reads TCP, UDP, IPv6, and Unix socket tables directly from procfs. It

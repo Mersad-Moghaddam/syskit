@@ -26,7 +26,7 @@ recorded here with its date and categorized changes.
   data as focused table, JSON, or YAML views.
 - **Port ownership:** `syskit ports` now reads TCP, UDP, IPv6, and Unix socket
   tables and best-effort associates socket inodes with owning process IDs and
-  commands. Use `--pid` to limit results to a process.
+  commands. Use `--pid`, `--address`, or `--state` to limit results.
 
 ## [0.1.0] - 2026-07-12
 

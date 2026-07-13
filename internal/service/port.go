@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/Mersad-Moghaddam/syskit/internal/model"
 )
@@ -15,6 +16,8 @@ type PortOptions struct {
 	Protocol  string
 	Port      int
 	PID       int
+	Address   string
+	State     string
 }
 type Port struct{ collector PortCollector }
 
@@ -42,6 +45,12 @@ func (s *Port) List(o PortOptions) (*model.PortInfo, error) {
 			continue
 		}
 		if o.PID > 0 && !hasPID(socket, o.PID) {
+			continue
+		}
+		if o.Address != "" && socket.LocalAddress != o.Address && socket.RemoteAddress != o.Address {
+			continue
+		}
+		if o.State != "" && !strings.EqualFold(socket.State, o.State) {
 			continue
 		}
 		out.Sockets = append(out.Sockets, socket)
