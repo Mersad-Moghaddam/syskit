@@ -79,6 +79,14 @@ We ask that reporters give us a reasonable opportunity to address an issue befor
 
 SysKit is a read-only, unprivileged, Linux-only inspection tool. The following guidance clarifies what we consider in and out of scope.
 
+### Plugin Trust Boundary
+
+Plugins are user-installed executable code and inherit the invoking user's
+permissions. Discovery and inspection never execute plugins. `plugins run`
+must be explicitly invoked, refuses world-writable discovery directories and
+out-of-directory executable paths, checks API compatibility, and enforces a
+timeout. These checks reduce accidental exposure; they are not a sandbox.
+
 ### In Scope
 
 - Vulnerabilities in SysKit's own code (the `syskit` binary and its libraries)

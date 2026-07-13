@@ -33,6 +33,7 @@ SysKit's core should remain focused, but Linux environments vary widely. Plugins
 ```sh
 syskit plugins list
 syskit plugins inspect example
+syskit plugins run example --timeout 5s
 syskit --plugin-dir ./plugins custom-check
 ```
 

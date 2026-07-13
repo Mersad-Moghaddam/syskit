@@ -57,6 +57,14 @@ Core commands must work without plugins.
 
 Plugin output should enter SysKit as structured data, not pre-rendered terminal text. SysKit core remains responsible for table, JSON, YAML, and TUI rendering so the user experience stays consistent.
 
+## Protocol v1
+
+An executable declared by a compatible manifest receives one JSON request on
+stdin: `{"api_version":"v1","action":"collect"}`. It must write exactly one
+JSON value to stdout and use stderr for diagnostics. SysKit enforces a bounded
+timeout, rejects executable paths outside the plugin directory, and renders the
+returned value itself. Execution occurs only through an explicit `plugins run`.
+
 ## Versioning
 
 The plugin protocol should be versioned independently from SysKit's CLI version. A SysKit release may support multiple plugin protocol versions during migration windows.

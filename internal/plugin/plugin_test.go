@@ -1,6 +1,7 @@
 package plugin
 
 import (
+	"context"
 	"os"
 	"path/filepath"
 	"testing"
@@ -34,4 +35,15 @@ func TestInspectFindsPlugin(t *testing.T) {
 	assert.Equal(t, []string{"procfs"}, info.Permissions)
 	_, err = Inspect([]string{dir}, "missing")
 	assert.EqualError(t, err, "plugin \"missing\" not found")
+}
+
+func TestRunExecutesCompatibleJSONPlugin(t *testing.T) {
+	dir := t.TempDir()
+	pluginDir := filepath.Join(dir, "example")
+	require.NoError(t, os.Mkdir(pluginDir, 0755))
+	require.NoError(t, os.WriteFile(filepath.Join(pluginDir, "manifest.json"), []byte(`{"name":"example","version":"1.0.0","api_version":"v1","executable":"plugin"}`), 0644))
+	require.NoError(t, os.WriteFile(filepath.Join(pluginDir, "plugin"), []byte("#!/bin/sh\nread request\nprintf '{\"ok\":true}'\n"), 0755))
+	value, err := Run(context.Background(), []string{dir}, "example")
+	require.NoError(t, err)
+	assert.Equal(t, true, value.(map[string]any)["ok"])
 }

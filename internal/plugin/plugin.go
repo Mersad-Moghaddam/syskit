@@ -3,11 +3,16 @@
 package plugin
 
 import (
+	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"sort"
+	"strings"
 )
 
 const APIVersion = "v1"
@@ -17,6 +22,12 @@ type Manifest struct {
 	Version     string   `json:"version"`
 	APIVersion  string   `json:"api_version"`
 	Permissions []string `json:"permissions,omitempty"`
+	Executable  string   `json:"executable,omitempty"`
+}
+
+type Request struct {
+	APIVersion string `json:"api_version"`
+	Action     string `json:"action"`
 }
 
 type Info struct {
@@ -89,6 +100,53 @@ func Inspect(dirs []string, name string) (*Info, error) {
 		}
 	}
 	return nil, fmt.Errorf("plugin %q not found", name)
+}
+
+// Run executes one explicitly selected compatible plugin using the v1 JSON
+// stdin/stdout protocol. Discovery alone never calls this function.
+func Run(ctx context.Context, dirs []string, name string) (any, error) {
+	info, err := Inspect(dirs, name)
+	if err != nil {
+		return nil, err
+	}
+	if info.Status != "compatible" {
+		return nil, fmt.Errorf("plugin %q uses incompatible API %q", name, info.APIVersion)
+	}
+	if info.Executable == "" || filepath.IsAbs(info.Executable) || filepath.Clean(info.Executable) != info.Executable || info.Executable == "." || info.Executable == ".." || strings.HasPrefix(info.Executable, ".."+string(filepath.Separator)) {
+		return nil, fmt.Errorf("plugin %q has invalid executable path", name)
+	}
+	path := filepath.Join(info.Path, info.Executable)
+	stat, err := os.Stat(path)
+	if err != nil {
+		return nil, fmt.Errorf("stating plugin executable %s: %w", path, err)
+	}
+	if !stat.Mode().IsRegular() || stat.Mode().Perm()&0111 == 0 {
+		return nil, fmt.Errorf("plugin executable %s is not an executable regular file", path)
+	}
+	request, _ := json.Marshal(Request{APIVersion: APIVersion, Action: "collect"})
+	command := exec.CommandContext(ctx, path)
+	command.Stdin = bytes.NewReader(append(request, '\n'))
+	var stdout, stderr bytes.Buffer
+	command.Stdout, command.Stderr = &stdout, &stderr
+	if err := command.Run(); err != nil {
+		if ctx.Err() != nil {
+			return nil, fmt.Errorf("plugin %q timed out: %w", name, ctx.Err())
+		}
+		return nil, fmt.Errorf("plugin %q failed: %w: %s", name, err, strings.TrimSpace(stderr.String()))
+	}
+	var result any
+	decoder := json.NewDecoder(&stdout)
+	if err := decoder.Decode(&result); err != nil {
+		return nil, fmt.Errorf("plugin %q returned invalid JSON: %w", name, err)
+	}
+	var extra any
+	if err := decoder.Decode(&extra); err != io.EOF {
+		if err == nil {
+			return nil, fmt.Errorf("plugin %q returned multiple JSON values", name)
+		}
+		return nil, fmt.Errorf("plugin %q returned trailing invalid JSON: %w", name, err)
+	}
+	return result, nil
 }
 
 // DefaultDirs returns the documented discovery locations. Explicit command

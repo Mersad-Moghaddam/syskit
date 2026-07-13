@@ -29,6 +29,8 @@ their milestone is tagged, then recorded in a dated release entry below.
   from explicit or documented directories without executing plugin code.
 - **Plugin inspection:** `syskit plugins inspect <name>` displays manifest
   compatibility and declared permissions without executing the plugin.
+- **Plugin protocol:** `syskit plugins run <name>` explicitly executes a
+  compatible, path-confined plugin with bounded JSON stdin/stdout and timeout.
 
 ## [0.4.0] - 2026-07-13
 
