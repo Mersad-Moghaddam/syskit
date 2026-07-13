@@ -72,7 +72,7 @@ the top memory process.
 `watch` also requires an interactive terminal and refreshes a one-shot command
 as a table until Ctrl-C.
 `top` is an interactive process monitor; use `c`, `m`, `n`, or `p` to change
-the CPU, memory, name, or PID sort respectively.
+the CPU, memory, name, or PID sort respectively, and `j`/`k` to scroll rows.
 `containers` is a best-effort, cgroup-derived listing: it reports recognized
 runtime-style IDs and process counts without requiring runtime socket access.
 

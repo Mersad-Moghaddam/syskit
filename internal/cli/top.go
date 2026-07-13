@@ -20,6 +20,8 @@ type topModel struct {
 	options  service.ProcessOptions
 	list     *model.ProcessList
 	err      error
+	fetching bool
+	offset   int
 }
 type topTick struct{}
 type topData struct {
@@ -43,7 +45,7 @@ func newTopCmd(provider topProvider) *cobra.Command {
 		if err != nil {
 			return err
 		}
-		model := topModel{provider: provider, interval: interval, options: service.ProcessOptions{Filters: parsed, Sort: sort, Reverse: true, Limit: limit}}
+		model := topModel{provider: provider, interval: interval, options: service.ProcessOptions{Filters: parsed, Sort: sort, Reverse: true, Limit: limit}, fetching: true}
 		_, err = tea.NewProgram(model, tea.WithAltScreen()).Run()
 		return err
 	}}
@@ -60,6 +62,12 @@ func (m topModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch value.String() {
 		case "q", "ctrl+c":
 			return m, tea.Quit
+		case "j", "down":
+			m.offset = m.nextOffset(1)
+			return m, nil
+		case "k", "up":
+			m.offset = m.nextOffset(-1)
+			return m, nil
 		case "c":
 			m.options.Sort = "cpu"
 		case "m":
@@ -71,13 +79,39 @@ func (m topModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		default:
 			return m, nil
 		}
+		m.offset = 0
+		if m.fetching {
+			return m, nil
+		}
+		m.fetching = true
 		return m, m.fetch()
 	case topData:
 		m.list, m.err = value.list, value.err
+		m.fetching = false
+		m.offset = m.nextOffset(0)
 	case topTick:
+		if m.fetching {
+			return m, m.tick()
+		}
+		m.fetching = true
 		return m, tea.Batch(m.fetch(), m.tick())
 	}
 	return m, nil
+}
+
+func (m topModel) nextOffset(delta int) int {
+	if m.list == nil || len(m.list.Processes) == 0 {
+		return 0
+	}
+	offset := m.offset + delta
+	if offset < 0 {
+		return 0
+	}
+	max := len(m.list.Processes) - 1
+	if offset > max {
+		return max
+	}
+	return offset
 }
 func (m topModel) fetch() tea.Cmd {
 	return func() tea.Msg { list, err := m.provider(m.options); return topData{list, err} }
@@ -92,7 +126,7 @@ func (m topModel) View() string {
 	var b strings.Builder
 	fmt.Fprintf(&b, "SysKit top — sort: %s\n\nPID     USER       CPU%%    MEM%%    COMMAND\n", m.options.Sort)
 	if m.list != nil {
-		for _, p := range m.list.Processes {
+		for _, p := range m.list.Processes[m.offset:] {
 			user := p.User
 			if user == "" {
 				user = fmt.Sprint(p.UID)
@@ -107,6 +141,6 @@ func (m topModel) View() string {
 			fmt.Fprintf(&b, "%-7d %-10s %5.1f  %5.1f  %s\n", p.PID, user, cpu, mem, p.Command)
 		}
 	}
-	b.WriteString("\nc/m/n/p: sort  •  q: quit")
+	b.WriteString("\nc/m/n/p: sort  •  j/k: scroll  •  q: quit")
 	return b.String()
 }

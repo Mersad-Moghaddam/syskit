@@ -25,6 +25,8 @@ their milestone is tagged, then recorded in a dated release entry below.
   by recognizable container ID and reports a conservative runtime hint.
 - **Interactive top:** `syskit top` refreshes a filterable process view with
   keyboard sort controls for CPU, memory, name, and PID.
+- **Top navigation:** `syskit top` supports `j`/`k` scrolling and skips refresh
+  ticks while an earlier process collection remains in flight.
 - **Watch mode:** `syskit watch <command> --interval` continuously refreshes
   the same in-process table command until interrupted.
 - **Dashboard foundation:** `syskit dashboard` starts a Bubble Tea/Lip Gloss
