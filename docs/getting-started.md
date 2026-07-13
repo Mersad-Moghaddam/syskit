@@ -48,6 +48,8 @@ go run ./cmd/syskit disk --io --interval 1s
 go run ./cmd/syskit process --limit 20
 go run ./cmd/syskit process tree
 go run ./cmd/syskit network
+go run ./cmd/syskit network routes
+go run ./cmd/syskit network dns --format yaml
 go run ./cmd/syskit ports --listening --pid 1234
 ```
 

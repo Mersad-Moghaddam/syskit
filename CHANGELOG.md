@@ -18,6 +18,9 @@ recorded here with its date and categorized changes.
 
 ### Added
 
+- **Network views:** `syskit network interfaces`, `syskit network routes`, and
+  `syskit network dns` expose the collected interface, route, and resolver
+  data as focused table, JSON, or YAML views.
 - **Port ownership:** `syskit ports` now reads TCP, UDP, IPv6, and Unix socket
   tables and best-effort associates socket inodes with owning process IDs and
   commands. Use `--pid` to limit results to a process.
