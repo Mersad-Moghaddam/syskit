@@ -136,7 +136,7 @@ Out-of-process plugin system per `../decisions/007-out-of-process-plugins.md`.
 | PLG-03 | Custom collector registration via plugins. | 5 | 12 | In Progress | `../specs/features/plugins.md` |
 | PLG-04 | Plugin isolation & security model. | 8 | 13 | In Progress | `../specs/plugin-architecture.md`, `../SECURITY.md` |
 | PLG-05 | Plugin configuration system. | 3 | 13 | Backlog | `../specs/configuration.md` |
-| PLG-06 | Plugin SDK, example plugin, and authoring docs. | 5 | 13 | Backlog | `../specs/features/plugins.md` |
+| PLG-06 | Plugin SDK, example plugin, and authoring docs. | 5 | 13 | Done | `../specs/features/plugins.md` |
 | REL-v05 | Release v0.5.0 — hardening, CHANGELOG, tag. | 3 | 13 | Backlog | `../docs/release-process.md` |
 
 Subtotal: **45 pts**.

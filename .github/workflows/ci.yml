@@ -90,6 +90,7 @@ jobs:
             docs/architecture.md
             docs/getting-started.md
             docs/command-reference.md
+            docs/plugin-authoring.md
             docs/contributing.md
             docs/roadmap.md
             docs/developer-onboarding.md

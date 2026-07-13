@@ -129,6 +129,7 @@ import higher ones.
 
 - [Getting started](docs/getting-started.md)
 - [Command reference](docs/command-reference.md)
+- [Plugin authoring](docs/plugin-authoring.md)
 - [Architecture overview](docs/architecture.md)
 - [Developer onboarding](docs/developer-onboarding.md)
 - [Product overview](specs/product.md)

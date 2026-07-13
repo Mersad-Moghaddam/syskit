@@ -18,11 +18,15 @@ import (
 const APIVersion = "v1"
 
 type Manifest struct {
-	Name        string   `json:"name"`
-	Version     string   `json:"version"`
-	APIVersion  string   `json:"api_version"`
-	Permissions []string `json:"permissions,omitempty"`
-	Executable  string   `json:"executable,omitempty"`
+	Name        string            `json:"name"`
+	Version     string            `json:"version"`
+	APIVersion  string            `json:"api_version"`
+	Permissions []string          `json:"permissions,omitempty"`
+	Executable  string            `json:"executable,omitempty"`
+	Collectors  []string          `json:"collectors,omitempty"`
+	Schemas     map[string]string `json:"output_schemas,omitempty"`
+	Author      string            `json:"author,omitempty"`
+	License     string            `json:"license,omitempty"`
 }
 
 type Request struct {
