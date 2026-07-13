@@ -48,10 +48,12 @@ go run ./cmd/syskit disk --io --interval 1s
 go run ./cmd/syskit process --limit 20
 go run ./cmd/syskit process tree
 go run ./cmd/syskit network
-go run ./cmd/syskit ports --listening
+go run ./cmd/syskit ports --listening --pid 1234
 ```
 
-The remaining commands below include both shipped and planned contracts; check
+`ports` reads TCP, UDP, IPv6, and Unix socket tables directly from procfs. It
+best-effort maps socket inodes to process IDs and commands; inaccessible or
+short-lived processes simply remain unmapped. The remaining commands below include both shipped and planned contracts; check
 `--help` for the current supported flags.
 
 ## How to Explore This Repository

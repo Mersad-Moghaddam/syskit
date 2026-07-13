@@ -1,6 +1,6 @@
 // Package platform is the only layer permitted to touch the operating system.
 //
-// It exposes the SysFS seam (ReadFile/Open/ReadDir) with a real implementation
+// It exposes the SysFS seam (ReadFile/Open/ReadDir/ReadLink) with a real implementation
 // rooted at "/" and a fixture-backed implementation rooted at test data, so
 // every collector reads through an injectable interface rather than the host
 // filesystem directly. It also owns the Netlink client and the cgroup v1/v2

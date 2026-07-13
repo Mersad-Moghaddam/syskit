@@ -21,6 +21,9 @@ type SysFS interface {
 	Open(name string) (fs.File, error)
 	// ReadDir lists a pseudo-directory (e.g. "proc" to enumerate PIDs).
 	ReadDir(name string) ([]fs.DirEntry, error)
+	// ReadLink reads a symbolic-link target relative to the mount root. Procfs
+	// file-descriptor links expose resource identities such as socket inodes.
+	ReadLink(name string) (string, error)
 	StatFS(path string) (FSStats, error)
 }
 
@@ -87,6 +90,17 @@ func (o osFS) ReadDir(name string) ([]fs.DirEntry, error) {
 	return entries, nil
 }
 
+func (o osFS) ReadLink(name string) (string, error) {
+	if err := validate("reading link", name); err != nil {
+		return "", err
+	}
+	target, err := os.Readlink(o.resolve(name))
+	if err != nil {
+		return "", mapError("reading link", name, err)
+	}
+	return target, nil
+}
+
 func (o osFS) StatFS(path string) (FSStats, error) {
 	var stat syscall.Statfs_t
 	if err := syscall.Statfs(path, &stat); err != nil {
@@ -139,6 +153,21 @@ func (t fixtureFS) ReadDir(name string) ([]fs.DirEntry, error) {
 		return nil, mapError("listing", name, err)
 	}
 	return entries, nil
+}
+
+func (t fixtureFS) ReadLink(name string) (string, error) {
+	if err := validate("reading link", name); err != nil {
+		return "", err
+	}
+	reader, ok := t.fsys.(interface{ ReadLink(string) (string, error) })
+	if !ok {
+		return "", fmt.Errorf("reading link %q: %w", name, ErrUnsupported)
+	}
+	target, err := reader.ReadLink(name)
+	if err != nil {
+		return "", mapError("reading link", name, err)
+	}
+	return target, nil
 }
 
 func (t fixtureFS) StatFS(path string) (FSStats, error) {

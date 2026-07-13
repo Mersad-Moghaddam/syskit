@@ -109,6 +109,8 @@ type SysFS interface {
     Open(name string) (fs.File, error)
     // ReadDir lists a pseudo-directory (e.g. "proc" to enumerate PIDs).
     ReadDir(name string) ([]fs.DirEntry, error)
+    // ReadLink reads a procfs symbolic link such as proc/<pid>/fd/<fd>.
+    ReadLink(name string) (string, error)
 }
 ```
 

@@ -16,6 +16,12 @@ recorded here with its date and categorized changes.
 
 ## [Unreleased]
 
+### Added
+
+- **Port ownership:** `syskit ports` now reads TCP, UDP, IPv6, and Unix socket
+  tables and best-effort associates socket inodes with owning process IDs and
+  commands. Use `--pid` to limit results to a process.
+
 ## [0.1.0] - 2026-07-12
 
 ### Added
