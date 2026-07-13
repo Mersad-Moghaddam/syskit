@@ -60,6 +60,8 @@ go run ./cmd/syskit dashboard --panel processes
 
 `dashboard` requires an interactive terminal; use the one-shot commands with
 `--format json` or `--format yaml` when redirecting output.
+It switches to a compact resize notice below 48×12 cells instead of overlapping
+dashboard panels.
 
 When permissions hide a process, structured process output sets `partial: true`
 while retaining every process it could read.

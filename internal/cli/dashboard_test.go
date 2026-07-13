@@ -31,6 +31,12 @@ func TestDashboardNavigatesPanels(t *testing.T) {
 	assert.Contains(t, processes.View(), "top process: worker")
 }
 
+func TestDashboardHandlesSmallTerminal(t *testing.T) {
+	m := dashboardModel{interval: time.Second}
+	updated, _ := m.Update(tea.WindowSizeMsg{Width: 40, Height: 10})
+	assert.Contains(t, updated.(dashboardModel).View(), "terminal is too small")
+}
+
 func TestDashboardQuitKey(t *testing.T) {
 	m := dashboardModel{interval: time.Second}
 	_, command := m.Update(tea.KeyMsg{Type: tea.KeyCtrlC})

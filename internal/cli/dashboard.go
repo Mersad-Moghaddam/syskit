@@ -36,6 +36,8 @@ type dashboardModel struct {
 	snapshot dashboardSnapshot
 	err      error
 	panel    string
+	width    int
+	height   int
 }
 
 type dashboardTick struct{}
@@ -83,6 +85,8 @@ func (m dashboardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	case dashboardData:
 		m.snapshot, m.err = value.snapshot, value.err
+	case tea.WindowSizeMsg:
+		m.width, m.height = value.Width, value.Height
 	case dashboardTick:
 		return m, tea.Batch(m.fetch(), m.tick())
 	}
@@ -107,6 +111,9 @@ func (m dashboardModel) View() string {
 	}
 	if m.panel == processesPanel {
 		return fmt.Sprintf("%s — processes\n\ntop process: %s\n\nrefresh: %s  •  tab: switch panel  •  q: quit", title, m.snapshot.TopProcess, m.interval)
+	}
+	if m.width > 0 && (m.width < 48 || m.height > 0 && m.height < 12) {
+		return fmt.Sprintf("%s\n\nterminal is too small (%dx%d)\nresize to at least 48x12\n\nq: quit", title, m.width, m.height)
 	}
 	return fmt.Sprintf("%s — overview\n\nhost: %s\nuptime: %s\nmemory: %d / %d bytes\ndisk: %d / %d bytes\nnetwork interfaces: %d\n\nrefresh: %s  •  tab: switch panel  •  q: quit", title, m.snapshot.Hostname, time.Duration(m.snapshot.Uptime*float64(time.Second)).Truncate(time.Second), m.snapshot.MemoryUsed, m.snapshot.MemoryTotal, m.snapshot.DiskUsed, m.snapshot.DiskTotal, m.snapshot.Interfaces, m.interval)
 }
