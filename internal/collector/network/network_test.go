@@ -2,8 +2,12 @@ package network
 
 import (
 	"testing"
+	"testing/fstest"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
+	"github.com/Mersad-Moghaddam/syskit/internal/platform"
 )
 
 func TestParseDev(t *testing.T) {
@@ -12,6 +16,23 @@ func TestParseDev(t *testing.T) {
 	assert.Len(t, interfaces, 1)
 	assert.Equal(t, "eth0", interfaces[0].Name)
 	assert.Equal(t, uint64(20), interfaces[0].TXBytes)
+}
+
+func TestCollectorEnrichesInterfacesFromSysfs(t *testing.T) {
+	fsys := platform.TestFS(fstest.MapFS{
+		"proc/net/dev":                 &fstest.MapFile{Data: []byte("Inter-|\n face |bytes\n eth0: 10 2 3 4 0 0 0 0 20 5 6 7 0 0 0 0\n")},
+		"sys/class/net/eth0/operstate": &fstest.MapFile{Data: []byte("up\n")},
+		"sys/class/net/eth0/mtu":       &fstest.MapFile{Data: []byte("1500\n")},
+		"sys/class/net/eth0/address":   &fstest.MapFile{Data: []byte("02:00:00:00:00:01\n")},
+	})
+
+	info, err := NewCollector(fsys).Collect()
+	require.NoError(t, err)
+	require.Len(t, info.Interfaces, 1)
+	assert.Equal(t, "up", info.Interfaces[0].State)
+	require.NotNil(t, info.Interfaces[0].MTU)
+	assert.Equal(t, uint32(1500), *info.Interfaces[0].MTU)
+	assert.Equal(t, "02:00:00:00:00:01", info.Interfaces[0].MACAddress)
 }
 
 func TestRoutesAndResolvers(t *testing.T) {

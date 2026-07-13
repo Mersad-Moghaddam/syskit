@@ -18,6 +18,9 @@ recorded here with its date and categorized changes.
 
 ### Added
 
+- **Network interface metadata:** `syskit network` and `syskit network
+  interfaces` now report sysfs operational state, MTU, and MAC address with
+  procfs traffic counters.
 - **Network views:** `syskit network interfaces`, `syskit network routes`, and
   `syskit network dns` expose the collected interface, route, and resolver
   data as focused table, JSON, or YAML views.

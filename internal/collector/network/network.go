@@ -26,6 +26,7 @@ func (c *Collector) Collect() (*model.NetworkInfo, error) {
 	if err != nil {
 		return nil, fmt.Errorf("parsing /proc/net/dev: %w", err)
 	}
+	c.enrichInterfaces(interfaces)
 	info := &model.NetworkInfo{Interfaces: interfaces, CollectedAt: time.Now().UTC()}
 	if routes, err := c.fs.ReadFile("proc/net/route"); err == nil {
 		info.Routes, _ = ParseRoutes(routes)
@@ -34,6 +35,27 @@ func (c *Collector) Collect() (*model.NetworkInfo, error) {
 		info.Nameservers = ParseResolvConf(resolv)
 	}
 	return info, nil
+}
+
+// enrichInterfaces supplements procfs counters with stable per-interface
+// attributes exposed by sysfs. Missing attributes are optional because an
+// interface may disappear between the procfs snapshot and these reads.
+func (c *Collector) enrichInterfaces(interfaces []model.NetworkInterface) {
+	for i := range interfaces {
+		base := "sys/class/net/" + interfaces[i].Name + "/"
+		if data, err := c.fs.ReadFile(base + "operstate"); err == nil {
+			interfaces[i].State = strings.TrimSpace(string(data))
+		}
+		if data, err := c.fs.ReadFile(base + "address"); err == nil {
+			interfaces[i].MACAddress = strings.TrimSpace(string(data))
+		}
+		if data, err := c.fs.ReadFile(base + "mtu"); err == nil {
+			if value, parseErr := strconv.ParseUint(strings.TrimSpace(string(data)), 10, 32); parseErr == nil {
+				mtu := uint32(value)
+				interfaces[i].MTU = &mtu
+			}
+		}
+	}
 }
 func ParseRoutes(data []byte) ([]model.Route, error) {
 	var routes []model.Route

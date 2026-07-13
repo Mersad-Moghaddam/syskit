@@ -17,3 +17,9 @@ func TestRouteAndDNSTables(t *testing.T) {
 	assert.Equal(t, []string{"NAMESERVER"}, dns.Headers)
 	assert.Equal(t, [][]string{{"1.1.1.1"}, {"8.8.8.8"}}, dns.Rows)
 }
+
+func TestNetworkTableIncludesInterfaceMetadata(t *testing.T) {
+	mtu := uint32(1500)
+	table := networkTable(&model.NetworkInfo{Interfaces: []model.NetworkInterface{{Name: "eth0", State: "up", MTU: &mtu, MACAddress: "02:00:00:00:00:01"}}})
+	assert.Equal(t, []string{"eth0", "up", "1500", "02:00:00:00:00:01"}, table.Rows[0][:4])
+}
