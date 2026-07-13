@@ -16,6 +16,9 @@ their milestone is tagged, then recorded in a dated release entry below.
 
 ### Added
 
+- **Release artifacts:** tagged releases build Linux amd64/arm64 archives with
+  embedded versions and SHA-256 checksums.
+
 - **Diagnostics:** `syskit diagnostics` reports explainable, read-only memory
   pressure, swap-use, and filesystem-capacity findings.
 

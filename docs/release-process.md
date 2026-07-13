@@ -33,6 +33,12 @@ SysKit follows semantic versioning as described in [versioning standards](../sta
 - [ ] Security notes are reviewed.
 - [ ] Release artifacts are reproducible.
 
+## Artifact Builds
+
+Run `scripts/build-release.sh vX.Y.Z` on a clean tagged checkout to create
+Linux amd64 and arm64 archives with embedded versions and a `SHA256SUMS` file.
+The tag-triggered release workflow publishes the same artifacts on GitHub.
+
 ## Changelog Policy
 
 The changelog should group user-visible changes by:
