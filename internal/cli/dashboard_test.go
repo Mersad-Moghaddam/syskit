@@ -12,10 +12,11 @@ import (
 
 func TestDashboardModelRendersSnapshotAndError(t *testing.T) {
 	m := dashboardModel{interval: time.Second}
-	updated, _ := m.Update(dashboardData{snapshot: dashboardSnapshot{Hostname: "fixture", Uptime: 60, MemoryUsed: 40, MemoryTotal: 100, Interfaces: 2}})
+	updated, _ := m.Update(dashboardData{snapshot: dashboardSnapshot{Hostname: "fixture", Uptime: 60, MemoryUsed: 40, MemoryTotal: 100, DiskUsed: 20, DiskTotal: 80, Interfaces: 2, TopProcess: "worker"}})
 	view := updated.(dashboardModel).View()
 	assert.Contains(t, view, "host: fixture")
 	assert.Contains(t, view, "memory: 40 / 100 bytes")
+	assert.Contains(t, view, "top process: worker")
 
 	updated, _ = m.Update(dashboardData{err: errors.New("fixture failure")})
 	assert.Contains(t, updated.(dashboardModel).View(), "collection error: fixture failure")

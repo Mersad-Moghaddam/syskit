@@ -18,7 +18,7 @@ YAML output are available.
 |---|---|---|
 | v0.1 | Foundation, system, CPU, memory, disk, filesystem, table/JSON | Released (v0.1.0) |
 | v0.2 | Processes, networking, ports, filtering, sorting, YAML | In progress |
-| v0.3 | Watch mode, terminal dashboard, live process monitor | In progress |
+| v0.3 | Watch mode, terminal dashboard, live process monitor | In progress (dashboard host, memory, disk, network, and top-process summary available) |
 | v0.4 | Container-aware inspection and cgroup resource visibility | Planned |
 | v0.5 | Plugin architecture and external collectors | Planned |
 | v1.0 | Stable CLI contracts, packaging, complete documentation | Planned |

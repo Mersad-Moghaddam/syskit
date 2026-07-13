@@ -19,8 +19,8 @@ recorded here with its date and categorized changes.
 ### Added
 
 - **Dashboard foundation:** `syskit dashboard` starts a Bubble Tea/Lip Gloss
-  live view backed by the existing system, memory, and network services, with
-  a bounded refresh interval and clean keyboard exit.
+  live view backed by the existing system, memory, disk, process, and network
+  services, with a bounded refresh interval and clean keyboard exit.
 - **Network addresses:** `syskit network interfaces` now includes IPv4 and
   IPv6 CIDR addresses collected through a native `RTM_GETADDR` Netlink dump.
 - **Process identities:** `syskit process` resolves UID values to names from

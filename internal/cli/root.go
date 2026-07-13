@@ -120,11 +120,35 @@ filesystem, process, network, and port information as a table, JSON, or YAML.`,
 		if err != nil {
 			return dashboardSnapshot{}, err
 		}
+		disks, err := service.NewDisk(disk.NewCollector(platform.RealFS())).Collect()
+		if err != nil {
+			return dashboardSnapshot{}, err
+		}
+		processes, err := service.NewProcess(processcollector.NewCollector(platform.RealFS())).List(service.ProcessOptions{Sort: "memory", Reverse: true, Limit: 1})
+		if err != nil {
+			return dashboardSnapshot{}, err
+		}
 		used := uint64(0)
 		if memory.UsedBytes != nil {
 			used = *memory.UsedBytes
 		}
-		return dashboardSnapshot{Hostname: system.Hostname, Uptime: system.UptimeSeconds, MemoryUsed: used, MemoryTotal: memory.TotalBytes, Interfaces: len(network.Interfaces)}, nil
+		diskUsed, diskTotal := uint64(0), uint64(0)
+		for _, mount := range disks.Mounts {
+			if mount.MountPoint == "/" {
+				if mount.UsedBytes != nil {
+					diskUsed = *mount.UsedBytes
+				}
+				if mount.TotalBytes != nil {
+					diskTotal = *mount.TotalBytes
+				}
+				break
+			}
+		}
+		top := "unavailable"
+		if len(processes.Processes) > 0 {
+			top = processes.Processes[0].Command
+		}
+		return dashboardSnapshot{Hostname: system.Hostname, Uptime: system.UptimeSeconds, MemoryUsed: used, MemoryTotal: memory.TotalBytes, DiskUsed: diskUsed, DiskTotal: diskTotal, Interfaces: len(network.Interfaces), TopProcess: top}, nil
 	}))
 
 	return cmd

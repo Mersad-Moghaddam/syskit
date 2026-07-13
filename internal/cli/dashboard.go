@@ -20,6 +20,9 @@ type dashboardSnapshot struct {
 	MemoryUsed  uint64
 	MemoryTotal uint64
 	Interfaces  int
+	DiskUsed    uint64
+	DiskTotal   uint64
+	TopProcess  string
 }
 
 type dashboardProvider func() (dashboardSnapshot, error)
@@ -76,5 +79,5 @@ func (m dashboardModel) View() string {
 	if m.err != nil {
 		return title + "\n\ncollection error: " + m.err.Error() + "\n\nq: quit"
 	}
-	return fmt.Sprintf("%s\n\nhost: %s\nuptime: %s\nmemory: %d / %d bytes\nnetwork interfaces: %d\n\nrefresh: %s  •  q: quit", title, m.snapshot.Hostname, time.Duration(m.snapshot.Uptime*float64(time.Second)).Truncate(time.Second), m.snapshot.MemoryUsed, m.snapshot.MemoryTotal, m.snapshot.Interfaces, m.interval)
+	return fmt.Sprintf("%s\n\nhost: %s\nuptime: %s\nmemory: %d / %d bytes\ndisk: %d / %d bytes\nnetwork interfaces: %d\ntop process: %s\n\nrefresh: %s  •  q: quit", title, m.snapshot.Hostname, time.Duration(m.snapshot.Uptime*float64(time.Second)).Truncate(time.Second), m.snapshot.MemoryUsed, m.snapshot.MemoryTotal, m.snapshot.DiskUsed, m.snapshot.DiskTotal, m.snapshot.Interfaces, m.snapshot.TopProcess, m.interval)
 }
