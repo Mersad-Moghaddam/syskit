@@ -13,7 +13,7 @@
 | cgroup | Linux control group used to account and limit process resource usage. |
 | PSI | Pressure Stall Information, a Linux interface for CPU, memory, and I/O pressure signals. |
 | Golden file | Expected output fixture used to detect user-visible output changes in tests. |
-| TUI | Terminal user interface, planned for dashboard and live monitoring views. |
+| TUI | Terminal user interface used by dashboard and live monitoring views. |
 | XDG | Linux desktop directory convention used for configuration and state file locations. |
 | Read-only inspection | SysKit's core policy that commands inspect system state without modifying it. |
 | Output contract | Stable structure and semantics of command output, especially JSON and YAML. |

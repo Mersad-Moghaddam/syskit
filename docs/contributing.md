@@ -2,8 +2,8 @@
 
 > How to propose, implement, test, document, and review SysKit changes.
 
-SysKit is in v1 stabilization after the v0.5 release. Contributions are welcome
-across code and planning:
+SysKit has a stable v1 public contract. Contributions are welcome across code
+and planning:
 implementing features against accepted specs, clarifying requirements,
 strengthening architecture, adding Linux references, tightening acceptance
 criteria, or improving project process. Production Go code must build on the

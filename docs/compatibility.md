@@ -17,9 +17,8 @@ Internal Go packages, collector implementation details, kernel read order, log
 wording, and human-oriented table spacing are not public APIs. Table columns may
 evolve compatibly; automation must use JSON or YAML.
 
-The contract becomes binding when v1.0.0 is released. Before that tag, these
-files describe the release candidate surface and allow the final gate to detect
-unintentional drift.
+The contract is binding from v1.0.0 onward. These files describe the stable
+surface and allow CI to detect unintentional drift.
 
 ## Machine-Readable Manifests
 

@@ -155,7 +155,7 @@ Everything required to call SysKit stable and shippable to distros.
 | PKG-01 | Packaging: deb, rpm, AUR, static binaries, checksums. | 8 | 14 | Done | `../docs/release-process.md` |
 | REL-01 | Release automation + changelog generation. | 5 | 14 | Done | `../docs/release-process.md`, `../standards/commit-conventions.md` |
 | DOCS-01 | Documentation completion pass (all commands, install, man pages). | 3 | 14 | Done | `../docs/documentation-standards.md` |
-| REL-v10 | Release v1.0.0 — final gate, tag, announcement. | — | 14 | Backlog | `../docs/release-process.md` |
+| REL-v10 | Release v1.0.0 — final gate, tag, announcement. | — | 14 | Done | `../docs/release-process.md` |
 
 Subtotal: **39 pts**.
 

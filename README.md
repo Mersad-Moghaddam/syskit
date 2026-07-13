@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Go](https://img.shields.io/badge/Go-1.26.3+-00ADD8?logo=go&logoColor=white)](https://go.dev)
 [![Linux](https://img.shields.io/badge/Platform-Linux-FCC624?logo=linux&logoColor=black)](https://kernel.org)
-[![Status](https://img.shields.io/badge/Status-v0.5.0%20released-brightgreen)]()
+[![Status](https://img.shields.io/badge/Status-v1.0.0%20stable-brightgreen)]()
 
 ---
 
@@ -37,7 +37,7 @@ This approach ensures:
 - **Extensibility** — Support plugins, custom collectors, and multiple output formats.
 - **Education** — Serve as a reference project for Go engineering, Linux internals, and CLI design.
 
-## Planned Features
+## Features
 
 | Category | Features |
 |---|---|
@@ -80,15 +80,16 @@ This approach ensures:
 
 ## Project Status
 
-**v0.5.0 released**
+**v1.0.0 stable release**
 
-SysKit v0.5.0 includes process and network inspection, live dashboard/watch/top
-views, cgroup-derived containers, and explicit out-of-process plugins with table,
-JSON, and YAML output. The layered
-architecture, fixture-backed collectors, golden output contracts, and Linux
-integration coverage are in place for later milestones.
+SysKit v1.0.0 includes native host/process/network inspection, live
+dashboard/watch/top views, explainable diagnostics, cgroup-derived containers,
+and explicit out-of-process plugins with table, JSON, and YAML output. Its CLI,
+configuration, exit-code, plugin, and structured-output contracts are frozen
+under Semantic Versioning. Tagged releases publish reproducible archives,
+deb/rpm packages, AUR metadata, checksums, and `syskit(1)`.
 
-See the [Roadmap](specs/roadmap.md) for planned milestones.
+See the [Roadmap](specs/roadmap.md) for completed milestones and future ideas.
 
 ## Project Structure
 
@@ -137,6 +138,7 @@ import higher ones.
 - [Performance baseline](docs/performance.md)
 - [v1 compatibility contract](docs/compatibility.md)
 - [syskit(1) manual source](docs/man/syskit.1)
+- [v1.0.0 release notes](docs/releases/v1.0.0.md)
 - [Product overview](specs/product.md)
 - [Feature specifications](specs/features/)
 - [Collector architecture](specs/collectors.md)

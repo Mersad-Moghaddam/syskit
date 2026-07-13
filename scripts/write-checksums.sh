@@ -18,3 +18,4 @@ done
     sha256sum "$artifact"
   done
 ) > "$artifact_dir/SHA256SUMS"
+chmod 0644 "$artifact_dir/SHA256SUMS"

@@ -17,6 +17,7 @@ for arch in amd64 arm64; do
   tar -C "$output_dir" --sort=name --mtime="@$SOURCE_DATE_EPOCH" \
     --owner=0 --group=0 --numeric-owner -cf - LICENSE syskit.1 "$name" |
     gzip -n > "$output_dir/$name.tar.gz"
+  chmod 0644 "$output_dir/$name.tar.gz"
   rm "$output_dir/$name"
   rm "$output_dir/LICENSE"
   rm "$output_dir/syskit.1"

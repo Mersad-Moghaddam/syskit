@@ -48,9 +48,9 @@ Adding a new command, a new flag, or a new field to output is backward-compatibl
 
 ---
 
-## Pre-1.0 Caveat
+## Pre-1.0 History
 
-While SysKit is on a `0.x` line (see `../specs/roadmap.md`), the API is explicitly unstable:
+Before v1.0.0, the `0.x` API was explicitly unstable:
 
 - A **MINOR** bump (`0.1.0` → `0.2.0`) **may** include breaking changes.
 - A **PATCH** bump (`0.1.0` → `0.1.1`) remains backward-compatible.

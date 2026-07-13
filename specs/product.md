@@ -69,7 +69,7 @@ Physical and swap memory usage, buffer/cache breakdown, memory pressure indicato
 Partition layout, filesystem usage, mount points, I/O statistics, and disk health indicators.
 
 ### Process Management
-Process listing with filtering, process tree visualization, resource usage per process, and signal sending.
+Process listing with filtering, process tree visualization, and resource usage per process. SysKit remains read-only and does not send signals.
 
 ### Network Monitoring
 Interface statistics, active connections, routing tables, DNS configuration, and bandwidth utilization.

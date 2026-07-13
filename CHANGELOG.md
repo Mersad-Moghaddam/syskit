@@ -14,6 +14,8 @@ their milestone is tagged, then recorded in a dated release entry below.
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-07-13
+
 ### Added
 
 - **Command reference:** consolidated documentation now covers every implemented
@@ -56,6 +58,15 @@ their milestone is tagged, then recorded in a dated release entry below.
 - **Resolved presentation configuration:** `--color`, `--no-header`,
   per-command TOML sections, `NO_COLOR`, configured verbosity, and live refresh
   defaults now apply consistently at the CLI boundary.
+
+### Known limitations
+
+- Disk saturation remains an explicit unavailable diagnostic until device
+  busy-time utilization is collected; throughput is not presented as saturation.
+- Container views are cgroup-derived and do not query runtime sockets for names
+  or lifecycle status.
+- Release artifacts provide SHA-256 integrity checks but are not cryptographically
+  signed in v1.0.0.
 
 ## [0.5.0] - 2026-07-13
 

@@ -94,6 +94,7 @@ jobs:
             docs/performance.md
             docs/compatibility.md
             docs/man/syskit.1
+            docs/releases/v1.0.0.md
             docs/contributing.md
             docs/roadmap.md
             docs/developer-onboarding.md

@@ -72,3 +72,4 @@ mkdir -p "$output_dir"
 tar -C "$stage" --sort=name --mtime="@${SOURCE_DATE_EPOCH:-$(git log -1 --format=%ct)}" \
   --owner=0 --group=0 --numeric-owner -czf \
   "$output_dir/syskit_${pkgver}_aur.tar.gz" .SRCINFO PKGBUILD
+chmod 0644 "$output_dir/syskit_${pkgver}_aur.tar.gz"
