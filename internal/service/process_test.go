@@ -32,6 +32,13 @@ func TestApplyProcessPercentages(t *testing.T) {
 	assert.Equal(t, 10.0, *after.Processes[0].MemoryPercent)
 }
 
+func TestProcessListPreservesPartialStatus(t *testing.T) {
+	s := NewProcess(processCollectorStub{list: &model.ProcessList{Partial: true}})
+	list, err := s.List(ProcessOptions{})
+	require.NoError(t, err)
+	assert.True(t, list.Partial)
+}
+
 type processCollectorStub struct {
 	list *model.ProcessList
 	err  error

@@ -67,7 +67,7 @@ func (s *Process) list(list *model.ProcessList, o ProcessOptions) (*model.Proces
 	if err != nil {
 		return nil, err
 	}
-	return &model.ProcessList{Processes: items, CPUTimeTotal: list.CPUTimeTotal, TotalMemoryBytes: list.TotalMemoryBytes}, nil
+	return &model.ProcessList{Processes: items, CPUTimeTotal: list.CPUTimeTotal, TotalMemoryBytes: list.TotalMemoryBytes, Partial: list.Partial}, nil
 }
 func lessProcessCPU(a, b model.Process) bool {
 	if a.CPUPercent != nil && b.CPUPercent != nil {

@@ -24,6 +24,8 @@ recorded here with its date and categorized changes.
   `/etc/passwd`, supports `--user <name>`, and includes raw start-time ticks.
 - **Process resource usage:** `syskit process` reports memory percentage and
   can derive aggregate CPU percentage with `--interval`.
+- **Process partial data:** structured process output marks permission-restricted
+  procfs snapshots as partial while preserving readable rows.
 - **Network interface metadata:** `syskit network` and `syskit network
   interfaces` now report sysfs operational state, MTU, and MAC address with
   procfs traffic counters.

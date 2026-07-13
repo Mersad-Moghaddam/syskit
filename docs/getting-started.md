@@ -56,6 +56,9 @@ go run ./cmd/syskit ports --listening --pid 1234
 go run ./cmd/syskit ports --address 127.0.0.1 --state listen
 ```
 
+When permissions hide a process, structured process output sets `partial: true`
+while retaining every process it could read.
+
 `ports` reads TCP, UDP, IPv6, and Unix socket tables directly from procfs. It
 best-effort maps socket inodes to process IDs and commands; inaccessible or
 short-lived processes simply remain unmapped. JSON and YAML mark permission-

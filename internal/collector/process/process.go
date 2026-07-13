@@ -38,6 +38,7 @@ func (c *Collector) Collect() (*model.ProcessList, error) {
 		p, err := c.collectPID(pid)
 		if err != nil {
 			if errors.Is(err, platform.ErrNotFound) || errors.Is(err, platform.ErrPermission) {
+				list.Partial = list.Partial || errors.Is(err, platform.ErrPermission)
 				continue
 			}
 			return nil, err

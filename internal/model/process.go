@@ -20,4 +20,5 @@ type ProcessList struct {
 	Processes        []Process `json:"processes"`
 	CPUTimeTotal     uint64    `json:"cpu_time_total"`
 	TotalMemoryBytes uint64    `json:"total_memory_bytes"`
+	Partial          bool      `json:"partial"`
 }
