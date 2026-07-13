@@ -295,3 +295,45 @@ func (c *Config) resolveFormat(flagChanged bool, flagValue string, envSet bool, 
 	}
 	return c.Format
 }
+
+func (c *Config) resolveColor(flagChanged bool, flagValue string, envSet bool, command string) string {
+	if flagChanged {
+		return flagValue
+	}
+	if !envSet {
+		if cc, ok := c.Commands[command]; ok && cc.Color != nil {
+			return *cc.Color
+		}
+	}
+	return c.Color
+}
+
+func (c *Config) resolveNoHeader(flagChanged, flagValue, envSet bool, command string) bool {
+	if flagChanged {
+		return flagValue
+	}
+	if !envSet {
+		if cc, ok := c.Commands[command]; ok && cc.NoHeader != nil {
+			return *cc.NoHeader
+		}
+	}
+	return c.NoHeader
+}
+
+func (c *Config) resolveRefreshInterval(envSet bool, command string) time.Duration {
+	if !envSet {
+		if cc, ok := c.Commands[command]; ok && cc.RefreshInterval != nil {
+			return *cc.RefreshInterval
+		}
+	}
+	return c.RefreshInterval
+}
+
+func (c *Config) resolveConfiguredVerbosity(envSet bool, command string) string {
+	if !envSet {
+		if cc, ok := c.Commands[command]; ok && cc.Verbosity != nil {
+			return *cc.Verbosity
+		}
+	}
+	return c.Verbosity
+}

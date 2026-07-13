@@ -17,6 +17,7 @@ type DiskService interface {
 type DiskOptions struct {
 	Format   func() string
 	NoHeader func() bool
+	Color    func() bool
 }
 
 func NewDiskCmd(s DiskService, o DiskOptions) *cobra.Command {
@@ -37,7 +38,7 @@ func NewDiskCmd(s DiskService, o DiskOptions) *cobra.Command {
 		if !io {
 			info = filterDiskMounts(info, mount, filesystemType, device)
 		}
-		r, err := render.New(o.Format(), render.WithNoHeader(o.NoHeader()))
+		r, err := render.New(o.Format(), render.WithNoHeader(o.NoHeader()), render.WithColor(o.Color()))
 		if err != nil {
 			return err
 		}

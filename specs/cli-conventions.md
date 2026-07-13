@@ -19,10 +19,13 @@ SysKit should feel like one coherent tool, not a bundle of unrelated commands. T
 | `--config` | path | Use a specific config file |
 | `--color` | `auto`, `always`, `never` | Control color output |
 | `--no-header` | boolean | Suppress table headers |
-| `--watch` | boolean | Refresh output continuously where supported |
-| `--interval` | duration | Refresh cadence for live views |
 | `--verbose` | boolean | Show diagnostic detail |
+| `--debug` | boolean | Show debug-level diagnostic detail |
 | `--quiet` | boolean | Suppress non-essential messages |
+
+`--interval` is a consistent command-local flag on sampling and live views.
+Continuous generic refresh uses the `watch <command>` subcommand; there is no
+global `--watch` boolean.
 
 ## Filtering And Sorting
 

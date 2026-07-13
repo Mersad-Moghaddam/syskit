@@ -20,7 +20,7 @@ type PluginService interface {
 	Run(context.Context, []string, string) (any, error)
 }
 
-func NewPluginCmd(s PluginService, format func() string, noHeader func() bool) *cobra.Command {
+func NewPluginCmd(s PluginService, format func() string, noHeader, color func() bool) *cobra.Command {
 	var dirs []string
 	var timeout time.Duration
 	cmd := &cobra.Command{Use: "plugins", Short: "Inspect discovered plugins", Args: cobra.NoArgs}
@@ -29,7 +29,7 @@ func NewPluginCmd(s PluginService, format func() string, noHeader func() bool) *
 		if err != nil {
 			return fmt.Errorf("discovering plugins: %w", err)
 		}
-		r, err := render.New(format(), render.WithNoHeader(noHeader()))
+		r, err := render.New(format(), render.WithNoHeader(noHeader()), render.WithColor(color()))
 		if err != nil {
 			return err
 		}
@@ -47,7 +47,7 @@ func NewPluginCmd(s PluginService, format func() string, noHeader func() bool) *
 		if err != nil {
 			return fmt.Errorf("inspecting plugin: %w", err)
 		}
-		r, err := render.New(format(), render.WithNoHeader(noHeader()))
+		r, err := render.New(format(), render.WithNoHeader(noHeader()), render.WithColor(color()))
 		if err != nil {
 			return err
 		}
@@ -67,7 +67,7 @@ func NewPluginCmd(s PluginService, format func() string, noHeader func() bool) *
 		if err != nil {
 			return fmt.Errorf("running plugin: %w", err)
 		}
-		r, err := render.New(format(), render.WithNoHeader(noHeader()))
+		r, err := render.New(format(), render.WithNoHeader(noHeader()), render.WithColor(color()))
 		if err != nil {
 			return err
 		}

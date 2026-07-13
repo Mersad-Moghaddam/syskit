@@ -16,6 +16,7 @@ type FilesystemService interface {
 type FilesystemOptions struct {
 	Format   func() string
 	NoHeader func() bool
+	Color    func() bool
 }
 
 func NewFilesystemCmd(s FilesystemService, o FilesystemOptions) *cobra.Command {
@@ -36,7 +37,7 @@ func NewFilesystemCmd(s FilesystemService, o FilesystemOptions) *cobra.Command {
 			}
 			filtered.Mounts = append(filtered.Mounts, m)
 		}
-		r, err := render.New(o.Format(), render.WithNoHeader(o.NoHeader()))
+		r, err := render.New(o.Format(), render.WithNoHeader(o.NoHeader()), render.WithColor(o.Color()))
 		if err != nil {
 			return err
 		}

@@ -18,6 +18,7 @@ type CPUService interface {
 type CPUOptions struct {
 	Format   func() string
 	NoHeader func() bool
+	Color    func() bool
 }
 
 // NewCPUCmd builds the static `syskit cpu` command. Per-core utilization is
@@ -31,7 +32,7 @@ func NewCPUCmd(service CPUService, options CPUOptions) *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("collecting CPU information: %w", err)
 			}
-			r, err := render.New(options.Format(), render.WithNoHeader(options.NoHeader()))
+			r, err := render.New(options.Format(), render.WithNoHeader(options.NoHeader()), render.WithColor(options.Color()))
 			if err != nil {
 				return err
 			}

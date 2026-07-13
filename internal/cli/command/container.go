@@ -17,6 +17,7 @@ type ContainerService interface {
 type ContainerOptions struct {
 	Format   func() string
 	NoHeader func() bool
+	Color    func() bool
 }
 
 func NewContainerCmd(s ContainerService, o ContainerOptions) *cobra.Command {
@@ -25,7 +26,7 @@ func NewContainerCmd(s ContainerService, o ContainerOptions) *cobra.Command {
 		if err != nil {
 			return fmt.Errorf("collecting containers: %w", err)
 		}
-		r, err := render.New(o.Format(), render.WithNoHeader(o.NoHeader()))
+		r, err := render.New(o.Format(), render.WithNoHeader(o.NoHeader()), render.WithColor(o.Color()))
 		if err != nil {
 			return err
 		}
@@ -39,7 +40,7 @@ func NewContainerCmd(s ContainerService, o ContainerOptions) *cobra.Command {
 		if err != nil {
 			return fmt.Errorf("inspecting container: %w", err)
 		}
-		r, err := render.New(o.Format(), render.WithNoHeader(o.NoHeader()))
+		r, err := render.New(o.Format(), render.WithNoHeader(o.NoHeader()), render.WithColor(o.Color()))
 		if err != nil {
 			return err
 		}

@@ -72,7 +72,9 @@ Every configurable setting has a corresponding environment variable, prefixed wi
 |---|---|---|
 | `SYSKIT_FORMAT` | Default output format | `SYSKIT_FORMAT=json` |
 | `SYSKIT_COLOR` | Color output (`auto`/`always`/`never`) | `SYSKIT_COLOR=never` |
-| `SYSKIT_REFRESH` | Refresh interval for live commands | `SYSKIT_REFRESH=2s` |
+| `SYSKIT_REFRESH_INTERVAL` | Refresh interval for live commands | `SYSKIT_REFRESH_INTERVAL=2s` |
+| `SYSKIT_NO_HEADER` | Suppress table headers | `SYSKIT_NO_HEADER=true` |
+| `SYSKIT_VERBOSITY` | Diagnostic verbosity | `SYSKIT_VERBOSITY=debug` |
 | `SYSKIT_CONFIG` | Explicit config file path | `SYSKIT_CONFIG=/etc/syskit/config.toml` |
 
 The naming is mechanical: a setting named `refresh_interval` maps to `SYSKIT_REFRESH_INTERVAL`. This predictability is part of the consistent CLI experience.

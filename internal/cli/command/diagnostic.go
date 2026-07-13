@@ -13,14 +13,14 @@ type DiagnosticService interface {
 	Collect(string, string) (*model.DiagnosticReport, error)
 }
 
-func NewDiagnosticCmd(s DiagnosticService, format func() string, noHeader func() bool) *cobra.Command {
+func NewDiagnosticCmd(s DiagnosticService, format func() string, noHeader, color func() bool) *cobra.Command {
 	var category, severity string
 	cmd := &cobra.Command{Use: "diagnostics", Short: "Show read-only health findings", Args: cobra.NoArgs, RunE: func(c *cobra.Command, args []string) error {
 		report, err := s.Collect(category, severity)
 		if err != nil {
 			return fmt.Errorf("collecting diagnostics: %w", err)
 		}
-		r, err := render.New(format(), render.WithNoHeader(noHeader()))
+		r, err := render.New(format(), render.WithNoHeader(noHeader()), render.WithColor(color()))
 		if err != nil {
 			return err
 		}

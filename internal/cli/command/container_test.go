@@ -25,7 +25,7 @@ func TestContainerTable(t *testing.T) {
 }
 
 func TestContainerInspectRendersTable(t *testing.T) {
-	cmd := NewContainerCmd(containerServiceStub{detail: &model.ContainerDetail{ContainerInfo: model.ContainerInfo{ID: "abc", Runtime: "docker", PIDs: 1}, Processes: []model.Process{{PID: 7, Command: "worker"}}}}, ContainerOptions{Format: func() string { return "table" }, NoHeader: func() bool { return false }})
+	cmd := NewContainerCmd(containerServiceStub{detail: &model.ContainerDetail{ContainerInfo: model.ContainerInfo{ID: "abc", Runtime: "docker", PIDs: 1}, Processes: []model.Process{{PID: 7, Command: "worker"}}}}, ContainerOptions{Format: func() string { return "table" }, NoHeader: func() bool { return false }, Color: func() bool { return false }})
 	var out bytes.Buffer
 	cmd.SetOut(&out)
 	cmd.SetArgs([]string{"inspect", "abc"})

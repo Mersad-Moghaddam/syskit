@@ -20,6 +20,7 @@ type ProcessService interface {
 type ProcessOptions struct {
 	Format   func() string
 	NoHeader func() bool
+	Color    func() bool
 }
 
 func NewProcessCmd(s ProcessService, o ProcessOptions) *cobra.Command {
@@ -52,7 +53,7 @@ func NewProcessCmd(s ProcessService, o ProcessOptions) *cobra.Command {
 		if err != nil {
 			return fmt.Errorf("collecting processes: %w", err)
 		}
-		r, err := render.New(o.Format(), render.WithNoHeader(o.NoHeader()))
+		r, err := render.New(o.Format(), render.WithNoHeader(o.NoHeader()), render.WithColor(o.Color()))
 		if err != nil {
 			return err
 		}
@@ -75,7 +76,7 @@ func NewProcessCmd(s ProcessService, o ProcessOptions) *cobra.Command {
 			return fmt.Errorf("collecting process tree: %w", err)
 		}
 		if o.Format() != "table" {
-			r, err := render.New(o.Format())
+			r, err := render.New(o.Format(), render.WithColor(o.Color()))
 			if err != nil {
 				return err
 			}

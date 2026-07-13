@@ -115,6 +115,33 @@ format = "yaml"
 	assert.Equal(t, "json", cfg.resolveFormat(false, "table", envSet, "process"))
 }
 
+func TestResolvePresentationAndLiveSettings(t *testing.T) {
+	cfg := Defaults()
+	cfg.Color = "never"
+	cfg.NoHeader = false
+	cfg.RefreshInterval = time.Second
+	cfg.Verbosity = "normal"
+	cfg.Commands["top"] = commandConfig{
+		Color:           strptr("always"),
+		NoHeader:        boolptr(true),
+		RefreshInterval: durationptr(500 * time.Millisecond),
+		Verbosity:       strptr("debug"),
+	}
+
+	assert.Equal(t, "always", cfg.resolveColor(false, "auto", false, "top"))
+	assert.True(t, cfg.resolveNoHeader(false, false, false, "top"))
+	assert.Equal(t, 500*time.Millisecond, cfg.resolveRefreshInterval(false, "top"))
+	assert.Equal(t, "debug", cfg.resolveConfiguredVerbosity(false, "top"))
+
+	assert.Equal(t, "never", cfg.resolveColor(false, "auto", true, "top"), "environment tier bypasses command section")
+	assert.False(t, cfg.resolveNoHeader(false, false, true, "top"))
+	assert.Equal(t, time.Second, cfg.resolveRefreshInterval(true, "top"))
+	assert.Equal(t, "normal", cfg.resolveConfiguredVerbosity(true, "top"))
+
+	assert.Equal(t, "auto", cfg.resolveColor(true, "auto", false, "top"))
+	assert.False(t, cfg.resolveNoHeader(true, false, false, "top"))
+}
+
 // TestLoadPerCommandSection confirms an arbitrary [section] is captured.
 func TestLoadPerCommandSection(t *testing.T) {
 	clearSyskitEnv(t)
@@ -136,6 +163,10 @@ no_header = true
 }
 
 func strptr(s string) *string { return &s }
+func boolptr(v bool) *bool    { return &v }
+func durationptr(v time.Duration) *time.Duration {
+	return &v
+}
 
 // clearSyskitEnv removes SYSKIT_* variables so a test's environment is
 // deterministic regardless of the developer's shell.

@@ -37,6 +37,8 @@ const (
 type globalOptions struct {
 	// Raw flag values.
 	format     string
+	color      string
+	noHeader   bool
 	configPath string
 	verbose    bool
 	debug      bool
@@ -45,11 +47,17 @@ type globalOptions struct {
 	// Derived at PersistentPreRunE time.
 	cfg    *Config
 	logger *slog.Logger
+	level  verbosity
 }
 
 // newRootCmd builds the syskit root command. It returns a fresh command on every
 // call so tests can exercise flag parsing without shared state.
 func newRootCmd() *cobra.Command {
+	cmd, _ := newRootCmdWithOptions()
+	return cmd
+}
+
+func newRootCmdWithOptions() (*cobra.Command, *globalOptions) {
 	opts := &globalOptions{}
 
 	cmd := &cobra.Command{
@@ -80,6 +88,8 @@ filesystem, process, network, and port information as a table, JSON, or YAML.`,
 
 	pf := cmd.PersistentFlags()
 	pf.StringVar(&opts.format, "format", formatTable, "output format: table, json, or yaml")
+	pf.StringVar(&opts.color, "color", "auto", "color output: auto, always, or never")
+	pf.BoolVar(&opts.noHeader, "no-header", false, "suppress table headers")
 	pf.StringVar(&opts.configPath, "config", "", "path to a specific config file")
 	pf.BoolVarP(&opts.verbose, "verbose", "v", false, "show info-level diagnostics on stderr")
 	pf.BoolVar(&opts.debug, "debug", false, "show debug-level diagnostics on stderr")
@@ -96,23 +106,24 @@ filesystem, process, network, and port information as a table, JSON, or YAML.`,
 		service.NewSystem(systemcollector.NewCollector(platform.RealFS())),
 		command.SystemOptions{
 			Format:   func() string { return opts.format },
-			NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader },
+			NoHeader: func() bool { return opts.noHeader },
+			Color:    func() bool { return opts.colorEnabled(cmd.OutOrStdout()) },
 		},
 	))
 	cmd.AddCommand(command.NewCPUCmd(
 		service.NewCPU(cpu.NewCollector(platform.RealFS())),
-		command.CPUOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }},
+		command.CPUOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.noHeader }, Color: func() bool { return opts.colorEnabled(cmd.OutOrStdout()) }},
 	))
-	cmd.AddCommand(command.NewMemoryCmd(service.NewMemory(memory.NewCollector(platform.RealFS())), command.MemoryOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
-	cmd.AddCommand(command.NewDiskCmd(service.NewDisk(disk.NewCollector(platform.RealFS())), command.DiskOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
-	cmd.AddCommand(command.NewFilesystemCmd(service.NewDisk(disk.NewCollector(platform.RealFS())), command.FilesystemOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
-	cmd.AddCommand(command.NewProcessCmd(service.NewProcess(processcollector.NewCollector(platform.RealFS())), command.ProcessOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
+	cmd.AddCommand(command.NewMemoryCmd(service.NewMemory(memory.NewCollector(platform.RealFS())), command.MemoryOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.noHeader }, Color: func() bool { return opts.colorEnabled(cmd.OutOrStdout()) }}))
+	cmd.AddCommand(command.NewDiskCmd(service.NewDisk(disk.NewCollector(platform.RealFS())), command.DiskOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.noHeader }, Color: func() bool { return opts.colorEnabled(cmd.OutOrStdout()) }}))
+	cmd.AddCommand(command.NewFilesystemCmd(service.NewDisk(disk.NewCollector(platform.RealFS())), command.FilesystemOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.noHeader }, Color: func() bool { return opts.colorEnabled(cmd.OutOrStdout()) }}))
+	cmd.AddCommand(command.NewProcessCmd(service.NewProcess(processcollector.NewCollector(platform.RealFS())), command.ProcessOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.noHeader }, Color: func() bool { return opts.colorEnabled(cmd.OutOrStdout()) }}))
 	containerFS := platform.RealFS()
-	cmd.AddCommand(command.NewContainerCmd(service.NewContainer(processcollector.NewCollector(containerFS), cgroupMetricsReader(containerFS)), command.ContainerOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
-	cmd.AddCommand(command.NewNetworkCmd(service.NewNetwork(network.NewCollectorWithAddresses(platform.RealFS(), platform.RealNetlink())), command.NetworkOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
-	cmd.AddCommand(command.NewPortCmd(service.NewPort(port.NewCollector(platform.RealFS())), command.PortOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
-	cmd.AddCommand(command.NewDiagnosticCmd(service.NewDiagnostic(systemcollector.NewCollector(platform.RealFS()), cpu.NewCollector(platform.RealFS()), memory.NewCollector(platform.RealFS()), disk.NewCollector(platform.RealFS()), processcollector.NewCollector(platform.RealFS()), network.NewCollectorWithAddresses(platform.RealFS(), platform.RealNetlink()), port.NewCollector(platform.RealFS())), func() string { return opts.format }, func() bool { return opts.cfg != nil && opts.cfg.NoHeader }))
-	cmd.AddCommand(command.NewPluginCmd(service.NewPlugin(), func() string { return opts.format }, func() bool { return opts.cfg != nil && opts.cfg.NoHeader }))
+	cmd.AddCommand(command.NewContainerCmd(service.NewContainer(processcollector.NewCollector(containerFS), cgroupMetricsReader(containerFS)), command.ContainerOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.noHeader }, Color: func() bool { return opts.colorEnabled(cmd.OutOrStdout()) }}))
+	cmd.AddCommand(command.NewNetworkCmd(service.NewNetwork(network.NewCollectorWithAddresses(platform.RealFS(), platform.RealNetlink())), command.NetworkOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.noHeader }, Color: func() bool { return opts.colorEnabled(cmd.OutOrStdout()) }}))
+	cmd.AddCommand(command.NewPortCmd(service.NewPort(port.NewCollector(platform.RealFS())), command.PortOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.noHeader }, Color: func() bool { return opts.colorEnabled(cmd.OutOrStdout()) }}))
+	cmd.AddCommand(command.NewDiagnosticCmd(service.NewDiagnostic(systemcollector.NewCollector(platform.RealFS()), cpu.NewCollector(platform.RealFS()), memory.NewCollector(platform.RealFS()), disk.NewCollector(platform.RealFS()), processcollector.NewCollector(platform.RealFS()), network.NewCollectorWithAddresses(platform.RealFS(), platform.RealNetlink()), port.NewCollector(platform.RealFS())), func() string { return opts.format }, func() bool { return opts.noHeader }, func() bool { return opts.colorEnabled(cmd.OutOrStdout()) }))
+	cmd.AddCommand(command.NewPluginCmd(service.NewPlugin(), func() string { return opts.format }, func() bool { return opts.noHeader }, func() bool { return opts.colorEnabled(cmd.OutOrStdout()) }))
 	var previousDashboardCPU *model.CPUInfo
 	var previousDashboardNetwork *model.NetworkInfo
 	cmd.AddCommand(newDashboardCmd(func() (dashboardSnapshot, error) {
@@ -178,7 +189,7 @@ filesystem, process, network, and port information as a table, JSON, or YAML.`,
 		return service.NewProcess(processcollector.NewCollector(platform.RealFS())).List(options)
 	}))
 
-	return cmd
+	return cmd, opts
 }
 
 func cgroupMetricsReader(fs platform.SysFS) service.ContainerMetricsReader {
@@ -220,10 +231,35 @@ func (o *globalOptions) resolve(cmd *cobra.Command) error {
 	if err := validateFormat(o.format); err != nil {
 		return err
 	}
+	_, envColor := os.LookupEnv("SYSKIT_COLOR")
+	o.color = cfg.resolveColor(cmd.Flags().Changed("color"), o.color, envColor, command)
+	if os.Getenv("NO_COLOR") != "" {
+		o.color = "never"
+	}
+	if err := validateColor(o.color); err != nil {
+		return err
+	}
+	_, envNoHeader := os.LookupEnv("SYSKIT_NO_HEADER")
+	o.noHeader = cfg.resolveNoHeader(cmd.Flags().Changed("no-header"), o.noHeader, envNoHeader, command)
+
+	if (command == "watch" || command == "top" || command == "dashboard") && !cmd.Flags().Changed("interval") {
+		_, envRefresh := os.LookupEnv("SYSKIT_REFRESH_INTERVAL")
+		if err := cmd.Flags().Set("interval", cfg.resolveRefreshInterval(envRefresh, command).String()); err != nil {
+			return &usageError{err: err}
+		}
+	}
 
 	// Logger: verbosity from flags (quiet > debug > verbose), always on stderr.
 	v := resolveVerbosity(o.verbose, o.debug, o.quiet)
+	if !cmd.Flags().Changed("quiet") && !cmd.Flags().Changed("debug") && !cmd.Flags().Changed("verbose") {
+		_, envVerbosity := os.LookupEnv("SYSKIT_VERBOSITY")
+		v, err = parseVerbosity(cfg.resolveConfiguredVerbosity(envVerbosity, command))
+		if err != nil {
+			return &usageError{err: err}
+		}
+	}
 	o.logger = newLogger(cmd.ErrOrStderr(), v)
+	o.level = v
 	o.logger.Debug("configuration resolved",
 		"format", o.format,
 		"config_path", path,
@@ -232,11 +268,38 @@ func (o *globalOptions) resolve(cmd *cobra.Command) error {
 	return nil
 }
 
+func validateColor(color string) error {
+	switch color {
+	case "auto", "always", "never":
+		return nil
+	default:
+		return &usageError{err: fmt.Errorf("invalid --color %q: must be one of auto, always, never", color)}
+	}
+}
+
+func (o *globalOptions) colorEnabled(w io.Writer) bool {
+	if o.color == "always" {
+		return true
+	}
+	if o.color != "auto" {
+		return false
+	}
+	file, ok := w.(*os.File)
+	if !ok {
+		return false
+	}
+	info, err := file.Stat()
+	return err == nil && info.Mode()&os.ModeCharDevice != 0
+}
+
 // commandName returns the invoked subcommand's name for per-command config
 // lookup. For the bare root it returns "".
 func commandName(cmd *cobra.Command) string {
 	if cmd.Name() == "syskit" {
 		return ""
+	}
+	for cmd.Parent() != nil && cmd.Parent().Name() != "syskit" {
+		cmd = cmd.Parent()
 	}
 	return cmd.Name()
 }
@@ -257,11 +320,11 @@ func validateFormat(format string) error {
 // returns the process exit code. cmd/syskit passes the result straight to
 // os.Exit, keeping main tiny; all CLI logic lives here.
 func Main() int {
-	root := newRootCmd()
+	root, opts := newRootCmdWithOptions()
 	err := root.Execute()
 
 	message, code := present(err)
-	if message != "" {
+	if message != "" && !opts.quiet && opts.level != verbosityQuiet {
 		fmt.Fprintln(root.ErrOrStderr(), message)
 	}
 	return code

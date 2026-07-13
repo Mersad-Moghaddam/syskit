@@ -41,6 +41,9 @@ their milestone is tagged, then recorded in a dated release entry below.
 - **Table rendering performance:** rows are written without per-row field and
   padding allocations, reducing the 1,000-row benchmark from 4,077 to 22
   allocations while preserving golden output.
+- **Resolved presentation configuration:** `--color`, `--no-header`,
+  per-command TOML sections, `NO_COLOR`, configured verbosity, and live refresh
+  defaults now apply consistently at the CLI boundary.
 
 ## [0.5.0] - 2026-07-13
 

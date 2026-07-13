@@ -18,6 +18,7 @@ type NetworkService interface {
 type NetworkOptions struct {
 	Format   func() string
 	NoHeader func() bool
+	Color    func() bool
 }
 
 func NewNetworkCmd(s NetworkService, o NetworkOptions) *cobra.Command {
@@ -33,7 +34,7 @@ func NewNetworkCmd(s NetworkService, o NetworkOptions) *cobra.Command {
 		if err != nil {
 			return fmt.Errorf("collecting network information: %w", err)
 		}
-		r, err := render.New(o.Format(), render.WithNoHeader(o.NoHeader()))
+		r, err := render.New(o.Format(), render.WithNoHeader(o.NoHeader()), render.WithColor(o.Color()))
 		if err != nil {
 			return err
 		}
@@ -53,7 +54,7 @@ func newNetworkInterfacesCmd(s NetworkService, o NetworkOptions) *cobra.Command 
 		if err != nil {
 			return fmt.Errorf("collecting network information: %w", err)
 		}
-		r, err := render.New(o.Format(), render.WithNoHeader(o.NoHeader()))
+		r, err := render.New(o.Format(), render.WithNoHeader(o.NoHeader()), render.WithColor(o.Color()))
 		if err != nil {
 			return err
 		}
@@ -70,7 +71,7 @@ func newNetworkRoutesCmd(s NetworkService, o NetworkOptions) *cobra.Command {
 		if err != nil {
 			return fmt.Errorf("collecting network information: %w", err)
 		}
-		r, err := render.New(o.Format(), render.WithNoHeader(o.NoHeader()))
+		r, err := render.New(o.Format(), render.WithNoHeader(o.NoHeader()), render.WithColor(o.Color()))
 		if err != nil {
 			return err
 		}
@@ -87,7 +88,7 @@ func newNetworkDNSCmd(s NetworkService, o NetworkOptions) *cobra.Command {
 		if err != nil {
 			return fmt.Errorf("collecting network information: %w", err)
 		}
-		r, err := render.New(o.Format(), render.WithNoHeader(o.NoHeader()))
+		r, err := render.New(o.Format(), render.WithNoHeader(o.NoHeader()), render.WithColor(o.Color()))
 		if err != nil {
 			return err
 		}

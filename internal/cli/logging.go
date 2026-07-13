@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"fmt"
 	"io"
 	"log/slog"
 )
@@ -40,6 +41,21 @@ func resolveVerbosity(verbose, debug, quiet bool) verbosity {
 		return verbosityVerbose
 	default:
 		return verbosityNormal
+	}
+}
+
+func parseVerbosity(value string) (verbosity, error) {
+	switch value {
+	case "normal":
+		return verbosityNormal, nil
+	case "verbose":
+		return verbosityVerbose, nil
+	case "debug":
+		return verbosityDebug, nil
+	case "quiet":
+		return verbosityQuiet, nil
+	default:
+		return verbosityNormal, fmt.Errorf("invalid verbosity %q: must be one of quiet, normal, verbose, debug", value)
 	}
 }
 

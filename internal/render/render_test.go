@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -163,7 +164,7 @@ func TestTableRendererNoHeaderOmitsHeaderRow(t *testing.T) {
 	assert.NotContains(t, b.String(), "RSS_BYTES")
 }
 
-func TestTableRendererColorNeverInBytes(t *testing.T) {
+func TestTableRendererColorStylesOnlyTableHeader(t *testing.T) {
 	plain, err := New("table")
 	require.NoError(t, err)
 	colored, err := New("table", WithColor(true))
@@ -173,8 +174,14 @@ func TestTableRendererColorNeverInBytes(t *testing.T) {
 	require.NoError(t, plain.Render(&a, sampleTable()))
 	require.NoError(t, colored.Render(&b, sampleTable()))
 
-	assert.NotContains(t, b.String(), "\x1b", "no escape sequences in table output")
-	assert.Equal(t, a.String(), b.String(), "color option must not alter rendered bytes")
+	assert.Contains(t, b.String(), "\x1b[1m")
+	assert.Contains(t, b.String(), "\x1b[0m")
+	assert.Equal(t, a.String(), stripTableColor(b.String()))
+}
+
+func stripTableColor(s string) string {
+	s = strings.ReplaceAll(s, "\x1b[1m", "")
+	return strings.ReplaceAll(s, "\x1b[0m", "")
 }
 
 func TestTableRendererRejectsNonTable(t *testing.T) {

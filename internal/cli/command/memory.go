@@ -15,6 +15,7 @@ type MemoryService interface {
 type MemoryOptions struct {
 	Format   func() string
 	NoHeader func() bool
+	Color    func() bool
 }
 
 func NewMemoryCmd(s MemoryService, o MemoryOptions) *cobra.Command {
@@ -23,7 +24,7 @@ func NewMemoryCmd(s MemoryService, o MemoryOptions) *cobra.Command {
 		if err != nil {
 			return fmt.Errorf("collecting memory information: %w", err)
 		}
-		r, err := render.New(o.Format(), render.WithNoHeader(o.NoHeader()))
+		r, err := render.New(o.Format(), render.WithNoHeader(o.NoHeader()), render.WithColor(o.Color()))
 		if err != nil {
 			return err
 		}

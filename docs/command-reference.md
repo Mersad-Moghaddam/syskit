@@ -74,6 +74,8 @@ files, return exactly one JSON value, and complete before `--timeout`.
 |---|---|
 | `--format` | Output format: `table`, `json`, or `yaml`. |
 | `--config` | Explicit TOML configuration file. |
+| `--color` | Table color: `auto`, `always`, or `never`; `NO_COLOR` disables it. |
+| `--no-header` | Suppress headers in table output. |
 | `--verbose`, `--debug`, `--quiet` | Control diagnostics written to stderr. |
 
 Run `syskit <command> --help` for the complete current flag contract.

@@ -26,9 +26,8 @@ type Table struct {
 // cells are left-aligned and numeric cells are right-aligned per
 // specs/rendering.md. Columns are padded to the widest cell (header or body).
 //
-// Color is intentionally excluded from the rendered bytes so golden files stay
-// stable; the color option is accepted for API completeness and future styling
-// but never alters output today.
+// Color, when enabled by the CLI for a terminal, emphasizes only the header.
+// Structured renderers ignore the option and never emit terminal escapes.
 type tableRenderer struct {
 	noHeader bool
 	color    bool
@@ -43,17 +42,19 @@ func (r tableRenderer) Render(w io.Writer, v any) error {
 		return fmt.Errorf("render table: got %T, want render.Table: %w", v, ErrUnsupportedValue)
 	}
 
-	// color is reserved for future TTY styling; it must never change the bytes
-	// written here, so goldens remain stable regardless of the option.
-	_ = r.color
-
 	cols := columnCount(t)
 	widths := columnWidths(t, cols, r.noHeader)
 	rightAlign := numericColumns(t, cols)
 
 	var b strings.Builder
 	if !r.noHeader {
+		if r.color {
+			b.WriteString("\x1b[1m")
+		}
 		writeRow(&b, t.Headers, cols, widths, rightAlign)
+		if r.color {
+			b.WriteString("\x1b[0m")
+		}
 	}
 	for _, row := range t.Rows {
 		writeRow(&b, row, cols, widths, rightAlign)

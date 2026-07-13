@@ -22,6 +22,7 @@ type SystemService interface {
 type SystemOptions struct {
 	Format   func() string
 	NoHeader func() bool
+	Color    func() bool
 }
 
 // NewSystemCmd builds `syskit system`.
@@ -35,7 +36,7 @@ func NewSystemCmd(service SystemService, options SystemOptions) *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("collecting system information: %w", err)
 			}
-			r, err := render.New(options.Format(), render.WithNoHeader(options.NoHeader()))
+			r, err := render.New(options.Format(), render.WithNoHeader(options.NoHeader()), render.WithColor(options.Color()))
 			if err != nil {
 				return err
 			}

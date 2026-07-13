@@ -58,6 +58,56 @@ func TestRootDefaultFormatIsTable(t *testing.T) {
 	assert.Equal(t, formatTable, f.DefValue)
 }
 
+func TestRootPresentationFlags(t *testing.T) {
+	root := newRootCmd()
+	color := root.PersistentFlags().Lookup("color")
+	require.NotNil(t, color)
+	assert.Equal(t, "auto", color.DefValue)
+	noHeader := root.PersistentFlags().Lookup("no-header")
+	require.NotNil(t, noHeader)
+	assert.Equal(t, "false", noHeader.DefValue)
+}
+
+func TestRootRejectsInvalidColor(t *testing.T) {
+	t.Setenv("NO_COLOR", "")
+	_, _, err := executeArgs(t, "--color", "sometimes", "version")
+	require.Error(t, err)
+	assert.Equal(t, exitUsage, exitCode(err))
+}
+
+func TestRootAppliesTablePresentationFlags(t *testing.T) {
+	t.Setenv("NO_COLOR", "")
+	stdout, _, err := executeArgs(t, "system", "--color", "always")
+	require.NoError(t, err)
+	assert.Contains(t, stdout, "\x1b[1m")
+
+	stdout, _, err = executeArgs(t, "system", "--no-header")
+	require.NoError(t, err)
+	assert.NotContains(t, stdout, "HOST")
+
+	stdout, _, err = executeArgs(t, "system", "--format", "json", "--color", "always")
+	require.NoError(t, err)
+	assert.NotContains(t, stdout, "\x1b")
+}
+
+func TestNoColorOverridesForcedColor(t *testing.T) {
+	t.Setenv("NO_COLOR", "1")
+	stdout, _, err := executeArgs(t, "system", "--color", "always")
+	require.NoError(t, err)
+	assert.NotContains(t, stdout, "\x1b")
+}
+
+func TestCommandNameUsesTopLevelConfigurationSection(t *testing.T) {
+	root := newRootCmd()
+	process, _, err := root.Find([]string{"process", "tree"})
+	require.NoError(t, err)
+	assert.Equal(t, "process", commandName(process))
+
+	network, _, err := root.Find([]string{"network", "interfaces"})
+	require.NoError(t, err)
+	assert.Equal(t, "network", commandName(network))
+}
+
 // TestRootInvalidFormatNoSubcommand guards the bare-root path: an invalid
 // --format with no subcommand must still be a usage error (exit 2), not a
 // silent help dump. This regresses a defect where the root command lacked a
