@@ -6,7 +6,7 @@
 
 ## 1. Executive Summary
 
-SysKit is a Linux-only, read-only command-line toolkit — a single statically linked Go 1.26.3+ binary — that inspects system state (CPU, memory, disk, filesystem, processes, network, ports, containers) by reading native kernel interfaces (`/proc`, `/sys`, Netlink, cgroups) directly rather than shelling out to utilities, and renders results as table, JSON, YAML, or an interactive terminal dashboard. It is organized as a strict six-layer architecture (CLI → Command → Service → Collector → Platform → kernel) with independent per-domain collectors behind Go interfaces, holding no persistent state, cache, queue, or background service. This design is chosen for testability (collectors read fixtures through a `SysFS` seam), modularity (a new format or collector is an additive change), and a shared data path that feeds both the non-interactive CLI and the future TUI — deliberately no more machinery than a per-invocation inspection tool requires.
+SysKit is a Linux-only, read-only command-line toolkit — a single statically linked Go 1.26.3+ binary — that inspects system state (CPU, memory, disk, filesystem, processes, network, ports, containers) by reading native kernel interfaces (`/proc`, `/sys`, Netlink, cgroups) directly rather than shelling out to utilities, and renders results as table, JSON, YAML, or interactive terminal interfaces. It is organized as a strict six-layer architecture (CLI → Command → Service → Collector → Platform → kernel) with independent per-domain collectors behind Go interfaces, holding no persistent state, cache, queue, or background service. This design is chosen for testability (collectors read fixtures through a `SysFS` seam), modularity (a new format or collector is an additive change), and a shared data path that feeds both explicit commands and the interactive control center/dashboard — deliberately no more machinery than a per-invocation inspection tool requires.
 
 ## 2. Context & Constraints
 
@@ -53,7 +53,7 @@ flowchart TD
 
 | Layer | Does | Must not do | Key tech |
 |---|---|---|---|
-| **CLI** | Parse args/flags, load config (defaults←file←env←flags), pick renderer, present errors, assign exit codes, configure `slog` logger, run TUI | Read `/proc`/`/sys` directly; contain business logic | Cobra, Lip Gloss/Bubble Tea, `log/slog` |
+| **CLI** | Parse args/flags, load config (defaults←file←env←flags), pick renderer, present errors, assign exit codes, configure `slog` logger, run the control center and live TUIs | Read `/proc`/`/sys` directly; contain business logic; duplicate command execution in the menu | Cobra, Lip Gloss/Bubble Tea, `log/slog` |
 | **Command** | Define subcommands, validate flag combinations, map intent to a service call | Perform business logic or I/O | Cobra |
 | **Service** | Aggregate collectors, filter/sort, compute rates/deltas/percentages, own any bounded caching | Render output; read kernel interfaces | stdlib |
 | **Collector** | Parse one domain's raw bytes into typed, base-unit structs; return domain sentinels | Log, render, read config, shell out, know about other collectors | stdlib |

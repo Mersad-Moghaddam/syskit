@@ -51,6 +51,7 @@ This approach ensures:
 | **Filesystem** | Inode usage, filesystem types, mount options |
 | **Diagnostics** | System health checks, resource bottleneck detection |
 | **Dashboard** | Interactive terminal UI with real-time monitoring |
+| **Control center** | Hierarchical keyboard and mouse menu for every command family |
 | **Output** | Table, JSON, YAML, and plain-text output formats |
 | **Plugins** | User-defined collectors and custom extensions |
 | **Containers** | Docker and container runtime inspection |
@@ -90,6 +91,10 @@ under Semantic Versioning. Tagged releases publish reproducible archives,
 deb/rpm packages, AUR metadata, checksums, and `syskit(1)`.
 
 See the [Roadmap](specs/roadmap.md) for completed milestones and future ideas.
+
+Run `syskit` with no subcommand in an interactive terminal to open the control
+center. Browse domains with the arrow keys or mouse, press Enter to open or run
+an item, and use Escape or Left to return to the previous menu.
 
 ## Project Structure
 

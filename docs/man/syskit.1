@@ -4,7 +4,7 @@ syskit \- inspect Linux system state through native kernel interfaces
 .SH SYNOPSIS
 .B syskit
 .RI [ global-options ]
-.I command
+.RI [ command ]
 .RI [ command-options ]
 .SH DESCRIPTION
 SysKit is a Linux-only, read-only system inspection, monitoring, and diagnostics
@@ -14,6 +14,12 @@ the output of external system utilities.
 One-shot commands support table, JSON, and YAML output. Use JSON or YAML for
 automation; table layout is intended for people. Interactive commands require a
 terminal.
+.PP
+With no command, SysKit opens a hierarchical interactive control center when
+standard input and output are terminals. Arrow keys or j/k move, Enter opens or
+runs an item, Escape or Left returns to the previous menu, and q exits. Mouse
+wheel and click navigation are also supported. After a selected command exits,
+the control center can be used again. A redirected bare invocation prints help.
 .SH GLOBAL OPTIONS
 .TP
 .BR \-\-format " " table|json|yaml

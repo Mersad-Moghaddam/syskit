@@ -14,6 +14,14 @@ their milestone is tagged, then recorded in a dated release entry below.
 
 ## [Unreleased]
 
+### Added
+
+- **Interactive control center:** running `syskit` in a terminal now opens a
+  modern hierarchical menu covering every command family, focused CPU and
+  diagnostic views, live monitoring, containers, plugins, output formats, and
+  utilities. It supports keyboard and mouse navigation, prompts for required
+  values, and returns to the menu after each action.
+
 ## [1.0.0] - 2026-07-13
 
 ### Added

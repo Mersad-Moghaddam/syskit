@@ -67,7 +67,11 @@ func newRootCmdWithOptions() (*cobra.Command, *globalOptions) {
 
 It reads native kernel interfaces (/proc, /sys, Netlink, cgroups) directly,
 never shelling out to other utilities, and renders CPU, memory, disk,
-filesystem, process, network, and port information as a table, JSON, or YAML.`,
+filesystem, process, network, and port information as a table, JSON, or YAML.
+
+Run syskit without a subcommand in an interactive terminal to open the
+hierarchical control center. Use arrow keys or the mouse to browse every
+command family, run an action, and return to the menu.`,
 		SilenceErrors: true, // Main presents errors at the boundary (present()).
 		SilenceUsage:  true, // Main prints a concise usage hint; no full dump.
 		// PersistentPreRunE loads configuration, resolves the effective global
@@ -77,11 +81,20 @@ filesystem, process, network, and port information as a table, JSON, or YAML.`,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 			return opts.resolve(cmd)
 		},
-		// RunE handles the bare `syskit` invocation by printing help. Defining it
-		// also makes Cobra run PersistentPreRunE for the root command itself, so
-		// an invalid global flag (e.g. --format xml) with no subcommand is
-		// reported as a usage error instead of silently printing help.
+		// RunE opens the discoverability menu for a bare interactive invocation
+		// and preserves ordinary help for pipes and redirected output. Defining
+		// it also makes Cobra run PersistentPreRunE for the root command itself,
+		// so invalid global flags are still reported as usage errors.
 		RunE: func(cmd *cobra.Command, args []string) error {
+			stdin, inputIsFile := cmd.InOrStdin().(*os.File)
+			stdout, outputIsFile := cmd.OutOrStdout().(*os.File)
+			if inputIsFile && outputIsFile && isInteractiveTerminal(stdin) && isInteractiveTerminal(stdout) {
+				stderr, ok := cmd.ErrOrStderr().(*os.File)
+				if !ok {
+					stderr = os.Stderr
+				}
+				return runInteractiveMenu(stdin, stdout, stderr, opts.colorEnabled(stdout), changedPersistentArgs(cmd))
+			}
 			return cmd.Help()
 		},
 	}

@@ -152,6 +152,7 @@ func TestHelpSucceeds(t *testing.T) {
 	require.NoError(t, err)
 	assert.Contains(t, stdout, "syskit")
 	assert.Contains(t, stdout, "read-only")
+	assert.Contains(t, stdout, "hierarchical control center")
 }
 
 func TestExitCodeMapping(t *testing.T) {

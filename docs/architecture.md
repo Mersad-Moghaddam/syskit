@@ -8,7 +8,7 @@ This file is retained as the **user-facing doorway** into the architecture from 
 
 ## In one paragraph
 
-SysKit is a Linux-only, read-only command-line tool: a single Go binary that reads native kernel interfaces (`/proc`, `/sys`, Netlink, cgroups) directly, transforms the data, and renders it as table, JSON, YAML, or an interactive dashboard. It is organized as a strict, one-way layered pipeline — CLI → Command → Service → Collector → Platform → kernel — so that operating-system access stays away from presentation code, collectors can be tested against fixtures, and output contracts stay stable. It holds no persistent storage, cache, or queue.
+SysKit is a Linux-only, read-only command-line tool: a single Go binary that reads native kernel interfaces (`/proc`, `/sys`, Netlink, cgroups) directly, transforms the data, and renders it as table, JSON, YAML, or an interactive terminal interface. Its hierarchical control center is a CLI-only discoverability layer that delegates every action to the existing command tree. The project is organized as a strict, one-way layered pipeline — CLI → Command → Service → Collector → Platform → kernel — so that operating-system access stays away from presentation code, collectors can be tested against fixtures, and output contracts stay stable. It holds no persistent storage, cache, or queue.
 
 ## Read next
 

@@ -23,6 +23,7 @@ Each feature spec defines the intended user value, Linux concepts, command shape
 ## v0.3 And Later
 
 - [Dashboard](dashboard.md)
+- [Interactive menu](interactive-menu.md)
 - [Containers](containers.md)
 - [Plugins](plugins.md)
 

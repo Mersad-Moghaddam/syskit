@@ -7,6 +7,24 @@ All one-shot commands support `--format table`, `--format json`, and
 for people. SysKit is Linux-only and reads native kernel interfaces without
 executing system utilities.
 
+## Interactive control center
+
+Run bare `syskit` in a terminal to open the hierarchical control center. It
+groups every command family into domain submenus and executes the same commands
+documented below; it does not maintain a separate collection path.
+
+| Input | Action |
+|---|---|
+| `↑`/`↓`, `j`/`k`, mouse wheel | Move through the current menu. |
+| `Enter`, `→`, `l`, mouse click | Open a submenu or run the selected action. |
+| `Esc`, `←`, `h`, `Backspace` | Return to the previous menu; at Home, exit. |
+| `q`, `Ctrl-C` | Exit from any menu level. |
+
+Container inspection and plugin actions prompt for the required ID or name.
+After a one-shot command, press Enter to return. Dashboard and top return when
+their own `q` key exits; watch returns after Ctrl-C. A bare invocation whose
+input or output is redirected prints normal help instead of terminal controls.
+
 ## Host and resources
 
 | Command | Purpose |

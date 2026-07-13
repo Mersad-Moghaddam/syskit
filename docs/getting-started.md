@@ -65,6 +65,7 @@ The CLI exposes the v0.1 commands plus process, network, port, live-monitoring,
 and cgroup-derived container commands. For example:
 
 ```sh
+go run ./cmd/syskit
 go run ./cmd/syskit system
 go run ./cmd/syskit system --format json
 go run ./cmd/syskit cpu
@@ -92,6 +93,12 @@ go run ./cmd/syskit plugins inspect example --plugin-dir ./plugins
 go run ./cmd/syskit plugins run example --plugin-dir ./plugins --timeout 5s
 go run ./cmd/syskit diagnostics --severity warning
 ```
+
+The bare command opens SysKit's interactive control center when run in a real
+terminal. Use the keyboard or mouse to browse domain submenus, Enter to select,
+and Escape or Left to return. Every action delegates to the ordinary command
+path, and the menu reopens after that action completes. Redirected bare output
+continues to show standard Cobra help.
 
 `dashboard` requires an interactive terminal; use the one-shot commands with
 `--format json` or `--format yaml` when redirecting output.

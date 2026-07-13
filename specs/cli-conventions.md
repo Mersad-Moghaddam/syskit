@@ -11,6 +11,17 @@ SysKit should feel like one coherent tool, not a bundle of unrelated commands. T
 - Prefer clear words over abbreviations.
 - Avoid commands that imply mutation unless the command is explicitly out of scope.
 
+## Bare Invocation
+
+Running `syskit` without a subcommand opens the hierarchical interactive menu
+when stdin and stdout are terminals. The menu is a discoverability layer over
+the existing Cobra commands: selecting an action executes the same command and
+then returns to the menu. It must not collect or render system data itself.
+
+When either stream is not interactive, bare `syskit` prints ordinary help so
+scripts, pipes, and captured test output never receive terminal control codes.
+`syskit --help` always prints help directly.
+
 ## Global Flags
 
 | Flag | Values | Purpose |
