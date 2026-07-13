@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -53,6 +54,9 @@ func newDashboardCmd(provider dashboardProvider) *cobra.Command {
 		if panel != overviewPanel && panel != processesPanel {
 			return fmt.Errorf("dashboard panel must be %q or %q", overviewPanel, processesPanel)
 		}
+		if !isInteractiveTerminal(os.Stdout) {
+			return fmt.Errorf("dashboard requires an interactive terminal")
+		}
 		model := dashboardModel{provider: provider, interval: interval, panel: panel}
 		_, err := tea.NewProgram(model, tea.WithAltScreen()).Run()
 		return err
@@ -60,6 +64,11 @@ func newDashboardCmd(provider dashboardProvider) *cobra.Command {
 	cmd.Flags().DurationVar(&interval, "interval", time.Second, "dashboard refresh interval (500ms to 1m)")
 	cmd.Flags().StringVar(&panel, "panel", overviewPanel, "initial panel: overview or processes")
 	return cmd
+}
+
+func isInteractiveTerminal(file *os.File) bool {
+	info, err := file.Stat()
+	return err == nil && info.Mode()&os.ModeCharDevice != 0
 }
 
 func (m dashboardModel) Init() tea.Cmd { return tea.Batch(m.fetch(), m.tick()) }

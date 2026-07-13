@@ -2,6 +2,7 @@ package cli
 
 import (
 	"errors"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -42,4 +43,11 @@ func TestDashboardCommandRejectsUnsafeInterval(t *testing.T) {
 	err := cmd.Execute()
 	assert.Error(t, err)
 	assert.True(t, strings.Contains(err.Error(), "dashboard interval"))
+}
+
+func TestInteractiveTerminalRejectsRegularFile(t *testing.T) {
+	file, err := os.CreateTemp(t.TempDir(), "output")
+	assert.NoError(t, err)
+	t.Cleanup(func() { _ = file.Close() })
+	assert.False(t, isInteractiveTerminal(file))
 }

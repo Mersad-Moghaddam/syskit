@@ -58,6 +58,9 @@ go run ./cmd/syskit dashboard --interval 2s
 go run ./cmd/syskit dashboard --panel processes
 ```
 
+`dashboard` requires an interactive terminal; use the one-shot commands with
+`--format json` or `--format yaml` when redirecting output.
+
 When permissions hide a process, structured process output sets `partial: true`
 while retaining every process it could read.
 
