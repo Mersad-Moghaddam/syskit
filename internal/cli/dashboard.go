@@ -38,6 +38,7 @@ type dashboardModel struct {
 	panel    string
 	width    int
 	height   int
+	fetching bool
 }
 
 type dashboardTick struct{}
@@ -59,7 +60,7 @@ func newDashboardCmd(provider dashboardProvider) *cobra.Command {
 		if !isInteractiveTerminal(os.Stdout) {
 			return fmt.Errorf("dashboard requires an interactive terminal")
 		}
-		model := dashboardModel{provider: provider, interval: interval, panel: panel}
+		model := dashboardModel{provider: provider, interval: interval, panel: panel, fetching: true}
 		_, err := tea.NewProgram(model, tea.WithAltScreen()).Run()
 		return err
 	}}
@@ -85,9 +86,17 @@ func (m dashboardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	case dashboardData:
 		m.snapshot, m.err = value.snapshot, value.err
+		m.fetching = false
 	case tea.WindowSizeMsg:
 		m.width, m.height = value.Width, value.Height
 	case dashboardTick:
+		// Never start a second collection while the previous one is still
+		// running. A slow kernel interface should reduce refresh frequency,
+		// rather than accumulate concurrent reads and stale updates.
+		if m.fetching {
+			return m, m.tick()
+		}
+		m.fetching = true
 		return m, tea.Batch(m.fetch(), m.tick())
 	}
 	return m, nil

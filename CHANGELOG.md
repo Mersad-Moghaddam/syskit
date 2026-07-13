@@ -31,6 +31,8 @@ their milestone is tagged, then recorded in a dated release entry below.
   live view backed by the existing system, memory, disk, process, and network
   services, with a bounded refresh interval, overview/process panels, clean
   keyboard exit, and a clear non-TTY refusal.
+- **Dashboard backpressure:** refreshes skip a tick while collection is still
+  running, preventing overlapping reads and stale update buildup.
 
 ## [0.2.0] - 2026-07-13
 

@@ -43,6 +43,19 @@ func TestDashboardQuitKey(t *testing.T) {
 	assert.NotNil(t, command)
 }
 
+func TestDashboardSkipsOverlappingCollection(t *testing.T) {
+	m := dashboardModel{interval: time.Second, fetching: true}
+	updated, command := m.Update(dashboardTick{})
+	assert.True(t, updated.(dashboardModel).fetching)
+	assert.NotNil(t, command)
+
+	updated, _ = updated.(dashboardModel).Update(dashboardData{})
+	assert.False(t, updated.(dashboardModel).fetching)
+	updated, command = updated.(dashboardModel).Update(dashboardTick{})
+	assert.True(t, updated.(dashboardModel).fetching)
+	assert.NotNil(t, command)
+}
+
 func TestDashboardCommandRejectsUnsafeInterval(t *testing.T) {
 	cmd := newDashboardCmd(func() (dashboardSnapshot, error) { return dashboardSnapshot{}, nil })
 	cmd.SetArgs([]string{"--interval", "10ms"})
