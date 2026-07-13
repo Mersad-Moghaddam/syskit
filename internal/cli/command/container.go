@@ -55,9 +55,16 @@ func NewContainerCmd(s ContainerService, o ContainerOptions) *cobra.Command {
 }
 
 func containerTable(containers *model.ContainerList) render.Table {
-	t := render.Table{Headers: []string{"CONTAINER", "RUNTIME", "PIDS"}}
+	t := render.Table{Headers: []string{"CONTAINER", "RUNTIME", "PIDS", "MEMORY", "CPU NS", "READ", "WRITE"}}
 	for _, container := range containers.Containers {
-		t.Rows = append(t.Rows, []string{container.ID, container.Runtime, fmt.Sprint(container.PIDs)})
+		t.Rows = append(t.Rows, []string{container.ID, container.Runtime, fmt.Sprint(container.PIDs), containerMetric(container.Metrics, func(m *model.ContainerMetrics) *uint64 { return m.MemoryCurrentBytes }), containerMetric(container.Metrics, func(m *model.ContainerMetrics) *uint64 { return m.CPUUsageNanoseconds }), containerMetric(container.Metrics, func(m *model.ContainerMetrics) *uint64 { return m.ReadBytes }), containerMetric(container.Metrics, func(m *model.ContainerMetrics) *uint64 { return m.WrittenBytes })})
 	}
 	return t
+}
+
+func containerMetric(metrics *model.ContainerMetrics, field func(*model.ContainerMetrics) *uint64) string {
+	if metrics == nil || field(metrics) == nil {
+		return "-"
+	}
+	return fmt.Sprint(*field(metrics))
 }

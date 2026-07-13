@@ -25,6 +25,9 @@ their milestone is tagged, then recorded in a dated release entry below.
   by recognizable container ID and reports a conservative runtime hint.
 - **Container inspection:** `syskit containers inspect <id>` shows the
   cgroup-associated processes currently mapped to a recognized container ID.
+- **Container resource counters:** `syskit containers` and structured inspect
+  output include optional cgroup memory, CPU, read, and write counters when
+  the corresponding controller files are available.
 - **Interactive top:** `syskit top` refreshes a filterable process view with
   keyboard sort controls for CPU, memory, name, and PID.
 - **Top navigation:** `syskit top` supports `j`/`k` scrolling and skips refresh

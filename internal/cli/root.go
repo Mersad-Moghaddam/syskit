@@ -107,7 +107,8 @@ filesystem, process, network, and port information as a table, JSON, or YAML.`,
 	cmd.AddCommand(command.NewDiskCmd(service.NewDisk(disk.NewCollector(platform.RealFS())), command.DiskOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
 	cmd.AddCommand(command.NewFilesystemCmd(service.NewDisk(disk.NewCollector(platform.RealFS())), command.FilesystemOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
 	cmd.AddCommand(command.NewProcessCmd(service.NewProcess(processcollector.NewCollector(platform.RealFS())), command.ProcessOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
-	cmd.AddCommand(command.NewContainerCmd(service.NewContainer(processcollector.NewCollector(platform.RealFS())), command.ContainerOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
+	containerFS := platform.RealFS()
+	cmd.AddCommand(command.NewContainerCmd(service.NewContainer(processcollector.NewCollector(containerFS), cgroupMetricsReader(containerFS)), command.ContainerOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
 	cmd.AddCommand(command.NewNetworkCmd(service.NewNetwork(network.NewCollectorWithAddresses(platform.RealFS(), platform.RealNetlink())), command.NetworkOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
 	cmd.AddCommand(command.NewPortCmd(service.NewPort(port.NewCollector(platform.RealFS())), command.PortOptions{Format: func() string { return opts.format }, NoHeader: func() bool { return opts.cfg != nil && opts.cfg.NoHeader }}))
 	var previousDashboardCPU *model.CPUInfo
@@ -176,6 +177,20 @@ filesystem, process, network, and port information as a table, JSON, or YAML.`,
 	}))
 
 	return cmd
+}
+
+func cgroupMetricsReader(fs platform.SysFS) service.ContainerMetricsReader {
+	return func(process model.Process) (*model.ContainerMetrics, error) {
+		info, err := platform.DetectCgroup(fs, fmt.Sprintf("proc/%d/cgroup", process.PID))
+		if err != nil {
+			return nil, err
+		}
+		metrics, err := platform.ReadCgroupMetrics(fs, info)
+		if err != nil {
+			return nil, err
+		}
+		return &model.ContainerMetrics{MemoryCurrentBytes: metrics.MemoryCurrentBytes, CPUUsageNanoseconds: metrics.CPUUsageNanoseconds, ReadBytes: metrics.ReadBytes, WrittenBytes: metrics.WrittenBytes}, nil
+	}
 }
 
 // resolve loads configuration, applies flag>env>file>default precedence to the

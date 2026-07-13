@@ -7,11 +7,22 @@ import (
 	"github.com/Mersad-Moghaddam/syskit/internal/model"
 )
 
-// Container groups cgroup-associated processes into a runtime-independent
-// container view.
-type Container struct{ collector ProcessCollector }
+// ContainerMetricsReader reads optional resource counters for a process's
+// cgroup. It is injected so service code does not depend on the platform layer.
+type ContainerMetricsReader func(model.Process) (*model.ContainerMetrics, error)
 
-func NewContainer(c ProcessCollector) *Container { return &Container{collector: c} }
+type Container struct {
+	collector ProcessCollector
+	metrics   ContainerMetricsReader
+}
+
+func NewContainer(c ProcessCollector, readers ...ContainerMetricsReader) *Container {
+	s := &Container{collector: c}
+	if len(readers) > 0 {
+		s.metrics = readers[0]
+	}
+	return s
+}
 
 func (s *Container) List() (*model.ContainerList, error) {
 	processes, err := s.collector.Collect()
@@ -19,6 +30,7 @@ func (s *Container) List() (*model.ContainerList, error) {
 		return nil, err
 	}
 	byID := make(map[string]model.ContainerInfo)
+	representatives := make(map[string]model.Process)
 	for _, process := range processes.Processes {
 		if process.ContainerID == "" {
 			continue
@@ -28,11 +40,15 @@ func (s *Container) List() (*model.ContainerList, error) {
 		if container.Runtime == "" {
 			container.Runtime = process.ContainerRuntime
 		}
+		if _, ok := representatives[process.ContainerID]; !ok {
+			representatives[process.ContainerID] = process
+		}
 		container.PIDs++
 		byID[container.ID] = container
 	}
 	result := &model.ContainerList{Containers: make([]model.ContainerInfo, 0, len(byID))}
 	for _, container := range byID {
+		container.Metrics = s.readMetrics(representatives[container.ID])
 		result.Containers = append(result.Containers, container)
 	}
 	sort.Slice(result.Containers, func(i, j int) bool { return result.Containers[i].ID < result.Containers[j].ID })
@@ -58,6 +74,18 @@ func (s *Container) Inspect(id string) (*model.ContainerDetail, error) {
 	if detail.ID == "" {
 		return nil, fmt.Errorf("container %q not found", id)
 	}
+	detail.Metrics = s.readMetrics(detail.Processes[0])
 	sort.Slice(detail.Processes, func(i, j int) bool { return detail.Processes[i].PID < detail.Processes[j].PID })
 	return detail, nil
+}
+
+func (s *Container) readMetrics(process model.Process) *model.ContainerMetrics {
+	if s.metrics == nil {
+		return nil
+	}
+	metrics, err := s.metrics(process)
+	if err != nil {
+		return nil
+	}
+	return metrics
 }

@@ -37,3 +37,14 @@ func TestContainerInspectReturnsProcessesAndRejectsUnknownID(t *testing.T) {
 	_, err = s.Inspect("missing")
 	assert.EqualError(t, err, "container \"missing\" not found")
 }
+
+func TestContainerAddsBestEffortMetrics(t *testing.T) {
+	memory := uint64(42)
+	s := NewContainer(processCollectorStub{list: &model.ProcessList{Processes: []model.Process{{PID: 1, ContainerID: "abc"}}}}, func(model.Process) (*model.ContainerMetrics, error) {
+		return &model.ContainerMetrics{MemoryCurrentBytes: &memory}, nil
+	})
+	list, err := s.List()
+	require.NoError(t, err)
+	require.NotNil(t, list.Containers[0].Metrics)
+	assert.Equal(t, uint64(42), *list.Containers[0].Metrics.MemoryCurrentBytes)
+}
