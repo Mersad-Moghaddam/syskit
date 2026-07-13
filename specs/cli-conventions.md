@@ -16,7 +16,10 @@ SysKit should feel like one coherent tool, not a bundle of unrelated commands. T
 Running `syskit` without a subcommand opens the hierarchical interactive menu
 when stdin and stdout are terminals. The menu is a discoverability layer over
 the existing Cobra commands: selecting an action executes the same command and
-then returns to the menu. It must not collect or render system data itself.
+then returns to the same menu location. It must not collect or render system
+data itself. Its per-action accent may frame loading, output, and live views,
+but icons, labels, status text, and selection shapes must carry the same meaning
+when color is unavailable. One-shot output is scrollable in both dimensions.
 
 When either stream is not interactive, bare `syskit` prints ordinary help so
 scripts, pipes, and captured test output never receive terminal control codes.

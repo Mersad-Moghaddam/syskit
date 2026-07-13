@@ -16,10 +16,13 @@ automation; table layout is intended for people. Interactive commands require a
 terminal.
 .PP
 With no command, SysKit opens a hierarchical interactive control center when
-standard input and output are terminals. Arrow keys or j/k move, Enter opens or
-runs an item, Escape or Left returns to the previous menu, and q exits. Mouse
-wheel and click navigation are also supported. After a selected command exits,
-the control center can be used again. A redirected bare invocation prints help.
+standard input and output are terminals. A responsive wordmark animates once;
+any input skips the remaining animation. Each option has an icon and accent
+which is retained by its result or live view. Arrow keys or j/k move, Enter
+opens or runs an item, Escape or Left returns, and q exits. Mouse wheel and click
+navigation are also supported. Result views scroll vertically and horizontally
+and return to the previous menu location. A redirected bare invocation prints
+help.
 .SH GLOBAL OPTIONS
 .TP
 .BR \-\-format " " table|json|yaml

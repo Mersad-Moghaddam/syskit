@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"bytes"
 	"sort"
 	"strings"
 	"testing"
@@ -61,6 +60,46 @@ func TestInteractiveMenuCoversEveryCommandFamily(t *testing.T) {
 	}
 }
 
+func TestInteractiveMenuAssignsAnAccentAndIconToEveryOption(t *testing.T) {
+	root := interactiveMenuTree()
+	colors := map[string]bool{}
+	var walk func(menuItem)
+	walk = func(item menuItem) {
+		assert.NotEmpty(t, item.accent.primary, item.title)
+		assert.NotEmpty(t, item.accent.icon, item.title)
+		colors[string(item.accent.primary)] = true
+		for _, child := range item.children {
+			walk(child)
+		}
+	}
+	walk(root)
+	assert.GreaterOrEqual(t, len(colors), 10)
+}
+
+func TestInteractiveMenuEntranceAnimationAdvancesAndCanBeSkipped(t *testing.T) {
+	model := newMenuModel()
+	require.NotNil(t, model.Init())
+	model, command := updateMenu(t, model, menuIntroTick{})
+	assert.Equal(t, 1, model.introFrame)
+	require.NotNil(t, command)
+
+	model, _ = updateMenu(t, model, tea.KeyMsg{Type: tea.KeyDown})
+	assert.Equal(t, menuIntroFrames-1, model.introFrame)
+	assert.Equal(t, 1, model.cursor, "the key that skips animation also performs its action")
+}
+
+func TestInteractiveMenuAnimationKeepsClickableRowsStable(t *testing.T) {
+	model := newMenuModel()
+	fullRow := model.itemStartRow()
+	model.introFrame = menuIntroFrames - 1
+	assert.Equal(t, fullRow, model.itemStartRow())
+
+	model.width, model.height = 60, 12
+	compactRow := model.itemStartRow()
+	model.introFrame = 0
+	assert.Equal(t, compactRow, model.itemStartRow())
+}
+
 func TestInteractiveMenuNavigatesIntoCPUAndBack(t *testing.T) {
 	model := newMenuModel()
 
@@ -95,11 +134,29 @@ func TestInteractiveMenuSelectsPerCoreCPU(t *testing.T) {
 	require.NotNil(t, model.selection)
 	assert.Equal(t, "Per-core utilization", model.selection.title)
 	assert.Equal(t, []string{"cpu", "--per-core"}, model.selection.args)
+	assert.Equal(t, model.current.children[1].accent, model.selection.accent)
+}
+
+func TestInteractiveMenuReturnsToSameLocationWithoutReplayingIntro(t *testing.T) {
+	model := newMenuModel()
+	model, _ = updateMenu(t, model, tea.KeyMsg{Type: tea.KeyEnter})
+	model, _ = updateMenu(t, model, tea.KeyMsg{Type: tea.KeyDown})
+	model, _ = updateMenu(t, model, tea.KeyMsg{Type: tea.KeyEnter})
+	model, _ = updateMenu(t, model, tea.KeyMsg{Type: tea.KeyDown})
+	model, _ = updateMenu(t, model, tea.KeyMsg{Type: tea.KeyEnter})
+	require.NotNil(t, model.selection)
+
+	resumed := model.resumedAfterCommand()
+	assert.Equal(t, "CPU", resumed.current.title)
+	assert.Equal(t, 1, resumed.cursor)
+	assert.Nil(t, resumed.selection)
+	assert.Equal(t, menuIntroFrames-1, resumed.introFrame)
+	assert.Nil(t, resumed.Init(), "the entrance animation only runs once")
 }
 
 func TestInteractiveMenuMouseSelectsVisibleRow(t *testing.T) {
 	model := newMenuModel()
-	click := tea.MouseMsg{X: 4, Y: menuItemStartRow + 2, Button: tea.MouseButtonLeft, Action: tea.MouseActionPress}
+	click := tea.MouseMsg{X: 4, Y: model.itemStartRow() + 2, Button: tea.MouseButtonLeft, Action: tea.MouseActionPress}
 	model, _ = updateMenu(t, model, click)
 
 	assert.Equal(t, "Processes", model.current.title)
@@ -148,8 +205,8 @@ func TestInteractiveMenuResizeKeepsSelectionVisible(t *testing.T) {
 		model, _ = updateMenu(t, model, tea.KeyMsg{Type: tea.KeyDown})
 	}
 	assert.Equal(t, 9, model.cursor)
-	assert.Equal(t, 8, model.offset)
-	assert.Contains(t, model.View(), "9–10 of 10")
+	assert.Equal(t, 7, model.offset)
+	assert.Contains(t, model.View(), "8–10 of 10")
 }
 
 func TestInteractiveMenuQuitAndRootBackQuit(t *testing.T) {
@@ -167,7 +224,7 @@ func TestInteractiveMenuViewDescribesControlsAndSelection(t *testing.T) {
 	assert.Contains(t, view, "SYSKIT")
 	assert.Contains(t, view, "CONTROL CENTER")
 	assert.Contains(t, view, "System & hardware")
-	assert.Contains(t, view, "mouse enabled")
+	assert.Contains(t, view, "◉ mouse")
 	assert.Contains(t, view, "Host identity and core resource summaries")
 }
 
@@ -185,14 +242,4 @@ func TestChangedPersistentArgsPreservesExplicitRootOptions(t *testing.T) {
 	require.NoError(t, cmd.PersistentFlags().Set("quiet", "true"))
 
 	assert.ElementsMatch(t, []string{"--format=json", "--quiet=true"}, changedPersistentArgs(cmd))
-}
-
-func TestWaitForMenuReturn(t *testing.T) {
-	var output bytes.Buffer
-	require.NoError(t, waitForMenuReturn(strings.NewReader("\n"), &output, true))
-	assert.Contains(t, output.String(), "Press Enter to return")
-
-	output.Reset()
-	require.NoError(t, waitForMenuReturn(strings.NewReader(""), &output, false))
-	assert.NotContains(t, output.String(), "\x1b[")
 }

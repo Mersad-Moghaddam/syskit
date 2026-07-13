@@ -11,7 +11,10 @@ executing system utilities.
 
 Run bare `syskit` in a terminal to open the hierarchical control center. It
 groups every command family into domain submenus and executes the same commands
-documented below; it does not maintain a separate collection path.
+documented below; it does not maintain a separate collection path. A short,
+skippable wordmark animation introduces the interface. Each option has an icon
+and accent color which continues into its loading, result, or live view;
+`NO_COLOR` and `--color never` retain the shapes and labels without color.
 
 | Input | Action |
 |---|---|
@@ -21,9 +24,11 @@ documented below; it does not maintain a separate collection path.
 | `q`, `Ctrl-C` | Exit from any menu level. |
 
 Container inspection and plugin actions prompt for the required ID or name.
-After a one-shot command, press Enter to return. Dashboard and top return when
-their own `q` key exits; watch returns after Ctrl-C. A bare invocation whose
-input or output is redirected prints normal help instead of terminal controls.
+One-shot results open in a themed screen: `↑`/`↓` or `j`/`k` scroll vertically,
+`←`/`→` scroll wide output, Page Up/Down moves by a page, and Enter or Escape
+returns to the same menu location. Dashboard and top return when their own `q`
+key exits; watch returns after Ctrl-C. A bare invocation whose input or output
+is redirected prints normal help instead of terminal controls.
 
 ## Host and resources
 

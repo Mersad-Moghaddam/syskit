@@ -3,6 +3,7 @@ package cli
 import (
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -46,6 +47,7 @@ type dashboardModel struct {
 	width    int
 	height   int
 	fetching bool
+	theme    tuiTheme
 }
 
 type dashboardTick struct{}
@@ -55,6 +57,10 @@ type dashboardData struct {
 }
 
 func newDashboardCmd(provider dashboardProvider) *cobra.Command {
+	return newDashboardCmdWithTheme(provider, nil)
+}
+
+func newDashboardCmdWithTheme(provider dashboardProvider, selectedTheme *tuiTheme) *cobra.Command {
 	var interval time.Duration
 	var panel string
 	cmd := &cobra.Command{Use: "dashboard", Short: "Show a live system dashboard", Args: cobra.NoArgs, RunE: func(cmd *cobra.Command, args []string) error {
@@ -67,7 +73,7 @@ func newDashboardCmd(provider dashboardProvider) *cobra.Command {
 		if !isInteractiveTerminal(os.Stdout) {
 			return fmt.Errorf("dashboard requires an interactive terminal")
 		}
-		model := dashboardModel{provider: provider, interval: interval, panel: panel, fetching: true}
+		model := dashboardModel{provider: provider, interval: interval, panel: panel, fetching: true, theme: resolveTUITheme(selectedTheme)}
 		_, err := tea.NewProgram(model, tea.WithAltScreen()).Run()
 		return err
 	}}
@@ -121,17 +127,92 @@ func (m dashboardModel) tick() tea.Cmd {
 	return tea.Tick(m.interval, func(time.Time) tea.Msg { return dashboardTick{} })
 }
 func (m dashboardModel) View() string {
-	title := lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("62")).Render("SysKit dashboard")
+	theme := m.theme
+	if theme.accent.primary == "" {
+		theme = defaultTUITheme
+	}
+	title := theme.badge("◉  SYSKIT LIVE") + "  " + theme.primaryStyle().Bold(theme.color).Render("SYSTEM DASHBOARD")
+	tabs := dashboardTabs(theme, m.panel)
 	if m.err != nil {
-		return title + "\n\ncollection error: " + m.err.Error() + "\n\nq: quit"
+		return title + "\n" + tabs + "\n\n" + dashboardCard(theme, "COLLECTION ERROR", m.err.Error(), max(30, m.width-4)) + "\n\nq: quit"
 	}
 	if m.panel == processesPanel {
-		return fmt.Sprintf("%s — processes\n\ntop process: %s\n\nrefresh: %s  •  tab: switch panel  •  q: quit", title, m.snapshot.TopProcess, m.interval)
+		body := fmt.Sprintf("top process: %s\n\nLive process ranking is available in syskit top.", m.snapshot.TopProcess)
+		return fmt.Sprintf("%s\n%s\n\n%s\n\n%s", title, tabs, dashboardCard(theme, "PROCESS FOCUS", body, max(34, m.width-4)), dashboardFooter(theme, m.interval))
 	}
 	if m.width > 0 && (m.width < 48 || m.height > 0 && m.height < 12) {
 		return fmt.Sprintf("%s\n\nterminal is too small (%dx%d)\nresize to at least 48x12\n\nq: quit", title, m.width, m.height)
 	}
-	return fmt.Sprintf("%s — overview\n\nhost: %s\nuptime: %s\ncpu: %s\nmemory: %d / %d bytes\nswap: %d / %d bytes\ndisk: %d / %d bytes\nnetwork: %d interfaces%s\n\nrefresh: %s  •  tab: switch panel  •  q: quit", title, m.snapshot.Hostname, time.Duration(m.snapshot.Uptime*float64(time.Second)).Truncate(time.Second), dashboardPercent(m.snapshot.CPUPercent), m.snapshot.MemoryUsed, m.snapshot.MemoryTotal, m.snapshot.SwapUsed, m.snapshot.SwapTotal, m.snapshot.DiskUsed, m.snapshot.DiskTotal, m.snapshot.Interfaces, dashboardNetworkRatesText(m.snapshot.NetworkRX, m.snapshot.NetworkTX), m.interval)
+	host := fmt.Sprintf("host: %s\nuptime: %s\ncpu: %s %s", m.snapshot.Hostname, time.Duration(m.snapshot.Uptime*float64(time.Second)).Truncate(time.Second), dashboardPercent(m.snapshot.CPUPercent), dashboardOptionalBar(theme, m.snapshot.CPUPercent))
+	memory := fmt.Sprintf("memory: %s / %s\n%s\nswap: %s / %s", formatTUIBytes(m.snapshot.MemoryUsed), formatTUIBytes(m.snapshot.MemoryTotal), dashboardBar(theme, m.snapshot.MemoryUsed, m.snapshot.MemoryTotal, 20), formatTUIBytes(m.snapshot.SwapUsed), formatTUIBytes(m.snapshot.SwapTotal))
+	storage := fmt.Sprintf("disk: %s / %s\n%s", formatTUIBytes(m.snapshot.DiskUsed), formatTUIBytes(m.snapshot.DiskTotal), dashboardBar(theme, m.snapshot.DiskUsed, m.snapshot.DiskTotal, 20))
+	network := fmt.Sprintf("network: %d interfaces%s", m.snapshot.Interfaces, dashboardNetworkRatesText(m.snapshot.NetworkRX, m.snapshot.NetworkTX))
+	if m.width > 0 && m.width < 76 || m.height > 0 && m.height < 18 {
+		compact := strings.Join([]string{
+			fmt.Sprintf("host: %s  •  uptime: %s", m.snapshot.Hostname, time.Duration(m.snapshot.Uptime*float64(time.Second)).Truncate(time.Second)),
+			fmt.Sprintf("cpu: %s %s", dashboardPercent(m.snapshot.CPUPercent), dashboardOptionalBar(theme, m.snapshot.CPUPercent)),
+			strings.Split(memory, "\n")[0],
+			strings.Split(storage, "\n")[0],
+			network,
+		}, "\n")
+		return fmt.Sprintf("%s\n%s\n\n%s%s", title, tabs, compact, dashboardFooter(theme, m.interval))
+	}
+	cardWidth := max(32, (max(72, m.width)-3)/2)
+	rowOne := lipgloss.JoinHorizontal(lipgloss.Top, dashboardCard(theme, "HOST + CPU", host, cardWidth), " ", dashboardCard(theme, "MEMORY", memory, cardWidth))
+	rowTwo := lipgloss.JoinHorizontal(lipgloss.Top, dashboardCard(theme, "STORAGE", storage, cardWidth), " ", dashboardCard(theme, "NETWORK", network, cardWidth))
+	return fmt.Sprintf("%s\n%s\n\n%s\n%s\n%s", title, tabs, rowOne, rowTwo, dashboardFooter(theme, m.interval))
+}
+
+func dashboardTabs(theme tuiTheme, active string) string {
+	overview, processes := "  OVERVIEW  ", "  PROCESSES  "
+	if active == overviewPanel {
+		overview = theme.badge("OVERVIEW")
+	} else {
+		processes = theme.badge("PROCESSES")
+	}
+	return overview + "  " + processes
+}
+
+func dashboardCard(theme tuiTheme, heading, body string, width int) string {
+	headingStyle := theme.primaryStyle().Bold(theme.color)
+	return theme.borderStyle().Width(max(20, width-4)).Render(headingStyle.Render(heading) + "\n" + body)
+}
+
+func dashboardFooter(theme tuiTheme, interval time.Duration) string {
+	return "\n" + theme.primaryStyle().Render(fmt.Sprintf("● live  •  refresh %s  •  tab/←/→ switch  •  q quit", interval))
+}
+
+func dashboardOptionalBar(theme tuiTheme, value *float64) string {
+	if value == nil {
+		return ""
+	}
+	return dashboardBar(theme, uint64(*value), 100, 12)
+}
+
+func dashboardBar(theme tuiTheme, used, total uint64, width int) string {
+	if total == 0 {
+		return strings.Repeat("░", width)
+	}
+	filled := min(width, int(float64(used)/float64(total)*float64(width)))
+	active := strings.Repeat("█", filled)
+	if theme.color {
+		active = theme.primaryStyle().Render(active)
+	}
+	return active + strings.Repeat("░", width-filled)
+}
+
+func formatTUIBytes(value uint64) string {
+	units := []string{"B", "KiB", "MiB", "GiB", "TiB"}
+	amount := float64(value)
+	unit := 0
+	for amount >= 1024 && unit < len(units)-1 {
+		amount /= 1024
+		unit++
+	}
+	if unit == 0 {
+		return fmt.Sprintf("%d %s", value, units[unit])
+	}
+	return fmt.Sprintf("%.1f %s", amount, units[unit])
 }
 
 func dashboardPercent(value *float64) string {
@@ -145,7 +226,20 @@ func dashboardNetworkRatesText(rx, tx *float64) string {
 	if rx == nil || tx == nil {
 		return " (sampling)"
 	}
-	return fmt.Sprintf(" (rx %.0f B/s, tx %.0f B/s)", *rx, *tx)
+	return fmt.Sprintf(" (rx %s, tx %s)", formatTUIRate(*rx), formatTUIRate(*tx))
+}
+
+func formatTUIRate(value float64) string {
+	units := []string{"B/s", "KiB/s", "MiB/s", "GiB/s"}
+	unit := 0
+	for value >= 1024 && unit < len(units)-1 {
+		value /= 1024
+		unit++
+	}
+	if unit == 0 {
+		return fmt.Sprintf("%.0f %s", value, units[unit])
+	}
+	return fmt.Sprintf("%.1f %s", value, units[unit])
 }
 
 func dashboardCPUUtilization(before, after *model.CPUInfo) *float64 {

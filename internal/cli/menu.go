@@ -1,11 +1,10 @@
 package cli
 
 import (
-	"bufio"
 	"fmt"
-	"io"
 	"os"
 	"strings"
+	"time"
 	"unicode/utf8"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -14,7 +13,9 @@ import (
 	"github.com/spf13/pflag"
 )
 
-const menuItemStartRow = 5
+const menuIntroInterval = 55 * time.Millisecond
+
+type menuIntroTick struct{}
 
 type menuPrompt struct {
 	label       string
@@ -29,12 +30,14 @@ type menuItem struct {
 	args        []string
 	prompt      *menuPrompt
 	live        bool
+	accent      tuiAccent
 }
 
 type menuSelection struct {
-	title string
-	args  []string
-	live  bool
+	title  string
+	args   []string
+	live   bool
+	accent tuiAccent
 }
 
 type menuModel struct {
@@ -51,6 +54,7 @@ type menuModel struct {
 	inputError string
 	selection  *menuSelection
 	color      bool
+	introFrame int
 }
 
 func newMenuModel() menuModel {
@@ -64,15 +68,31 @@ func newMenuModelWithColor(color bool) menuModel {
 	return model
 }
 
-func (m menuModel) Init() tea.Cmd { return nil }
+func (m menuModel) Init() tea.Cmd {
+	if m.introFrame >= menuIntroFrames-1 {
+		return nil
+	}
+	return menuIntroAnimationTick()
+}
+
+func menuIntroAnimationTick() tea.Cmd {
+	return tea.Tick(menuIntroInterval, func(time.Time) tea.Msg { return menuIntroTick{} })
+}
 
 func (m menuModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch value := msg.(type) {
+	case menuIntroTick:
+		if m.introFrame < menuIntroFrames-1 {
+			m.introFrame++
+			return m, menuIntroAnimationTick()
+		}
+		return m, nil
 	case tea.WindowSizeMsg:
 		m.width, m.height = value.Width, value.Height
 		m.ensureVisible()
 		return m, nil
 	case tea.MouseMsg:
+		m.introFrame = menuIntroFrames - 1
 		if m.inputItem != nil {
 			return m, nil
 		}
@@ -84,7 +104,7 @@ func (m menuModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.move(1)
 		case tea.MouseButtonLeft:
 			if event.Action == tea.MouseActionPress {
-				index := m.offset + event.Y - menuItemStartRow
+				index := m.offset + event.Y - m.itemStartRow()
 				if index >= 0 && index < len(m.current.children) {
 					m.cursor = index
 					return m.activate()
@@ -93,6 +113,7 @@ func (m menuModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		return m, nil
 	case tea.KeyMsg:
+		m.introFrame = menuIntroFrames - 1
 		if m.inputItem != nil {
 			return m.updateInput(value)
 		}
@@ -134,7 +155,7 @@ func (m menuModel) updateInput(key tea.KeyMsg) (tea.Model, tea.Cmd) {
 		}
 		item := m.inputItem
 		args := append(append([]string(nil), item.prompt.prefix...), value)
-		m.selection = &menuSelection{title: item.title, args: args, live: item.live}
+		m.selection = &menuSelection{title: item.title, args: args, live: item.live, accent: item.accent}
 		return m, tea.Quit
 	case tea.KeyBackspace, tea.KeyDelete:
 		if m.input != "" {
@@ -167,7 +188,7 @@ func (m menuModel) activate() (tea.Model, tea.Cmd) {
 		m.inputItem, m.input, m.inputError = item, "", ""
 		return m, nil
 	}
-	m.selection = &menuSelection{title: item.title, args: append([]string(nil), item.args...), live: item.live}
+	m.selection = &menuSelection{title: item.title, args: append([]string(nil), item.args...), live: item.live, accent: item.accent}
 	return m, tea.Quit
 }
 
@@ -211,22 +232,41 @@ func (m menuModel) visibleRows() int {
 	if m.height <= 0 {
 		return len(m.current.children)
 	}
-	return max(1, m.height-10)
+	return max(1, m.height-m.itemStartRow()-4)
+}
+
+func (m menuModel) compact() bool {
+	return m.width > 0 && m.width < 68 || m.height > 0 && m.height < 20
+}
+
+func (m menuModel) itemStartRow() int {
+	if m.compact() {
+		return 5
+	}
+	return len(syskitLogo) + 4
+}
+
+func (m menuModel) resumedAfterCommand() menuModel {
+	m.selection = nil
+	m.inputItem, m.input, m.inputError = nil, "", ""
+	m.introFrame = menuIntroFrames - 1
+	return m
 }
 
 func (m menuModel) View() string {
 	styles := newMenuStyles(m.color)
 	var view strings.Builder
-	view.WriteString(styles.title.Render(" SYSKIT "))
-	view.WriteString(styles.titleSuffix.Render(" // CONTROL CENTER"))
+	view.WriteString(renderSysKitLogo(m.introFrame, m.width, m.color, m.compact()))
 	view.WriteString("\n")
-	view.WriteString(styles.muted.Render(" Linux system intelligence — native, fast, read-only"))
+	view.WriteString(renderTUITagline(m.introFrame, m.width, m.color))
 	view.WriteString("\n\n")
-	view.WriteString(styles.breadcrumb.Render(" ◆ " + m.breadcrumb()))
+	currentTheme := tuiTheme{accent: m.current.accent, color: m.color}
+	view.WriteString(currentTheme.primaryStyle().Bold(true).Render("⌂  " + m.breadcrumb()))
 	view.WriteString("\n\n")
 
 	if m.inputItem != nil {
-		view.WriteString(styles.selected.Render("  " + m.inputItem.title))
+		theme := tuiTheme{accent: m.inputItem.accent, color: m.color}
+		view.WriteString(theme.badge(m.inputItem.accent.icon + "  " + m.inputItem.title))
 		view.WriteString("\n")
 		view.WriteString(styles.description.Render("  " + m.inputItem.description))
 		view.WriteString("\n\n")
@@ -235,11 +275,15 @@ func (m menuModel) View() string {
 		if value == "" {
 			value = styles.placeholder.Render(m.inputItem.prompt.placeholder)
 		}
-		view.WriteString(styles.input.Render(value + "█"))
+		inputStyle := styles.input
+		if m.color {
+			inputStyle = inputStyle.BorderForeground(m.inputItem.accent.primary)
+		}
+		view.WriteString(inputStyle.Render(value + "█"))
 		if m.inputError != "" {
 			view.WriteString("\n" + styles.error.Render("  "+m.inputError))
 		}
-		view.WriteString("\n\n" + styles.footer.Render("  Enter run  •  Esc cancel  •  Ctrl-C quit"))
+		view.WriteString("\n\n" + theme.primaryStyle().Render("  ↵ run  •  esc cancel  •  ctrl-c quit"))
 		return view.String()
 	}
 
@@ -247,16 +291,18 @@ func (m menuModel) View() string {
 	end := min(len(m.current.children), m.offset+visible)
 	for index := m.offset; index < end; index++ {
 		item := m.current.children[index]
-		marker, suffix := "  ", ""
+		marker, suffix := "   ", ""
 		if len(item.children) > 0 {
-			suffix = "  ›"
+			suffix = "   ›"
 		}
-		line := marker + fitMenuLabel(item.title, item.description, suffix, m.width)
+		label := fitMenuLabel(item.accent.icon+"  "+item.title, item.description, suffix, m.width)
+		line := marker + label
+		theme := tuiTheme{accent: item.accent, color: m.color}
 		if index == m.cursor {
-			line = "▸ " + fitMenuLabel(item.title, item.description, suffix, m.width)
-			view.WriteString(styles.selected.Render(line))
+			line = "▌  " + label
+			view.WriteString(theme.selectedStyle().PaddingRight(1).Render(line))
 		} else {
-			view.WriteString(styles.item.Render(line))
+			view.WriteString(theme.primaryStyle().Render(line))
 		}
 		view.WriteString("\n")
 	}
@@ -267,7 +313,11 @@ func (m menuModel) View() string {
 	view.WriteString("\n")
 	view.WriteString(styles.description.Render("  " + m.selectedDescription()))
 	view.WriteString("\n\n")
-	view.WriteString(styles.footer.Render("  ↑/↓ or j/k move  •  Enter/→ open  •  Esc/← back  •  q quit  •  mouse enabled"))
+	footerTheme := currentTheme
+	if len(m.current.children) > 0 && m.cursor < len(m.current.children) {
+		footerTheme.accent = m.current.children[m.cursor].accent
+	}
+	view.WriteString(footerTheme.primaryStyle().Render("  ↑↓/jk move  •  ↵/→ open  •  esc/← back  •  q quit  •  ◉ mouse"))
 	return view.String()
 }
 
@@ -292,26 +342,19 @@ func (m menuModel) selectedDescription() string {
 }
 
 type menuStyles struct {
-	title, titleSuffix, muted, breadcrumb, item, selected lipgloss.Style
-	description, footer, input, placeholder, error        lipgloss.Style
+	muted, description, input, placeholder, error lipgloss.Style
 }
 
 func newMenuStyles(color bool) menuStyles {
 	if !color {
 		plain := lipgloss.NewStyle()
-		return menuStyles{title: plain, titleSuffix: plain, muted: plain, breadcrumb: plain, item: plain,
-			selected: plain, description: plain, footer: plain, input: plain, placeholder: plain, error: plain}
+		return menuStyles{muted: plain, description: plain,
+			input: plain.Border(lipgloss.RoundedBorder()).Padding(0, 1).MarginLeft(2), placeholder: plain, error: plain}
 	}
 	return menuStyles{
-		title:       lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("230")).Background(lipgloss.Color("62")),
-		titleSuffix: lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("63")),
 		muted:       lipgloss.NewStyle().Foreground(lipgloss.Color("241")),
-		breadcrumb:  lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("81")),
-		item:        lipgloss.NewStyle().Foreground(lipgloss.Color("252")).PaddingLeft(1),
-		selected:    lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("230")).Background(lipgloss.Color("62")).PaddingRight(1),
 		description: lipgloss.NewStyle().Foreground(lipgloss.Color("245")),
-		footer:      lipgloss.NewStyle().Foreground(lipgloss.Color("243")),
-		input:       lipgloss.NewStyle().Foreground(lipgloss.Color("230")).Background(lipgloss.Color("235")).Padding(0, 1).MarginLeft(2),
+		input:       lipgloss.NewStyle().Foreground(lipgloss.Color("230")).Background(lipgloss.Color("235")).Border(lipgloss.RoundedBorder()).Padding(0, 1).MarginLeft(2),
 		placeholder: lipgloss.NewStyle().Foreground(lipgloss.Color("242")),
 		error:       lipgloss.NewStyle().Foreground(lipgloss.Color("203")),
 	}
@@ -323,7 +366,7 @@ func fitMenuLabel(title, description, suffix string, width int) string {
 	}
 	labelWidth := min(24, max(16, width/3))
 	title = truncateMenuText(title, labelWidth-1)
-	line := fmt.Sprintf("%-*s %s%s", labelWidth, title, description, suffix)
+	line := title + strings.Repeat(" ", max(1, labelWidth-lipgloss.Width(title))) + " " + description + suffix
 	return truncateMenuText(line, max(12, width-5))
 }
 
@@ -339,17 +382,23 @@ func truncateMenuText(value string, limit int) string {
 }
 
 func interactiveMenuTree() menuItem {
+	accentIndex := 0
+	nextAccent := func() tuiAccent {
+		accent := paletteAccent(accentIndex)
+		accentIndex++
+		return accent
+	}
 	leaf := func(title, description string, args ...string) menuItem {
-		return menuItem{title: title, description: description, args: args}
+		return menuItem{title: title, description: description, args: args, accent: nextAccent()}
 	}
 	live := func(title, description string, args ...string) menuItem {
-		return menuItem{title: title, description: description, args: args, live: true}
+		return menuItem{title: title, description: description, args: args, live: true, accent: nextAccent()}
 	}
 	group := func(title, description string, children ...menuItem) menuItem {
-		return menuItem{title: title, description: description, children: children}
+		return menuItem{title: title, description: description, children: children, accent: nextAccent()}
 	}
 	prompt := func(title, description, label, placeholder string, prefix ...string) menuItem {
-		return menuItem{title: title, description: description, prompt: &menuPrompt{label: label, placeholder: placeholder, prefix: prefix}}
+		return menuItem{title: title, description: description, prompt: &menuPrompt{label: label, placeholder: placeholder, prefix: prefix}, accent: nextAccent()}
 	}
 
 	cpu := group("CPU", "Topology, model, frequency, and sampled utilization",
@@ -443,8 +492,8 @@ func interactiveMenuTree() menuItem {
 }
 
 func runInteractiveMenu(stdin, stdout, stderr *os.File, color bool, globalArgs []string) error {
+	model := newMenuModelWithColor(color)
 	for {
-		model := newMenuModelWithColor(color)
 		result, err := tea.NewProgram(model, tea.WithInput(stdin), tea.WithOutput(stdout), tea.WithAltScreen(), tea.WithMouseCellMotion()).Run()
 		if err != nil {
 			return fmt.Errorf("running interactive menu: %w", err)
@@ -455,37 +504,32 @@ func runInteractiveMenu(stdin, stdout, stderr *os.File, color bool, globalArgs [
 		}
 
 		selection := finished.selection
-		child, options := newRootCmdWithOptions()
+		model = finished.resumedAfterCommand()
+		if !selection.live {
+			if err := runMenuCommandResult(stdin, stdout, *selection, globalArgs, color); err != nil {
+				return err
+			}
+			continue
+		}
+
+		theme := &tuiTheme{accent: selection.accent, color: color}
+		child, options := newRootCmdWithOptionsAndTheme(theme)
 		child.SetIn(stdin)
 		child.SetOut(stdout)
 		child.SetErr(stderr)
 		child.SetArgs(append(append([]string(nil), globalArgs...), selection.args...))
 		err = child.Execute()
-		if message, _ := present(err); message != "" && !options.quiet {
-			fmt.Fprintln(stderr, message)
-		}
-		if selection.live && err == nil {
+		if err == nil {
 			continue
 		}
-		if err := waitForMenuReturn(stdin, stdout, color); err != nil {
+		message, code := present(err)
+		if options.quiet {
+			message = "Live view exited with an error."
+		}
+		if err := runMenuCompletedResult(stdin, stdout, *selection, menuCommandResult{stderr: message, err: err, code: code}, color); err != nil {
 			return err
 		}
 	}
-}
-
-func waitForMenuReturn(input io.Reader, output io.Writer, color bool) error {
-	prompt := "\nPress Enter to return to the SysKit menu…"
-	if color {
-		prompt = "\n\x1b[2mPress Enter to return to the SysKit menu…\x1b[0m"
-	}
-	if _, err := fmt.Fprint(output, prompt); err != nil {
-		return fmt.Errorf("writing menu prompt: %w", err)
-	}
-	_, err := bufio.NewReader(input).ReadString('\n')
-	if err != nil && err != io.EOF {
-		return fmt.Errorf("waiting to return to menu: %w", err)
-	}
-	return nil
 }
 
 func changedPersistentArgs(cmd *cobra.Command) []string {

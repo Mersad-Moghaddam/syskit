@@ -22,6 +22,9 @@ type topModel struct {
 	err      error
 	fetching bool
 	offset   int
+	width    int
+	height   int
+	theme    tuiTheme
 }
 type topTick struct{}
 type topData struct {
@@ -30,6 +33,10 @@ type topData struct {
 }
 
 func newTopCmd(provider topProvider) *cobra.Command {
+	return newTopCmdWithTheme(provider, nil)
+}
+
+func newTopCmdWithTheme(provider topProvider, selectedTheme *tuiTheme) *cobra.Command {
 	var interval time.Duration
 	var sort string
 	var limit int
@@ -45,7 +52,7 @@ func newTopCmd(provider topProvider) *cobra.Command {
 		if err != nil {
 			return err
 		}
-		model := topModel{provider: provider, interval: interval, options: service.ProcessOptions{Filters: parsed, Sort: sort, Reverse: true, Limit: limit}, fetching: true}
+		model := topModel{provider: provider, interval: interval, options: service.ProcessOptions{Filters: parsed, Sort: sort, Reverse: true, Limit: limit}, fetching: true, theme: resolveTUITheme(selectedTheme)}
 		_, err = tea.NewProgram(model, tea.WithAltScreen()).Run()
 		return err
 	}}
@@ -58,6 +65,9 @@ func newTopCmd(provider topProvider) *cobra.Command {
 func (m topModel) Init() tea.Cmd { return tea.Batch(m.fetch(), m.tick()) }
 func (m topModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch value := msg.(type) {
+	case tea.WindowSizeMsg:
+		m.width, m.height = value.Width, value.Height
+		return m, nil
 	case tea.KeyMsg:
 		switch value.String() {
 		case "q", "ctrl+c":
@@ -120,13 +130,27 @@ func (m topModel) tick() tea.Cmd {
 	return tea.Tick(m.interval, func(time.Time) tea.Msg { return topTick{} })
 }
 func (m topModel) View() string {
+	theme := m.theme
+	if theme.accent.primary == "" {
+		theme = defaultTUITheme
+	}
+	title := theme.badge("▲  SYSKIT TOP") + "  " + theme.primaryStyle().Bold(theme.color).Render("LIVE PROCESS INTELLIGENCE")
 	if m.err != nil {
-		return "SysKit top\n\ncollection error: " + m.err.Error() + "\n\nq: quit"
+		return title + "\n\n" + theme.borderStyle().Render("collection error: "+m.err.Error()) + "\n\nq: quit"
 	}
 	var b strings.Builder
-	fmt.Fprintf(&b, "SysKit top — sort: %s\n\nPID     USER       CPU%%    MEM%%    COMMAND\n", m.options.Sort)
+	b.WriteString(title)
+	b.WriteString("\n")
+	b.WriteString(renderTopSortTabs(theme, m.options.Sort))
+	b.WriteString("\n\n")
+	b.WriteString(theme.primaryStyle().Bold(theme.color).Render("PID     USER       CPU%    MEM%    COMMAND"))
+	b.WriteString("\n")
 	if m.list != nil {
-		for _, p := range m.list.Processes[m.offset:] {
+		end := len(m.list.Processes)
+		if m.height > 0 {
+			end = min(end, m.offset+max(1, m.height-8))
+		}
+		for index, p := range m.list.Processes[m.offset:end] {
 			user := p.User
 			if user == "" {
 				user = fmt.Sprint(p.UID)
@@ -138,9 +162,31 @@ func (m topModel) View() string {
 			if p.MemoryPercent != nil {
 				mem = *p.MemoryPercent
 			}
-			fmt.Fprintf(&b, "%-7d %-10s %5.1f  %5.1f  %s\n", p.PID, user, cpu, mem, p.Command)
+			row := fmt.Sprintf("%-7d %-10s %5.1f  %5.1f  %s", p.PID, user, cpu, mem, p.Command)
+			if m.width > 0 {
+				row = truncateMenuText(row, max(20, m.width-3))
+			}
+			if index == 0 {
+				row = theme.primaryStyle().Render("▌ " + row)
+			} else {
+				row = "  " + row
+			}
+			b.WriteString(row + "\n")
 		}
 	}
-	b.WriteString("\nc/m/n/p: sort  •  j/k: scroll  •  q: quit")
+	b.WriteString("\n" + theme.primaryStyle().Render(fmt.Sprintf("● live  •  refresh %s  •  c/m/n/p sort  •  j/k scroll  •  q quit", m.interval)))
 	return b.String()
+}
+
+func renderTopSortTabs(theme tuiTheme, selected string) string {
+	keys := []struct{ key, label string }{{"c", "CPU"}, {"m", "MEMORY"}, {"n", "NAME"}, {"p", "PID"}}
+	parts := make([]string, 0, len(keys))
+	for _, item := range keys {
+		label := item.key + " " + item.label
+		if strings.EqualFold(selected, item.label) {
+			label = theme.badge(label)
+		}
+		parts = append(parts, label)
+	}
+	return strings.Join(parts, "  ")
 }

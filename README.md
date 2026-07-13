@@ -93,8 +93,10 @@ deb/rpm packages, AUR metadata, checksums, and `syskit(1)`.
 See the [Roadmap](specs/roadmap.md) for completed milestones and future ideas.
 
 Run `syskit` with no subcommand in an interactive terminal to open the control
-center. Browse domains with the arrow keys or mouse, press Enter to open or run
-an item, and use Escape or Left to return to the previous menu.
+center. Its animated SysKit wordmark adapts to compact terminals, every action
+has its own icon and accent, and selected commands keep that theme through
+loading, output, dashboard, top, and watch views. Browse with the arrow keys or
+mouse, press Enter to open or run an item, and use Escape or Left to return.
 
 ## Project Structure
 

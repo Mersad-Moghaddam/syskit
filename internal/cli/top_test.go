@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/Mersad-Moghaddam/syskit/internal/model"
+	"github.com/Mersad-Moghaddam/syskit/internal/service"
 )
 
 func TestTopSortKeysUpdateOptions(t *testing.T) {
@@ -31,4 +32,19 @@ func TestTopScrollAndBackpressure(t *testing.T) {
 	updated, _ = updated.(topModel).Update(topData{list: &model.ProcessList{Processes: []model.Process{{PID: 1}}}})
 	assert.False(t, updated.(topModel).fetching)
 	assert.Equal(t, 0, updated.(topModel).offset)
+}
+
+func TestTopViewUsesModernLiveLayout(t *testing.T) {
+	memory := 12.5
+	m := topModel{
+		interval: time.Second,
+		options:  service.ProcessOptions{Sort: "memory"},
+		theme:    tuiTheme{accent: paletteAccent(3), color: false},
+		list:     &model.ProcessList{Processes: []model.Process{{PID: 42, User: "fixture", Command: "worker", MemoryPercent: &memory}}},
+	}
+	view := m.View()
+	assert.Contains(t, view, "SYSKIT TOP")
+	assert.Contains(t, view, "LIVE PROCESS INTELLIGENCE")
+	assert.Contains(t, view, "worker")
+	assert.Contains(t, view, "refresh 1s")
 }

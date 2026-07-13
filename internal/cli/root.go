@@ -58,7 +58,13 @@ func newRootCmd() *cobra.Command {
 }
 
 func newRootCmdWithOptions() (*cobra.Command, *globalOptions) {
+	return newRootCmdWithOptionsAndTheme(nil)
+}
+
+func newRootCmdWithOptionsAndTheme(theme *tuiTheme) (*cobra.Command, *globalOptions) {
 	opts := &globalOptions{}
+	activeTheme := resolveTUITheme(theme)
+	theme = &activeTheme
 
 	cmd := &cobra.Command{
 		Use:   "syskit",
@@ -70,8 +76,9 @@ never shelling out to other utilities, and renders CPU, memory, disk,
 filesystem, process, network, and port information as a table, JSON, or YAML.
 
 Run syskit without a subcommand in an interactive terminal to open the
-hierarchical control center. Use arrow keys or the mouse to browse every
-command family, run an action, and return to the menu.`,
+hierarchical control center with an animated, color-coded interface. Use arrow
+keys or the mouse to browse every command family; one-shot results and live
+views retain the selected accent and return to the same menu location.`,
 		SilenceErrors: true, // Main presents errors at the boundary (present()).
 		SilenceUsage:  true, // Main prints a concise usage hint; no full dump.
 		// PersistentPreRunE loads configuration, resolves the effective global
@@ -79,7 +86,11 @@ command family, run an action, and return to the menu.`,
 		// runs. Configuration and logging are CLI-layer concerns resolved once
 		// here and threaded down as plain values.
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			return opts.resolve(cmd)
+			if err := opts.resolve(cmd); err != nil {
+				return err
+			}
+			theme.color = opts.colorEnabled(cmd.OutOrStdout())
+			return nil
 		},
 		// RunE opens the discoverability menu for a bare interactive invocation
 		// and preserves ordinary help for pipes and redirected output. Defining
@@ -139,7 +150,7 @@ command family, run an action, and return to the menu.`,
 	cmd.AddCommand(command.NewPluginCmd(service.NewPlugin(), func() string { return opts.format }, func() bool { return opts.noHeader }, func() bool { return opts.colorEnabled(cmd.OutOrStdout()) }))
 	var previousDashboardCPU *model.CPUInfo
 	var previousDashboardNetwork *model.NetworkInfo
-	cmd.AddCommand(newDashboardCmd(func() (dashboardSnapshot, error) {
+	cmd.AddCommand(newDashboardCmdWithTheme(func() (dashboardSnapshot, error) {
 		system, err := service.NewSystem(systemcollector.NewCollector(platform.RealFS())).Collect()
 		if err != nil {
 			return dashboardSnapshot{}, err
@@ -188,8 +199,8 @@ command family, run an action, and return to the menu.`,
 		rxRate, txRate := dashboardNetworkRates(previousDashboardNetwork, network)
 		previousDashboardCPU, previousDashboardNetwork = cpu, network
 		return dashboardSnapshot{Hostname: system.Hostname, Uptime: system.UptimeSeconds, CPUPercent: cpuPercent, MemoryUsed: used, MemoryTotal: memory.TotalBytes, SwapUsed: memory.SwapUsedBytes, SwapTotal: memory.SwapTotalBytes, DiskUsed: diskUsed, DiskTotal: diskTotal, Interfaces: len(network.Interfaces), NetworkRX: rxRate, NetworkTX: txRate, TopProcess: top}, nil
-	}))
-	cmd.AddCommand(newWatchCmd(func(args []string, out io.Writer) error {
+	}, theme))
+	cmd.AddCommand(newWatchCmdWithTheme(func(args []string, out io.Writer) error {
 		// A fresh root preserves the normal command/service construction path for
 		// every refresh without sharing mutable Cobra invocation state.
 		child := newRootCmd()
@@ -197,10 +208,10 @@ command family, run an action, and return to the menu.`,
 		child.SetOut(out)
 		child.SetErr(out)
 		return child.Execute()
-	}))
-	cmd.AddCommand(newTopCmd(func(options service.ProcessOptions) (*model.ProcessList, error) {
+	}, theme))
+	cmd.AddCommand(newTopCmdWithTheme(func(options service.ProcessOptions) (*model.ProcessList, error) {
 		return service.NewProcess(processcollector.NewCollector(platform.RealFS())).List(options)
-	}))
+	}, theme))
 
 	return cmd, opts
 }

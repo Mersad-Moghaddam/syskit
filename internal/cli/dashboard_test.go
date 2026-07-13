@@ -8,6 +8,7 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/Mersad-Moghaddam/syskit/internal/model"
@@ -18,11 +19,12 @@ func TestDashboardModelRendersSnapshotAndError(t *testing.T) {
 	updated, _ := m.Update(dashboardData{snapshot: dashboardSnapshot{Hostname: "fixture", Uptime: 60, MemoryUsed: 40, MemoryTotal: 100, DiskUsed: 20, DiskTotal: 80, Interfaces: 2, TopProcess: "worker"}})
 	view := updated.(dashboardModel).View()
 	assert.Contains(t, view, "host: fixture")
-	assert.Contains(t, view, "memory: 40 / 100 bytes")
-	assert.Contains(t, view, "overview")
+	assert.Contains(t, view, "memory: 40 B / 100 B")
+	assert.Contains(t, view, "OVERVIEW")
 
 	updated, _ = m.Update(dashboardData{err: errors.New("fixture failure")})
-	assert.Contains(t, updated.(dashboardModel).View(), "collection error: fixture failure")
+	assert.Contains(t, updated.(dashboardModel).View(), "COLLECTION ERROR")
+	assert.Contains(t, updated.(dashboardModel).View(), "fixture failure")
 }
 
 func TestDashboardDerivesCPUAndNetworkRates(t *testing.T) {
@@ -53,6 +55,21 @@ func TestDashboardHandlesSmallTerminal(t *testing.T) {
 	m := dashboardModel{interval: time.Second}
 	updated, _ := m.Update(tea.WindowSizeMsg{Width: 40, Height: 10})
 	assert.Contains(t, updated.(dashboardModel).View(), "terminal is too small")
+}
+
+func TestDashboardUsesCompactLayoutAtMediumWidths(t *testing.T) {
+	m := dashboardModel{interval: time.Second, panel: overviewPanel, width: 60, height: 16, snapshot: dashboardSnapshot{Hostname: "fixture", MemoryTotal: 1024, DiskTotal: 2048}}
+	view := m.View()
+	assert.Contains(t, view, "host: fixture")
+	assert.NotContains(t, view, "HOST + CPU")
+	for _, line := range strings.Split(view, "\n") {
+		assert.LessOrEqual(t, lipgloss.Width(line), 68)
+	}
+}
+
+func TestDashboardFormatsHumanReadableCapacity(t *testing.T) {
+	assert.Equal(t, "1.0 GiB", formatTUIBytes(1<<30))
+	assert.Equal(t, "2.0 MiB/s", formatTUIRate(2<<20))
 }
 
 func TestDashboardQuitKey(t *testing.T) {

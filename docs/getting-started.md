@@ -95,10 +95,12 @@ go run ./cmd/syskit diagnostics --severity warning
 ```
 
 The bare command opens SysKit's interactive control center when run in a real
-terminal. Use the keyboard or mouse to browse domain submenus, Enter to select,
-and Escape or Left to return. Every action delegates to the ordinary command
-path, and the menu reopens after that action completes. Redirected bare output
-continues to show standard Cobra help.
+terminal. The responsive wordmark animates once on entry (any input skips it),
+and each option's icon and accent continue into its loading and output view.
+Use the keyboard or mouse to browse domain submenus, Enter to select, and Escape
+or Left to return. Result screens support vertical and horizontal scrolling;
+the menu reopens at the previous location after completion. Redirected bare
+output continues to show standard Cobra help.
 
 `dashboard` requires an interactive terminal; use the one-shot commands with
 `--format json` or `--format yaml` when redirecting output.

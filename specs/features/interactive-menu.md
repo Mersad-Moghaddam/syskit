@@ -25,12 +25,21 @@ visible.
   output are interactive terminals.
 - Preserve the existing help output for redirected or piped bare invocations.
 - Group every implemented user-facing capability into domain submenus.
+- Present a recognizable SysKit wordmark above the menu and animate its entrance
+  without delaying input; the first key or click skips the remaining frames.
+- Give every visible option a deliberate accent color and icon. Selection must
+  remain identifiable through shape and text when color is disabled.
 - Support arrow keys, Vim-style navigation, Enter, Escape, Backspace, and mouse
   selection.
 - Show a breadcrumb and description for the current selection.
 - Prompt inside the menu for values required by container and plugin commands.
 - Run existing Cobra commands rather than collecting or rendering data in the
   menu layer.
+- Run one-shot selections inside a themed result view that keeps the selected
+  option's accent, reports loading/success/failure, and supports vertical and
+  horizontal scrolling for large output.
+- Carry the selected accent into dashboard, top, and watch views launched from
+  the menu; direct invocations use the default SysKit theme.
 - Return to the menu after a selected command exits; allow quitting from any
   menu level without corrupting terminal state.
 - Handle small terminals by keeping the selected row visible.
@@ -47,6 +56,7 @@ non-menu behavior.
 ## Expected Interaction
 
 ```text
+███████╗██╗   ██╗███████╗██╗  ██╗██╗████████╗
 SYSKIT // CONTROL CENTER
 Home / CPU
 
@@ -54,9 +64,9 @@ Home / CPU
   Per-core view      utilization for every logical CPU
 ```
 
-Selecting a leaf runs the corresponding existing command. Static output waits
-for confirmation before returning; interactive views return after their own
-quit key is used.
+Selecting a leaf runs the corresponding existing command. One-shot output is
+shown in a responsive result screen with its command, status, scroll position,
+and return controls. Interactive views return after their own quit key is used.
 
 ## Edge Cases
 
@@ -65,6 +75,8 @@ quit key is used.
 - A selected collector returns an error or partial data.
 - A required container ID or plugin name is empty.
 - The user exits an interactive child view with Ctrl-C.
+- Output is taller or wider than the terminal.
+- `NO_COLOR` or `--color never` disables decoration color.
 
 ## Acceptance Criteria
 
@@ -74,6 +86,12 @@ quit key is used.
 - CPU opens a submenu with overview and per-core choices.
 - Escape, Left, or Backspace returns one level; it quits only at the root.
 - Static and live selections return to the menu after completion.
+- The entrance animation completes automatically, can be skipped immediately,
+  and does not change the clickable row geometry between frames.
+- Each option renders with an accent and icon; the selected command's result or
+  live view reuses that accent.
+- Result views expose loading, success, failure, vertical scroll, and horizontal
+  scroll states without leaking terminal control sequences into command output.
 - Keyboard, mouse, input, resize, and quit transitions have unit tests.
 - Existing CLI contract and command tests remain green under the race detector.
 
@@ -87,5 +105,5 @@ quit key is used.
 
 - Replacing explicit commands or their stable flags.
 - Reimplementing collection or rendering in the menu.
-- Persisting menu state between invocations.
+- Persisting menu state between separate SysKit process invocations.
 - Adding non-Linux behavior.
