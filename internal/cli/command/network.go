@@ -2,6 +2,7 @@ package command
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/Mersad-Moghaddam/syskit/internal/model"
 	"github.com/Mersad-Moghaddam/syskit/internal/render"
@@ -10,6 +11,7 @@ import (
 
 type NetworkService interface {
 	Collect() (*model.NetworkInfo, error)
+	Sample(time.Duration) (*model.NetworkInfo, error)
 }
 type NetworkOptions struct {
 	Format   func() string
@@ -17,8 +19,15 @@ type NetworkOptions struct {
 }
 
 func NewNetworkCmd(s NetworkService, o NetworkOptions) *cobra.Command {
-	return &cobra.Command{Use: "network", Short: "Show network interface counters", Args: cobra.NoArgs, RunE: func(c *cobra.Command, args []string) error {
-		info, err := s.Collect()
+	var interval time.Duration
+	cmd := &cobra.Command{Use: "network", Short: "Show network interface counters", Args: cobra.NoArgs, RunE: func(c *cobra.Command, args []string) error {
+		var info *model.NetworkInfo
+		var err error
+		if interval > 0 {
+			info, err = s.Sample(interval)
+		} else {
+			info, err = s.Collect()
+		}
 		if err != nil {
 			return fmt.Errorf("collecting network information: %w", err)
 		}
@@ -31,11 +40,20 @@ func NewNetworkCmd(s NetworkService, o NetworkOptions) *cobra.Command {
 		}
 		return r.Render(c.OutOrStdout(), info)
 	}}
+	cmd.Flags().DurationVar(&interval, "interval", 0, "sample interface bandwidth over this interval")
+	return cmd
 }
 func networkTable(info *model.NetworkInfo) render.Table {
-	t := render.Table{Headers: []string{"IFACE", "RX BYTES", "TX BYTES", "RX PACKETS", "TX PACKETS", "RX ERR", "TX ERR", "RX DROP", "TX DROP"}}
+	t := render.Table{Headers: []string{"IFACE", "RX BYTES", "TX BYTES", "RX B/s", "TX B/s", "RX PACKETS", "TX PACKETS", "RX ERR", "TX ERR", "RX DROP", "TX DROP"}}
 	for _, n := range info.Interfaces {
-		t.Rows = append(t.Rows, []string{n.Name, fmt.Sprint(n.RXBytes), fmt.Sprint(n.TXBytes), fmt.Sprint(n.RXPackets), fmt.Sprint(n.TXPackets), fmt.Sprint(n.RXErrors), fmt.Sprint(n.TXErrors), fmt.Sprint(n.RXDrops), fmt.Sprint(n.TXDrops)})
+		rx, tx := "unavailable", "unavailable"
+		if n.RXBytesPerSecond != nil {
+			rx = fmt.Sprintf("%.0f", *n.RXBytesPerSecond)
+		}
+		if n.TXBytesPerSecond != nil {
+			tx = fmt.Sprintf("%.0f", *n.TXBytesPerSecond)
+		}
+		t.Rows = append(t.Rows, []string{n.Name, fmt.Sprint(n.RXBytes), fmt.Sprint(n.TXBytes), rx, tx, fmt.Sprint(n.RXPackets), fmt.Sprint(n.TXPackets), fmt.Sprint(n.RXErrors), fmt.Sprint(n.TXErrors), fmt.Sprint(n.RXDrops), fmt.Sprint(n.TXDrops)})
 	}
 	return t
 }
