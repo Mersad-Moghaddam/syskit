@@ -78,6 +78,19 @@ func Discover(dirs []string) ([]Info, error) {
 	return result, nil
 }
 
+func Inspect(dirs []string, name string) (*Info, error) {
+	items, err := Discover(dirs)
+	if err != nil {
+		return nil, err
+	}
+	for i := range items {
+		if items[i].Name == name {
+			return &items[i], nil
+		}
+	}
+	return nil, fmt.Errorf("plugin %q not found", name)
+}
+
 // DefaultDirs returns the documented discovery locations. Explicit command
 // directories take precedence because Discover only uses this list when none
 // were supplied.

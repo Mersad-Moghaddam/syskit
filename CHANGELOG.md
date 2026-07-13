@@ -18,6 +18,8 @@ their milestone is tagged, then recorded in a dated release entry below.
 
 - **Plugin discovery:** `syskit plugins list` reads declared plugin manifests
   from explicit or documented directories without executing plugin code.
+- **Plugin inspection:** `syskit plugins inspect <name>` displays manifest
+  compatibility and declared permissions without executing the plugin.
 
 - **Cgroup foundation:** the platform layer now detects cgroup v1/v2 layouts,
   normalizes `/proc/<pid>/cgroup` memberships, and reads optional normalized

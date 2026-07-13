@@ -24,3 +24,14 @@ func TestDefaultDirsUsesEnvironment(t *testing.T) {
 	t.Setenv("XDG_DATA_HOME", "/data")
 	assert.Equal(t, []string{"/one", "/two", filepath.Join("/data", "syskit", "plugins")}, DefaultDirs())
 }
+
+func TestInspectFindsPlugin(t *testing.T) {
+	dir := t.TempDir()
+	require.NoError(t, os.Mkdir(filepath.Join(dir, "example"), 0755))
+	require.NoError(t, os.WriteFile(filepath.Join(dir, "example", "manifest.json"), []byte(`{"name":"example","version":"1.0.0","api_version":"v1","permissions":["procfs"]}`), 0644))
+	info, err := Inspect([]string{dir}, "example")
+	require.NoError(t, err)
+	assert.Equal(t, []string{"procfs"}, info.Permissions)
+	_, err = Inspect([]string{dir}, "missing")
+	assert.EqualError(t, err, "plugin \"missing\" not found")
+}
