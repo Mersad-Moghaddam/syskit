@@ -7,7 +7,21 @@
 [![Linux](https://img.shields.io/badge/Platform-Linux-FCC624?logo=linux&logoColor=black)](https://kernel.org)
 [![Status](https://img.shields.io/badge/Status-v1.0.0%20stable-brightgreen)]()
 
----
+<p align="center">
+  <img src="assets/readme/syskit-hero.png" alt="A dark SysKit terminal dashboard with live system metrics" width="960">
+</p>
+
+<p align="center">
+  <strong>Native Linux intelligence for the terminal.</strong><br>
+  Inspect live system state with one fast, read-only CLI.
+</p>
+
+<p align="center">
+  <a href="#install-in-one-command">Install</a> ·
+  <a href="#see-the-terminal-experience">See it in action</a> ·
+  <a href="docs/command-reference.md">Commands</a> ·
+  <a href="docs/getting-started.md">Documentation</a>
+</p>
 
 ## Overview
 
@@ -16,6 +30,33 @@ SysKit is an open-source command-line toolkit designed for backend engineers, De
 Rather than wrapping existing Linux utilities, SysKit interacts directly with native Linux interfaces — `/proc`, `/sys`, Netlink, and other kernel APIs — to collect and present system data. This approach provides better performance, richer detail, and a deeper understanding of the underlying operating system.
 
 SysKit is both a practical daily-use tool and a long-term educational project for mastering Go, Linux internals, CLI development, and systems programming.
+
+## The terminal identity
+
+The wordmark below uses the exact glyph art rendered by SysKit's interactive
+control center. In a color-capable terminal, each line receives the rotating
+cyan, violet, mint, amber, and coral accents used throughout the TUI.
+
+```text
+███████╗██╗   ██╗███████╗██╗  ██╗██╗████████╗
+██╔════╝╚██╗ ██╔╝██╔════╝██║ ██╔╝██║╚══██╔══╝
+███████╗ ╚████╔╝ ███████╗█████╔╝ ██║   ██║
+╚════██║  ╚██╔╝  ╚════██║██╔═██╗ ██║   ██║
+███████║   ██║   ███████║██║  ██╗██║   ██║
+╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝
+
+● SYSKIT // CONTROL CENTER  native Linux intelligence  •  read-only  •  zero shell-outs
+```
+
+## See the terminal experience
+
+<p align="center">
+  <img src="assets/readme/syskit-terminal-preview.svg" alt="SysKit control center and system inspection in a terminal" width="960">
+</p>
+
+Run `syskit` in an interactive terminal to browse the control center, or use a
+single command for a focused result. Every command reads native Linux interfaces
+directly—never parsed output from system utilities.
 
 ## Install in one command
 

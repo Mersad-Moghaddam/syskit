@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="860" viewBox="0 0 1440 860" role="img" aria-labelledby="title desc">
+  <title id="title">SysKit terminal control center and system inspection preview</title>
+  <desc id="desc">A dark terminal window showing the SysKit ASCII wordmark, control-center menu, and system information table.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07151d"/>
+      <stop offset="1" stop-color="#0e1024"/>
+    </linearGradient>
+    <linearGradient id="terminal" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#101b28"/>
+      <stop offset="1" stop-color="#070c14"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="24" stdDeviation="20" flood-color="#00040a" flood-opacity="0.65"/>
+    </filter>
+  </defs>
+  <rect width="1440" height="860" fill="url(#background)"/>
+  <circle cx="1160" cy="92" r="300" fill="#1d4270" opacity="0.14"/>
+  <circle cx="174" cy="772" r="260" fill="#502a71" opacity="0.12"/>
+  <g filter="url(#shadow)">
+    <rect x="82" y="70" width="1276" height="720" rx="22" fill="url(#terminal)" stroke="#284151" stroke-width="2"/>
+    <path d="M82 138h1276" stroke="#284151" stroke-width="2"/>
+    <circle cx="122" cy="104" r="9" fill="#ff6b6b"/>
+    <circle cx="152" cy="104" r="9" fill="#f6c453"/>
+    <circle cx="182" cy="104" r="9" fill="#74d99f"/>
+    <text x="720" y="110" text-anchor="middle" fill="#92a4b5" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="17">syskit — native Linux intelligence</text>
+    <text x="132" y="290" fill="#4ee7ff" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="76" font-weight="700">SYSKIT</text>
+    <text x="140" y="334" fill="#b08cff" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="20">NATIVE LINUX INTELLIGENCE</text>
+    <text x="132" y="410" fill="#d6e3ed" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18">● SYSKIT // CONTROL CENTER</text>
+    <text x="470" y="410" fill="#8294a6" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18">native Linux intelligence  •  read-only  •  zero shell-outs</text>
+    <rect x="126" y="450" width="560" height="51" rx="8" fill="#123b56" stroke="#4ee7ff" stroke-opacity="0.7"/>
+    <text x="151" y="484" fill="#f3fbff" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="21" font-weight="700">◈  System</text>
+    <text x="320" y="484" fill="#9cc5d9" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="19">Host, kernel, uptime, load</text>
+    <text x="151" y="539" fill="#b08cff" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="21">◆  CPU</text>
+    <text x="320" y="539" fill="#8294a6" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="19">Topology and utilization</text>
+    <text x="151" y="594" fill="#63e6be" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="21">✦  Memory</text>
+    <text x="320" y="594" fill="#8294a6" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="19">Usage, swap, and pressure</text>
+    <text x="151" y="649" fill="#ffc15c" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="21">◉  Disk</text>
+    <text x="320" y="649" fill="#8294a6" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="19">Mounts and I/O statistics</text>
+    <path d="M746 450v220" stroke="#284151" stroke-width="2"/>
+    <text x="790" y="484" fill="#4ee7ff" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="19">$ syskit system</text>
+    <text x="790" y="534" fill="#8294a6" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="17">HOST       OS            KERNEL       ARCH</text>
+    <text x="790" y="565" fill="#e9f4fb" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="17">workstation Linux         6.x          amd64</text>
+    <text x="790" y="615" fill="#8294a6" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="17">UPTIME     LOAD</text>
+    <text x="790" y="646" fill="#e9f4fb" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="17">03h 59m    0.42 0.36 0.31</text>
+    <text x="132" y="748" fill="#8294a6" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="16">↑↓ navigate   •   enter open   •   esc back   •   q quit</text>
+  </g>
+</svg>
