@@ -45,6 +45,13 @@ installs the binary and manual page under `/usr/local` (using `sudo` only when
 needed). It resolves the latest release through `github.com`, so it does not
 require access to `api.github.com`.
 
+If a server has broken or blocked IPv6, force IPv4 for both the initial download
+and every installer download:
+
+```sh
+curl -4 -fsSL https://github.com/Mersad-Moghaddam/syskit/releases/latest/download/syskit-install.sh | SYSKIT_CURL_FAMILY=4 sh
+```
+
 ```sh
 syskit version
 syskit system

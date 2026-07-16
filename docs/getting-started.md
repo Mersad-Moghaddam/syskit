@@ -47,6 +47,9 @@ archive against `SHA256SUMS`, and installs under `/usr/local` (prompting for
 curl -fsSL https://github.com/Mersad-Moghaddam/syskit/releases/latest/download/syskit-install.sh | sh
 ```
 
+If IPv6 is unavailable on the host, force IPv4 for the installer and its
+downloads with `curl -4 -fsSL https://github.com/Mersad-Moghaddam/syskit/releases/latest/download/syskit-install.sh | SYSKIT_CURL_FAMILY=4 sh`.
+
 To select a release or install without `sudo`, download the script and set its
 variables explicitly:
 

@@ -14,6 +14,13 @@ their milestone is tagged, then recorded in a dated release entry below.
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-07-16
+
+### Fixed
+
+- **IPv4-only installer mode:** `SYSKIT_CURL_FAMILY=4` forces every installer
+  download over IPv4 for servers with unavailable or blocked IPv6.
+
 ## [1.0.1] - 2026-07-16
 
 ### Fixed

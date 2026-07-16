@@ -5,6 +5,7 @@ set -eu
 
 repository="Mersad-Moghaddam/syskit"
 prefix="${SYSKIT_INSTALL_PREFIX:-/usr/local}"
+curl_family="${SYSKIT_CURL_FAMILY:-}"
 
 require() {
 	if ! command -v "$1" >/dev/null 2>&1; then
@@ -18,6 +19,23 @@ require tar
 require sha256sum
 require install
 require mktemp
+
+case "$curl_family" in
+	"") ;;
+	4 | 6) ;;
+	*)
+		echo "syskit installer: SYSKIT_CURL_FAMILY must be 4 or 6" >&2
+		exit 1
+		;;
+esac
+
+fetch() {
+	case "$curl_family" in
+		4) curl -4 "$@" ;;
+		6) curl -6 "$@" ;;
+		*) curl "$@" ;;
+	esac
+}
 
 if [ "$(uname -s)" != "Linux" ]; then
 	echo "syskit installer: SysKit is supported only on Linux" >&2
@@ -38,7 +56,7 @@ if [ -z "$version" ]; then
 	# Use github.com rather than api.github.com: some server firewalls allow
 	# release downloads but block the GitHub API. GitHub redirects this URL to
 	# the latest release tag, which curl exposes as url_effective.
-	release_url="$(curl -fsSIL --connect-timeout 15 --max-time 30 -o /dev/null -w '%{url_effective}' "https://github.com/$repository/releases/latest")"
+	release_url="$(fetch -fsSIL --connect-timeout 15 --max-time 30 -o /dev/null -w '%{url_effective}' "https://github.com/$repository/releases/latest")"
 	version="${release_url##*/}"
 fi
 
@@ -55,8 +73,8 @@ base_url="https://github.com/$repository/releases/download/$version"
 temp_dir="$(mktemp -d "${TMPDIR:-/tmp}/syskit-install.XXXXXX")"
 trap 'rm -rf "$temp_dir"' EXIT HUP INT TERM
 
-curl -fsSL --connect-timeout 15 -o "$temp_dir/SHA256SUMS" "$base_url/SHA256SUMS"
-curl -fsSL --connect-timeout 15 -o "$temp_dir/$archive" "$base_url/$archive"
+fetch -fsSL --connect-timeout 15 -o "$temp_dir/SHA256SUMS" "$base_url/SHA256SUMS"
+fetch -fsSL --connect-timeout 15 -o "$temp_dir/$archive" "$base_url/$archive"
 (
 	cd "$temp_dir"
 	sha256sum -c SHA256SUMS --ignore-missing
