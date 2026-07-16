@@ -14,6 +14,14 @@ their milestone is tagged, then recorded in a dated release entry below.
 
 ## [Unreleased]
 
+## [1.0.3] - 2026-07-16
+
+### Changed
+
+- **Installer progress:** the installer now reports architecture selection,
+  release resolution, download progress, checksum verification, extraction, and
+  each installation step.
+
 ## [1.0.2] - 2026-07-16
 
 ### Fixed
