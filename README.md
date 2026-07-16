@@ -54,7 +54,7 @@ This approach ensures:
 | **Control center** | Hierarchical keyboard and mouse menu for every command family |
 | **Output** | Table, JSON, YAML, and plain-text output formats |
 | **Plugins** | User-defined collectors and custom extensions |
-| **Containers** | Docker and container runtime inspection |
+| **Containers** | Cgroup-derived container IDs, processes, and resource counters |
 
 ## Design Principles
 
@@ -97,6 +97,198 @@ center. Its animated SysKit wordmark adapts to compact terminals, every action
 has its own icon and accent, and selected commands keep that theme through
 loading, output, dashboard, top, and watch views. Browse with the arrow keys or
 mouse, press Enter to open or run an item, and use Escape or Left to return.
+
+## Requirements
+
+- A supported Linux system on `amd64`/`x86_64` or `arm64`/`aarch64`.
+- Standard Linux kernel interfaces mounted at `/proc` and `/sys`.
+- A terminal for interactive commands such as `dashboard`, `top`, `watch`, and
+  the control center.
+- `sudo` or root access only to install a system-wide binary. SysKit itself is
+  read-only and most inspection commands work as an ordinary user.
+- For the download-based instructions: `curl`, `tar`, and `sha256sum` (normally
+  provided by the base system packages on Linux distributions).
+
+Some process and socket ownership data can be hidden by kernel permissions.
+SysKit reports partial results where applicable; run only the specific command
+with elevated privileges if you need access that your normal user lacks.
+
+## Installation
+
+Tagged releases are published on the
+[GitHub Releases page](https://github.com/Mersad-Moghaddam/syskit/releases).
+Each release includes static Linux archives for amd64 and arm64, Debian and RPM
+packages, AUR metadata, and a `SHA256SUMS` file. Choose the method that matches
+your distribution.
+
+### 1. Portable archive (any supported Linux distribution)
+
+This is the most broadly compatible installation method. It installs the
+binary and the manual page under `/usr/local`, without changing files managed
+by your distribution's package manager.
+
+```sh
+VERSION=v1.0.0
+case "$(uname -m)" in
+  x86_64) ARCH=amd64 ;;
+  aarch64|arm64) ARCH=arm64 ;;
+  *) echo "unsupported architecture: $(uname -m)" >&2; exit 1 ;;
+esac
+
+BASE_URL="https://github.com/Mersad-Moghaddam/syskit/releases/download/$VERSION"
+ARCHIVE="syskit_${VERSION#v}_linux_${ARCH}.tar.gz"
+curl -fLO "$BASE_URL/SHA256SUMS"
+curl -fLO "$BASE_URL/$ARCHIVE"
+sha256sum -c SHA256SUMS --ignore-missing
+tar -xzf "$ARCHIVE"
+sudo install -Dm 0755 "syskit_${VERSION#v}_linux_${ARCH}" /usr/local/bin/syskit
+sudo install -Dm 0644 syskit.1 /usr/local/share/man/man1/syskit.1
+```
+
+The checksum command must report `OK` for the downloaded archive before you
+install it. Release artifacts are checksum-verifiable but are not currently
+cryptographically signed.
+
+### 2. Debian, Ubuntu, and other Debian-family distributions
+
+Download the `.deb` matching your architecture and verify it against the same
+release's `SHA256SUMS` before installation. For amd64:
+
+```sh
+VERSION=1.0.0
+BASE_URL="https://github.com/Mersad-Moghaddam/syskit/releases/download/v$VERSION"
+PACKAGE="syskit_${VERSION}_amd64.deb"
+curl -fLO "$BASE_URL/SHA256SUMS"
+curl -fLO "$BASE_URL/$PACKAGE"
+sha256sum -c SHA256SUMS --ignore-missing
+sudo apt install "./$PACKAGE"
+```
+
+For 64-bit ARM, replace `amd64` with `arm64`. `apt` resolves any package
+dependencies and places `syskit` in `/usr/bin/syskit`.
+
+### 3. Fedora, RHEL, Rocky Linux, AlmaLinux, and other RPM-family distributions
+
+For x86_64 systems:
+
+```sh
+VERSION=1.0.0
+BASE_URL="https://github.com/Mersad-Moghaddam/syskit/releases/download/v$VERSION"
+PACKAGE="syskit-${VERSION}-1.x86_64.rpm"
+curl -fLO "$BASE_URL/SHA256SUMS"
+curl -fLO "$BASE_URL/$PACKAGE"
+sha256sum -c SHA256SUMS --ignore-missing
+sudo dnf install "./$PACKAGE"
+```
+
+For 64-bit ARM, replace `x86_64` with `aarch64`. On RPM systems that use
+`zypper`, install the already verified local file with
+`sudo zypper install "./$PACKAGE"`.
+
+### 4. Arch Linux and derivatives (AUR metadata)
+
+SysKit publishes reviewable metadata for the `syskit-bin` AUR package. Download
+the archive for the release, verify it, then build and install it with
+`makepkg` (do not run `makepkg` as root):
+
+```sh
+VERSION=1.0.0
+BASE_URL="https://github.com/Mersad-Moghaddam/syskit/releases/download/v$VERSION"
+PACKAGE="syskit_${VERSION}_aur.tar.gz"
+curl -fLO "$BASE_URL/SHA256SUMS"
+curl -fLO "$BASE_URL/$PACKAGE"
+sha256sum -c SHA256SUMS --ignore-missing
+mkdir "syskit-bin-$VERSION"
+tar -xzf "$PACKAGE" -C "syskit-bin-$VERSION"
+cd "syskit-bin-$VERSION"
+makepkg -si
+```
+
+`makepkg` downloads the architecture-appropriate release archive and verifies
+the checksum pinned in `PKGBUILD`.
+
+### 5. Build from source
+
+Use this option for development, unreleased changes, or when you prefer to
+compile the binary yourself. It requires Go 1.26.3 or newer and Git.
+
+```sh
+git clone https://github.com/Mersad-Moghaddam/syskit.git
+cd syskit
+git checkout v1.0.0
+go test -race ./...
+go build -trimpath \
+  -ldflags "-s -w -X github.com/Mersad-Moghaddam/syskit/internal/cli.version=v1.0.0" \
+  -o syskit ./cmd/syskit
+sudo install -Dm 0755 syskit /usr/local/bin/syskit
+sudo install -Dm 0644 docs/man/syskit.1 /usr/local/share/man/man1/syskit.1
+```
+
+To build the current development branch instead, omit `git checkout v1.0.0` and
+the version linker flag. A development build reports `dev` from `syskit version`.
+
+### Verify the installation
+
+```sh
+syskit version
+syskit --help
+syskit system
+syskit cpu --format json
+man syskit
+```
+
+`syskit` with no arguments opens the interactive control center when both input
+and output are terminals. For scripting, prefer the stable JSON or YAML output:
+
+```sh
+syskit memory --format json
+syskit process --sort cpu --limit 20 --format yaml
+syskit ports --listening
+```
+
+See the [command reference](docs/command-reference.md) for the full command and
+flag contract, including interactive keyboard controls and configuration.
+
+### Upgrade or remove
+
+To upgrade an archive installation, repeat the portable-archive steps with the
+new release version. Package-manager installations can be upgraded by installing
+the newer local package using the same commands above.
+
+```sh
+# Portable archive installation
+sudo rm -f /usr/local/bin/syskit /usr/local/share/man/man1/syskit.1
+
+# Debian/Ubuntu package installation
+sudo apt remove syskit
+
+# RPM package installation
+sudo dnf remove syskit
+
+# Arch package installation
+sudo pacman -Rns syskit-bin
+```
+
+Use only the removal command for the method you originally used. Removing
+SysKit does not remove its optional configuration or plugin directories.
+
+## Configuration and shell completion
+
+SysKit works with no configuration. When needed, configuration is loaded in
+this order: command-line flags, `SYSKIT_*` environment variables, then
+`$XDG_CONFIG_HOME/syskit/config.toml` (or `~/.config/syskit/config.toml`), and
+finally built-in defaults.
+
+Generate completion for your current shell and place it in the directory used
+by that shell. For example, to enable Bash completion for the current session:
+
+```sh
+source <(syskit completion bash)
+```
+
+The CLI can generate `bash`, `zsh`, `fish`, and `powershell` completion source.
+Run `syskit completion <shell> --help` or consult your shell's documentation for
+the persistent completion directory on your distribution.
 
 ## Project Structure
 
