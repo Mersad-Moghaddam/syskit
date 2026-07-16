@@ -37,7 +37,7 @@ need fast answers without changing the host they are investigating.
 Install the latest stable release on Linux with one command:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/Mersad-Moghaddam/syskit/main/scripts/install.sh | sh
+curl -fsSL https://github.com/Mersad-Moghaddam/syskit/releases/latest/download/syskit-install.sh | sh
 ```
 
 The installer detects amd64/arm64, verifies the release SHA-256 checksum, and

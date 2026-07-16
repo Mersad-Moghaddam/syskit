@@ -14,6 +14,14 @@ their milestone is tagged, then recorded in a dated release entry below.
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-07-16
+
+### Fixed
+
+- **Installer availability:** the one-command installer is now published as a
+  checksum-listed release asset, avoiding `raw.githubusercontent.com` for
+  servers that permit GitHub release downloads but block the raw-content host.
+
 ### Added
 
 - **Interactive control center:** running `syskit` in a terminal now opens a

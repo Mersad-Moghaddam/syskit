@@ -22,4 +22,5 @@ for arch in amd64 arm64; do
   rm "$output_dir/LICENSE"
   rm "$output_dir/syskit.1"
 done
+install -m 0755 scripts/install.sh "$output_dir/syskit-install.sh"
 scripts/write-checksums.sh "$output_dir"
