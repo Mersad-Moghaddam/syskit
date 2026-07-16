@@ -8,10 +8,6 @@
 [![Status](https://img.shields.io/badge/Status-v1.0.0%20stable-brightgreen)]()
 
 <p align="center">
-  <img src="assets/readme/syskit-hero.png" alt="A dark SysKit terminal dashboard with live system metrics" width="960">
-</p>
-
-<p align="center">
   <strong>Native Linux intelligence for the terminal.</strong><br>
   Inspect live system state with one fast, read-only CLI.
 </p>
