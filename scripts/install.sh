@@ -35,8 +35,11 @@ esac
 
 version="${SYSKIT_VERSION:-}"
 if [ -z "$version" ]; then
-	metadata="$(curl -fsSL "https://api.github.com/repos/$repository/releases/latest")"
-	version="$(printf '%s\n' "$metadata" | sed -n 's/^[[:space:]]*"tag_name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n 1)"
+	# Use github.com rather than api.github.com: some server firewalls allow
+	# release downloads but block the GitHub API. GitHub redirects this URL to
+	# the latest release tag, which curl exposes as url_effective.
+	release_url="$(curl -fsSIL --connect-timeout 15 --max-time 30 -o /dev/null -w '%{url_effective}' "https://github.com/$repository/releases/latest")"
+	version="${release_url##*/}"
 fi
 
 case "$version" in
@@ -52,8 +55,8 @@ base_url="https://github.com/$repository/releases/download/$version"
 temp_dir="$(mktemp -d "${TMPDIR:-/tmp}/syskit-install.XXXXXX")"
 trap 'rm -rf "$temp_dir"' EXIT HUP INT TERM
 
-curl -fsSL -o "$temp_dir/SHA256SUMS" "$base_url/SHA256SUMS"
-curl -fsSL -o "$temp_dir/$archive" "$base_url/$archive"
+curl -fsSL --connect-timeout 15 -o "$temp_dir/SHA256SUMS" "$base_url/SHA256SUMS"
+curl -fsSL --connect-timeout 15 -o "$temp_dir/$archive" "$base_url/$archive"
 (
 	cd "$temp_dir"
 	sha256sum -c SHA256SUMS --ignore-missing

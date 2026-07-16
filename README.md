@@ -42,7 +42,8 @@ curl -fsSL https://raw.githubusercontent.com/Mersad-Moghaddam/syskit/main/script
 
 The installer detects amd64/arm64, verifies the release SHA-256 checksum, and
 installs the binary and manual page under `/usr/local` (using `sudo` only when
-needed).
+needed). It resolves the latest release through `github.com`, so it does not
+require access to `api.github.com`.
 
 ```sh
 syskit version
