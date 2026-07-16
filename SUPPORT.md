@@ -1,20 +1,22 @@
 # Support
 
-SysKit is currently in the planning phase and has no released binary yet.
+SysKit is a stable, Linux-native system inspection and diagnostics toolkit.
+For installation, supported Linux architectures, and command examples, start
+with the [README](README.md) and [Getting started](docs/getting-started.md).
 
 ## Questions
 
 Use GitHub issues for questions about:
 
-- Product scope.
-- Architecture.
-- Feature specifications.
-- Linux behavior relevant to planned collectors.
+- Installation and supported Linux environments.
+- Command behavior and output contracts.
 - Documentation improvements.
+- Product scope, architecture, and feature specifications.
 
 ## Bugs
 
-Until implementation begins, bugs usually mean documentation conflicts, broken repository checks, unclear requirements, or incorrect Linux explanations. Use the bug report template and include the affected document.
+Use the bug report template. Include the SysKit version, Linux distribution,
+kernel version, command, expected result, and sanitized output where possible.
 
 ## Security
 

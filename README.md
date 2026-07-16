@@ -8,6 +8,7 @@
 [![Go](https://img.shields.io/badge/Go-1.26.3+-00ADD8?logo=go&logoColor=white)](https://go.dev)
 [![Linux](https://img.shields.io/badge/Platform-Linux-FCC624?logo=linux&logoColor=black)](https://kernel.org)
 [![Status](https://img.shields.io/badge/Status-v1.0.0%20stable-brightgreen)](docs/releases/v1.0.0.md)
+[![CI](https://github.com/Mersad-Moghaddam/syskit/actions/workflows/ci.yml/badge.svg)](https://github.com/Mersad-Moghaddam/syskit/actions/workflows/ci.yml)
 
 <p align="center">
   <a href="#install">Install</a> ·
@@ -93,11 +94,16 @@ results rather than inventing missing data.
 
 ## Learn and contribute
 
-- New user? Start with [Getting started](docs/getting-started.md).
-- Need every flag and command? Read the [command reference](docs/command-reference.md).
-- Curious how it works? Explore the [architecture](docs/architecture.md),
+- **Use it:** Start with [Getting started](docs/getting-started.md) or the
+  complete [command reference](docs/command-reference.md).
+- **Shape it:** Read [Contributing](docs/contributing.md), then open an
+  [issue](https://github.com/Mersad-Moghaddam/syskit/issues) for a bug,
+  improvement, or design discussion.
+- **Understand it:** Explore the [architecture](docs/architecture.md),
   [feature specifications](specs/features/), and [Learning Center](learning/README.md).
-- Want to contribute? Read [Contributing](docs/contributing.md) and the
-  [engineering constitution](specs/constitution.md).
+- **Keep it healthy:** Contributions follow the [Code of Conduct](CODE_OF_CONDUCT.md),
+  releases are tracked in the [changelog](CHANGELOG.md), and security issues
+  belong in the private process described in [SECURITY.md]—never a public issue.
 
-SysKit is released under the [MIT License](LICENSE).
+SysKit is released under the [MIT License](LICENSE) and governed through its
+[open decision process](GOVERNANCE.md).

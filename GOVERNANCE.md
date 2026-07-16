@@ -8,7 +8,9 @@
 
 This document describes how the SysKit project is governed: the roles people hold, how decisions are reached, how significant changes are proposed and recorded, and how the governance model itself evolves.
 
-SysKit is in its early design and specification phase and is not yet accepting external contributions. This document describes the intended governance model for the project as it matures — it establishes the rules of the road before the traffic arrives.
+SysKit welcomes external contributions across code, documentation, specifications,
+Linux research, and project process. This document describes the rules that keep
+that collaboration transparent and sustainable.
 
 The engineering principles that decisions are measured against live in the [Engineering Constitution](specs/constitution.md). Governance defines *how* decisions are made; the Constitution defines *what* a good decision looks like. Where the two intersect, the Constitution supplies the technical standard and this document supplies the process.
 
@@ -131,4 +133,6 @@ Amendments that materially change how power is distributed or how decisions are 
 
 ---
 
-*This governance model is intentionally lightweight for a project in its early phase. It is expected to grow more formal as the contributor base grows — but its intent, transparent and principled stewardship, does not change.*
+*This governance model is intentionally lightweight. It may grow more formal as
+the contributor base grows, but its intent—transparent and principled
+stewardship—does not change.*

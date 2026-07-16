@@ -14,15 +14,15 @@ Because SysKit reads and displays system information, its primary security conce
 
 ## Supported Versions
 
-SysKit is pre-1.0 and under active development. During this phase, **only the latest released version** receives security updates. There is no long-term support for older pre-release versions — users are expected to upgrade to the most recent release.
+SysKit has a stable v1 public contract. **Only the latest released version**
+receives security updates; users should upgrade promptly when a security release
+is published.
 
 | Version | Supported          |
 |---------|--------------------|
-| Latest release (`0.x`) | :white_check_mark: |
-| Older `0.x` releases   | :x:                |
+| Latest release (`1.x`) | :white_check_mark: |
+| Older releases         | :x:                |
 | Unreleased `main`      | :x: (best effort)  |
-
-Once SysKit reaches `1.0`, this policy will be revised to define supported release lines under Semantic Versioning.
 
 ---
 
@@ -37,7 +37,7 @@ Instead, report them privately by email to:
 To help us triage and resolve the issue quickly, please include as much of the following as you can:
 
 - A clear description of the vulnerability and its impact
-- The SysKit version (`syskit --version`) and how it was installed
+- The SysKit version (`syskit version`) and how it was installed
 - The Linux distribution and kernel version (`uname -a`)
 - Exact steps to reproduce, including the command invoked (e.g. `syskit process --json`)
 - Any relevant output, logs, or proof-of-concept — with sensitive data redacted
