@@ -17,6 +17,30 @@ Rather than wrapping existing Linux utilities, SysKit interacts directly with na
 
 SysKit is both a practical daily-use tool and a long-term educational project for mastering Go, Linux internals, CLI development, and systems programming.
 
+## Install in one command
+
+On a supported Linux system, install the latest stable release with:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/Mersad-Moghaddam/syskit/main/scripts/install.sh | sh
+```
+
+The installer detects `amd64` or `arm64`, downloads the matching release,
+verifies it with the release's SHA-256 checksum, and installs `syskit` and its
+manual page under `/usr/local`. It asks for `sudo` only when required. After it
+finishes, verify the installation with `syskit version`.
+
+To install a particular release, or to avoid `sudo` by using a user-local
+prefix, download the script first and run it with explicit variables:
+
+```sh
+curl -fsSLO https://raw.githubusercontent.com/Mersad-Moghaddam/syskit/main/scripts/install.sh
+SYSKIT_VERSION=v1.0.0 SYSKIT_INSTALL_PREFIX="$HOME/.local" sh install.sh
+```
+
+For the complete requirements, package-manager options, manual checksum steps,
+and removal instructions, continue to [detailed installation](#installation).
+
 ## Philosophy
 
 SysKit follows a **Specification-Driven Development (SDD)** workflow. Implementation comes after documentation and architecture. Every feature begins as a specification, is reviewed for correctness and consistency, and only then moves into code.

@@ -38,6 +38,23 @@ before installing it:
 sha256sum -c SHA256SUMS --ignore-missing
 ```
 
+For a quick installation of the latest stable release, use the repository's
+installer. It selects the current architecture, verifies the downloaded release
+archive against `SHA256SUMS`, and installs under `/usr/local` (prompting for
+`sudo` when needed):
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/Mersad-Moghaddam/syskit/main/scripts/install.sh | sh
+```
+
+To select a release or install without `sudo`, download the script and set its
+variables explicitly:
+
+```sh
+curl -fsSLO https://raw.githubusercontent.com/Mersad-Moghaddam/syskit/main/scripts/install.sh
+SYSKIT_VERSION=v1.0.0 SYSKIT_INSTALL_PREFIX="$HOME/.local" sh install.sh
+```
+
 For a portable archive, extract the file matching your architecture and install
 the versioned binary as `syskit`:
 
